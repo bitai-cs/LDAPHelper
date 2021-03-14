@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Authors>Viko Bastidas</Authors>
+    <Company>Bastidas IT</Company>
+    <Product>LDAP Proxy Services</Product>
+    <Description>Library to wrap  Novell.Directory.Ldap.NETStandard2_0 functionality to make LDAP common queries to search accounts and objects ina Directory Service.</Description>
+    <Copyright>Copyright © 2017-2020 Bastidas IT. All rights reserved.</Copyright>
+    <Version>2.1.1</Version>
+    <AssemblyVersion>2.1.1.7</AssemblyVersion>
+    <PackageIcon>hierarchy-1.png</PackageIcon>
+    <FileVersion>2.1.1.7</FileVersion>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageId>LDAPHelperLib</PackageId>
+    <AssemblyName>LDAPHelperLib</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="ILdapEntry.cs" />
+    <Compile Remove="LdapEntry.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Novell.Directory.Ldap.NETStandard2_0" Version="3.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\resources\hierarchy-1.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LDAPHelperDTO\LDAPHelperDTO.csproj" />
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="xcopy /y &quot;$(TargetDir)*.*&quot; &quot;$(ProjectDir)..\..\..\_bin\netstandard2.0\LDAPHelperLib\&quot;" />
+  </Target>
+
+</Project>

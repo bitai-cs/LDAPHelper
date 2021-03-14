@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyVersion>1.2.1.20</AssemblyVersion>
+    <FileVersion>1.2.1.20</FileVersion>
+    <Version>1.2.1</Version>
+    <AssemblyName>LDAPHelperDTO</AssemblyName>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>Viko Bastidas</Authors>
+    <Company>Bastidas IT</Company>
+    <Product>LDAP Proxy Services</Product>
+    <Description>DTO (Data Transfer Object) representing an object resulting from an LDAP query.</Description>
+    <Copyright>Copyright © 2017-2020 Bastidas IT. All rights reserved.</Copyright>
+    <PackageIcon>hierarchy-1.png</PackageIcon>
+    <RootNamespace>LDAPHelperDTO</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\resources\hierarchy-1.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="xcopy /y &quot;$(TargetDir)*.*&quot; &quot;$(ProjectDir)..\..\..\_bin\netstandard2.0\LdapHelperDTO\&quot;" />
+  </Target>
+
+</Project>

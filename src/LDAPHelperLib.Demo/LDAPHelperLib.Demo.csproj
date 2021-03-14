@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <RootNamespace>LDAPHelperLib.Demo</RootNamespace>
+    <Authors>Viko Bastidas</Authors>
+    <Company>Bastidas IT</Company>
+    <Product>LDAP Proxy Services</Product>
+    <Description>LDAPHelperLib (Assembly) demo of use.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Serilog" Version="2.7.1" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LDAPHelperLib\LDAPHelperLib.csproj" />
+  </ItemGroup>
+
+</Project>
