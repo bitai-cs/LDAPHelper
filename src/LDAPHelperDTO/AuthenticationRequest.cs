@@ -12,7 +12,7 @@ namespace LdapHelperDTO
 		/// <summary>
 		/// Tag value used to identify the request
 		/// </summary>
-		public string RequestTag { get; set; }
+		public string CustomTag { get; set; }
 
 		/// <summary>
 		/// Profile configured in LDAP Web API Proxy service

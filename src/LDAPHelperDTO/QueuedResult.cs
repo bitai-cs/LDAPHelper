@@ -6,15 +6,15 @@ namespace LdapHelperDTO
 {
 	public class QueuedResult
 	{
-		public QueuedResult(string requestTag)
+		public QueuedResult(string customTag)
 		{
-			RequestTag = requestTag;
+			CustomTag = customTag;
 		}
 
 
 
 
-		public string RequestTag { get; }
+		public string CustomTag { get; }
 		public IEnumerable<LdapHelperDTO.LdapEntry> Entries { get; set; }
 		public string ErrorType { get; set; }
 		public string ErrorMessage { get; set; }

@@ -6,7 +6,7 @@ namespace LdapHelperDTO
 {
 	public class AuthenticationStatus
 	{
-		public string RequestTag { get; set; }
+		public string CustomTag { get; set; }
 		public bool UseGC { get; set; }
 		public string DomainName { get; set; }
 		public string User { get; set; }

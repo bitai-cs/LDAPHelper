@@ -4,10 +4,10 @@ using System.Text;
 
 namespace LdapHelperLib
 {
-	public enum DefaultServerPorts : int
+	public enum LdapServerCommonPorts : int
 	{
-		DefaultPort = Novell.Directory.Ldap.LdapConnection.DEFAULT_PORT,
-		SslPort = Novell.Directory.Ldap.LdapConnection.DEFAULT_SSL_PORT,
+		DefaultPort = Novell.Directory.Ldap.LdapConnection.DefaultPort,
+		DefaultSslPort = Novell.Directory.Ldap.LdapConnection.DefaultSslPort,
 		GlobalCatalogPort = 3268
 	}
 }

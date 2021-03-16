@@ -1,18 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security;
 using System.Text;
 
 namespace LdapHelperLib
 {
 	public class LdapUserCredentials
 	{
-		public LdapUserCredentials(string userName, string password)
+		public LdapUserCredentials(string username, string password)
 		{
-			UserName = userName;
+			Username = username;
 			Password = password;
 		}
 
-		public string UserName { get; }
+		public string Username { get; }
 		public string Password { get; }
 	}
 }

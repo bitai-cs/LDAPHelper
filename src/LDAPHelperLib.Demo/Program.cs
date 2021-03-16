@@ -3,20 +3,74 @@ using System.Threading.Tasks;
 using Serilog;
 using Serilog.Sinks.SystemConsole;
 using System.Linq;
+using System.Security;
 
 namespace LDAPHelperLib.Demo
 {
-	public enum BaseDNEnum
-	{
-		com,
-		cl_com,
-		br_com,
-		pe_com,
-		ar_com,
-	}
+	//public enum BaseDNEnum
+	//{
+	//	com,
+	//	cl_com,
+	//	br_com,
+	//	pe_com,
+	//	ar_com,
+	//}
 
 	public class Program
 	{
+		/// <summary>
+		/// Custom (optional) tag value to label request. Can be null. 
+		/// </summary>
+		internal static string Tag = "My Demo";
+		/// <summary>
+		/// LDAP Server ip or DNS name
+		/// </summary>
+		internal static string LdapServer = "10.11.58.13";
+		/// <summary>
+		/// LDAP Server port 
+		/// </summary>
+		internal static int LdapServerPort = (int)LdapHelperLib.LdapServerCommonPorts.DefaultPort;
+		internal static bool UseSsl = false;
+		internal static short ConnectionTimeout = 15;
+		/// <summary>
+		/// Domain Username to connect LDAP Server
+		/// </summary>
+		internal static string DomainUserName = "LANPERU\\4439690";
+		/// <summary>
+		/// Domain Username passsword
+		/// </summary>
+		internal static string AccountPassword = "810117V|k0";
+		/// <summary>
+		/// Example of Base DN (Distinguished Name) that defines the minimum scope of directory searches 
+		/// </summary>
+		internal static string BaseDN_1 = "DC=lan, DC=com";
+		/// <summary>
+		/// Example of Base DN (Distinguished Name) that defines the minimum scope of directory searches 
+		/// </summary>
+		internal static string BaseDN_2 = "DC=pe, DC=lan, DC=com";
+		/// <summary>
+		/// Example of Base DN (Distinguished Name) that defines the minimum scope of directory searches 
+		/// </summary>
+		internal static string BaseDN_3 = "DC=cl, DC=lan, DC=com";
+		/// <summary>
+		/// Example of Base DN (Distinguished Name) that defines the minimum scope of directory searches 
+		/// </summary>
+		internal static string BaseDN_4 = "DC=ar, DC=lan, DC=com";
+		/// <summary>
+		/// Example of Base DN (Distinguished Name) that defines the minimum scope of directory searches 
+		/// </summary>
+		internal static string BaseDN_5 = "DC=br, DC=lan, DC=com";
+		/// <summary>
+		/// Example of Base DN (Distinguished Name) that defines the minimum scope of directory searches 
+		/// </summary>
+		internal static string BaseDN_6 = "DC=us, DC=lan, DC=com";
+		/// <summary>
+		/// Example of Base DN (Distinguished Name) that defines the minimum scope of directory searches 
+		/// </summary>
+		internal static string BaseDN_7 = "DC=ca, DC=lan, DC=com";
+		internal static string SelectedBaseDN = BaseDN_1;
+
+
 		#region Private Static Methods
 		private static void configLog()
 		{
@@ -25,7 +79,7 @@ namespace LDAPHelperLib.Demo
 				.CreateLogger();
 		}
 
-		private static void Log_TestTitle(string title)
+		private static void log_TestTitle(string title)
 		{
 			Console.WriteLine();
 			Console.WriteLine("**********************************************");
@@ -33,66 +87,19 @@ namespace LDAPHelperLib.Demo
 			Console.WriteLine("**********************************************");
 		}
 
-		private static LdapHelperLib.LdapConnectionPipeline getConnectionPipeline()
+		private static LdapHelperLib.LdapConnectionInfo getConnectionInfo()
 		{
-			return new LdapHelperLib.LdapConnectionPipeline(false, 10);
-		}
-
-		private static LdapHelperLib.LdapServerSettings getServerSettings(bool useGlobalCatalog, BaseDNEnum baseDNtype, out string baseDN)
-		{
-			switch (baseDNtype)
-			{
-				case BaseDNEnum.pe_com:
-					baseDN = "DC=pe, DC=lan, DC=com";
-					break;
-				case BaseDNEnum.br_com:
-					baseDN = "DC=br, DC=lan, DC=com";
-					break;
-				case BaseDNEnum.cl_com:
-					baseDN = "DC=cl, DC=lan, DC=com";
-					break;
-				case BaseDNEnum.ar_com:
-					baseDN = "DC=ar, DC=lan, DC=com";
-					break;
-				case BaseDNEnum.com:
-					baseDN = "DC=lan, DC=com";
-					break;
-				default:
-					throw new Exception("Tipo de BaseDN no reconocido.");
-			}
-
-			return new LdapHelperLib.LdapServerSettings("8kpelimdc01.pe.lan.com", useGlobalCatalog ? (int)LdapHelperLib.DefaultServerPorts.GlobalCatalogPort : (int)LdapHelperLib.DefaultServerPorts.DefaultPort);
-		}
-
-		private static LdapHelperLib.LdapServerSettings getServerSettingsForGlobalCatalog(BaseDNEnum baseDNtype, out string baseDN)
-		{
-			switch (baseDNtype)
-			{
-				case BaseDNEnum.pe_com:
-					baseDN = "DC=pe, DC=lan, DC=com";
-					break;
-				case BaseDNEnum.br_com:
-					baseDN = "DC=br, DC=lan, DC=com";
-					break;
-				case BaseDNEnum.cl_com:
-					baseDN = "DC=cl, DC=lan, DC=com";
-					break;
-				case BaseDNEnum.ar_com:
-					baseDN = "DC=ar, DC=lan, DC=com";
-					break;
-				case BaseDNEnum.com:
-					baseDN = "DC=lan, DC=com";
-					break;
-				default:
-					throw new Exception("Tipo de BaseDN no reconocido.");
-			}
-
-			return new LdapHelperLib.LdapServerSettings("8kpelimdc01.pe.lan.com", (int)LdapHelperLib.DefaultServerPorts.GlobalCatalogPort);
+			return new LdapHelperLib.LdapConnectionInfo(Program.LdapServer, Program.LdapServerPort, Program.UseSsl, Program.ConnectionTimeout, getCredentials());
 		}
 
 		private static LdapHelperLib.LdapUserCredentials getCredentials()
 		{
-			return new LdapHelperLib.LdapUserCredentials("LANPERU\\usr_ext01", "L4t4m2018");
+			return new LdapHelperLib.LdapUserCredentials(Program.DomainUserName, Program.AccountPassword);
+		}
+
+		private static LdapHelperLib.LdapClientConfiguration getClientConfiguration()
+		{
+			return new LdapHelperLib.LdapClientConfiguration(getConnectionInfo(), getCredentials(), Program.SelectedBaseDN);
 		}
 		#endregion
 
@@ -113,13 +120,25 @@ namespace LDAPHelperLib.Demo
 
 				string _attributeFiler = null;
 
-				await Test_AuthenticateUser(false, BaseDNEnum.pe_com);
+				Console.WriteLine("Enter LDAP server IP address or DNS name:");
+				Console.WriteLine($"Leave empty to use {Program.LdapServer}");
+				var _ldapServerEntered = Console.ReadLine();
+				if (string.IsNullOrEmpty(_ldapServerEntered))
+					_ldapServerEntered = Program.LdapServer;
+				Log.Information($"Will use {_ldapServerEntered} LDAP Server.");
 
+				Console.WriteLine("Enter LDAP server port:");
+				Console.WriteLine($"Leave empty to use {Program.LdapServerPort}");
+				var _portEntered = Console.ReadLine();
+				var _portNumber = string.IsNullOrEmpty(_portEntered) ? Program.LdapServerPort : Convert.ToInt32(_portEntered);
+				Log.Information($"Will use port:{_portNumber} to connect LDAP Server.");
+
+				await Test_AuthenticateUser("LANPERU\\usr_ext01", "L4t4m2018");
 				//await Test_AuthenticateUser(true, BaseDNEnum.br_com);
 
 
 
-				await Test_GetUsersAndGroupsByAttributeEnumerable(true, LdapHelperDTO.EntryAttribute.sAMAccountName, "usr_ext01", BaseDNEnum.com);
+				//await Test_GetUsersAndGroupsByAttributeEnumerable(true, LdapHelperDTO.EntryAttribute.sAMAccountName, "usr_ext01", BaseDNEnum.com);
 
 				//await Test_GetUsersAndGroupsByAttributeQueuedResult(true, LdapHelperDTO.EntryAttribute.sAMAccountName, "usr_ext01", BaseDNEnum.com);
 
@@ -239,7 +258,6 @@ namespace LDAPHelperLib.Demo
 				//await Test_GetGroupMembershipEntries(true, LdapHelperDTO.EntryAttribute.sAMAccountName, "4303259", BaseDNEnum.com);
 
 
-
 				Console.WriteLine();
 
 				Log.Warning("Fin: " + DateTime.Now.ToString());
@@ -257,27 +275,18 @@ namespace LDAPHelperLib.Demo
 			}
 		}
 
-
-		public static async Task<bool> Test_AuthenticateUser(bool useGlobalCatalog, BaseDNEnum baseDN = BaseDNEnum.com)
+		public static async Task<bool> Test_AuthenticateUser(string domainUsername, string password)
 		{
 			try
 			{
-				if (useGlobalCatalog)
-					Log_TestTitle("Test00_Authenticate (Global Catalog)");
-				else
-					Log_TestTitle("Test00_Authenticate");
+				log_TestTitle("Test00_Authenticate");
 
-				var _connPipeline = getConnectionPipeline();
-				string _baseDN = string.Empty;
-				var _serverSettings = useGlobalCatalog ? getServerSettingsForGlobalCatalog(baseDN, out _baseDN) : getServerSettings(baseDN, out _baseDN);
-				var _userCredentials = getCredentials();
+				var _c = new LdapHelperLib.Authenticator(getClientConfiguration());
 
-				Log.Information(_baseDN);
 				Log.Information("Autenticando usuario...");
-				var _c = new LdapHelperLib.Authenticator(null, _connPipeline, _serverSettings, _userCredentials);
-				var _auth = await _c.AuthenticateUser(_userCredentials);
+				var _auth = await _c.AuthenticateUser(new LdapHelperLib.LdapUserCredentials(domainUsername, password));
 				if (_auth)
-					Log.Information("Usuario autententicado!");
+					Log.Information("Usuario autententicado.");
 				else
 					Log.Warning("Usuario NO autententicado.");
 
@@ -293,34 +302,19 @@ namespace LDAPHelperLib.Demo
 			}
 		}
 
-
-		public static async Task<bool> Test_GetUsersAndGroupsByAttributeEnumerable(bool useGlobalCatalog, LdapHelperDTO.EntryAttribute attribute, string attributeFiler, BaseDNEnum baseDN)
+		public static async Task<bool> Test_GetUsersAndGroupsByAttributeEnumerable(LdapHelperDTO.EntryAttribute filterAttribute, string filterValue, LdapHelperDTO.RequiredEntryAttributes requiredResults)
 		{
 			try
 			{
-				if (useGlobalCatalog)
-					Log_TestTitle("Test_GetUsersAndGroupsByAttributeEnumerable (Global Catalog)");
-				else
-					Log_TestTitle("Test_GetUsersAndGroupsByAttributeEnumerable");
+				log_TestTitle("Test_GetUsersAndGroupsByAttributeEnumerable");
 
-				var _connPipeline = getConnectionPipeline();
-				string _baseDN = string.Empty;
-				var _serverSettings = useGlobalCatalog ? getServerSettingsForGlobalCatalog(baseDN, out _baseDN) : getServerSettings(baseDN, out _baseDN);
-				var _userCredentials = getCredentials();
+				var _s = new LdapHelperLib.Searcher(getClientConfiguration());
 
-				var _s = new LdapHelperLib.Searcher(null, _connPipeline, _serverSettings, _baseDN, useGlobalCatalog, _userCredentials);
-
-				Log.Information(_baseDN);
-				Log.Information(string.Format("Búscando con el atributo {0}: {1}...", attribute.ToString(), attributeFiler));
+				Log.Information(string.Format("Base DN: {0}", _s.BaseDN));
+				Log.Information(string.Format("Búscando con el atributo {0}: {1}...", filterAttribute.ToString(), filterValue));
 				Console.WriteLine();
 
-				var _result = await _s.SearchUsersAndGroupsByAttributeAsync(attribute, attributeFiler, LdapHelperDTO.RequiredEntryAttributes.MinimunWithMemberAndMemberOf);
-				//if (string.IsNullOrEmpty(_result.ErrorType)) {
-				//	Log.Error(_result.ErrorType);
-				//	Log.Error(_result.ErrorMessage);
-				//	//Log.Error(_result.Error.StackTrace);
-				//	Console.WriteLine();
-				//}
+				var _result = await _s.SearchUsersAndGroupsByAttributeAsync(filterAttribute, filterValue, requiredResults);
 
 				if (_result.Count() == 0)
 					Log.Warning("No se encontraron registros con el criterio de búsqueda proporcionado.");
@@ -350,27 +344,19 @@ namespace LDAPHelperLib.Demo
 			}
 		}
 
-		public static async Task<bool> Test_GetUsersAndGroupsByAttributeQueuedResult(bool useGlobalCatalog, LdapHelperDTO.EntryAttribute attribute, string attributeFiler, BaseDNEnum baseDN)
+		public static async Task<bool> Test_GetUsersAndGroupsByAttributeQueuedResult(LdapHelperDTO.EntryAttribute filterAttribute, string filterValue, LdapHelperDTO.RequiredEntryAttributes requiredResults)
 		{
 			try
 			{
-				if (useGlobalCatalog)
-					Log_TestTitle("Test_GetUsersAndGroupsByAttributeQueuedResult (Global Catalog)");
-				else
-					Log_TestTitle("Test_GetUsersAndGroupsByAttributeQueuedResult");
+				log_TestTitle("Test_GetUsersAndGroupsByAttributeQueuedResult");
 
-				var _connPipeline = getConnectionPipeline();
-				string _baseDN = string.Empty;
-				var _serverSettings = useGlobalCatalog ? getServerSettingsForGlobalCatalog(baseDN, out _baseDN) : getServerSettings(baseDN, out _baseDN);
-				var _userCredentials = getCredentials();
+				var _s = new LdapHelperLib.Searcher(getClientConfiguration());
 
-				var _s = new LdapHelperLib.Searcher(null, _connPipeline, _serverSettings, _baseDN, useGlobalCatalog, _userCredentials);
-
-				Log.Information(_baseDN);
-				Log.Information(string.Format("Búscando con el atributo {0}: {1}...", attribute.ToString(), attributeFiler));
+				Log.Information(string.Format("Base DN: {0}", _s.BaseDN));
+				Log.Information(string.Format("Búscando con el atributo {0}: {1}...", filterAttribute.ToString(), filterValue));
 				Console.WriteLine();
 
-				var _result = await _s.SearchUsersAndGroupsByAttributeAsyncModeAsync(attribute, attributeFiler, LdapHelperDTO.RequiredEntryAttributes.MinimunWithMemberAndMemberOf);
+				var _result = await _s.SearchUsersAndGroupsByAttributeQueuedModeAsync(filterAttribute, filterValue, requiredResults, Program.Tag);
 				if (string.IsNullOrEmpty(_result.ErrorType))
 				{
 					Log.Error(_result.ErrorType);
@@ -407,33 +393,29 @@ namespace LDAPHelperLib.Demo
 			}
 		}
 
-
-		public static async Task<bool> Test_GetUsersAndGroupsBy2Attributes(bool useGlobalCatalog, LdapHelperDTO.EntryAttribute attribute, string attributeFilter, LdapHelperDTO.EntryAttribute attribute2, string attributeFilter2, bool conjuntion, BaseDNEnum baseDN)
+		public static async Task<bool> Test_GetUsersAndGroupsBy2Attributes(LdapHelperDTO.EntryAttribute filterAttribute, string filterValue, LdapHelperDTO.EntryAttribute secondFilterAttribute, string secondFilterValue, bool conjunctiveFilters, LdapHelperDTO.RequiredEntryAttributes requiredResults)
 		{
+			if (string.IsNullOrEmpty(filterValue))
+			{
+				throw new ArgumentException($"'{nameof(filterValue)}' cannot be null or empty.", nameof(filterValue));
+			}
+
+			if (string.IsNullOrEmpty(secondFilterValue))
+			{
+				throw new ArgumentException($"'{nameof(secondFilterValue)}' cannot be null or empty.", nameof(secondFilterValue));
+			}
+
 			try
 			{
-				if (useGlobalCatalog)
-					Log_TestTitle("Test_GetUsersAndGroupsBy2Attributes (Global Catalog)");
-				else
-					Log_TestTitle("Test_GetUsersAndGroupsBy2Attributes");
+				log_TestTitle("Test_GetUsersAndGroupsBy2Attributes");
 
-				var _connPipeline = getConnectionPipeline();
-				string _baseDN = string.Empty;
-				var _serverSettings = useGlobalCatalog ? getServerSettingsForGlobalCatalog(baseDN, out _baseDN) : getServerSettings(baseDN, out _baseDN);
-				var _userCredentials = getCredentials();
+				var _s = new LdapHelperLib.Searcher(getClientConfiguration());
 
-				var _s = new LdapHelperLib.Searcher(null, _connPipeline, _serverSettings, _baseDN, useGlobalCatalog, _userCredentials)
-				{
-					ServerSettings = _serverSettings,
-					UserCredentials = _userCredentials,
-					BaseDN = _baseDN
-				};
-
-				Log.Information(_baseDN);
-				Log.Information(string.Format("Búscando con el atributo {1}: {2} {0} {3}: {4}", (conjuntion ? " Y " : " O "), attribute.ToString(), attributeFilter, attribute2.ToString(), attributeFilter2));
+				Log.Information(string.Format("Base DN: {0}", _s.BaseDN));
+				Log.Information(string.Format("Búscando con el atributo {1}: {2} {0} {3}: {4}", (conjunctiveFilters ? " Y " : " O "), filterAttribute.ToString(), filterValue, secondFilterAttribute.ToString(), secondFilterValue));
 				Console.WriteLine();
 
-				var _results = await _s.SearchUsersAndGroupsBy2AttributesAsync(attribute, attributeFilter, attribute2, attributeFilter2, conjuntion, LdapHelperDTO.RequiredEntryAttributes.MinimunWithMemberAndMemberOf);
+				var _results = await _s.SearchUsersAndGroupsBy2AttributesAsync(filterAttribute, filterValue, secondFilterAttribute, secondFilterValue, conjunctiveFilters, requiredResults, Program.Tag);
 				if (_results.Count().Equals(0))
 					Log.Warning("No se encontraron registros con el criterio de búsqueda proporcionado.");
 				else
@@ -461,33 +443,19 @@ namespace LDAPHelperLib.Demo
 			}
 		}
 
-
-		public static async Task<bool> Test_GetEntriesByAttribute(bool useGlobalCatalog, LdapHelperDTO.EntryAttribute attribute, string attributeFilter, BaseDNEnum baseDN)
+		public static async Task<bool> Test_GetEntriesByAttribute(LdapHelperDTO.EntryAttribute attribute, string attributeFilter, LdapHelperDTO.RequiredEntryAttributes requiredResults)
 		{
 			try
 			{
-				if (useGlobalCatalog)
-					Log_TestTitle("Test_GetEntriesByAttribute (Global Catalog)");
-				else
-					Log_TestTitle("Test_GetEntriesByAttribute");
+				log_TestTitle("Test_GetEntriesByAttribute");
 
-				var _connPipeline = getConnectionPipeline();
-				var _baseDN = string.Empty;
-				var _serverSettings = useGlobalCatalog ? getServerSettingsForGlobalCatalog(baseDN, out _baseDN) : getServerSettings(baseDN, out _baseDN);
-				var _userCredentials = getCredentials();
+				var _s = new LdapHelperLib.Searcher(getClientConfiguration());
 
-				var _s = new LdapHelperLib.Searcher(null, _connPipeline, _serverSettings, _baseDN, useGlobalCatalog, _userCredentials)
-				{
-					ServerSettings = _serverSettings,
-					UserCredentials = _userCredentials,
-					BaseDN = _baseDN
-				};
-
-				Log.Information(_baseDN);
+				Log.Information(string.Format("Base DN: {0}", _s.BaseDN));
 				Log.Information(string.Format("Búscando en por {0}: {1}...", attribute.ToString(), attributeFilter));
 				Console.WriteLine();
 
-				var _result = await _s.SearchEntriesByAttributeAsync(attribute, attributeFilter, LdapHelperDTO.RequiredEntryAttributes.MinimunWithMemberAndMemberOf);
+				var _result = await _s.SearchEntriesByAttributeAsync(attribute, attributeFilter, requiredResults, Program.Tag);
 				if (_result.Count().Equals(0))
 					Log.Warning(string.Format("No se encontraron datos para {0}: {1}", attribute.ToString(), attributeFilter));
 				else
@@ -514,38 +482,22 @@ namespace LDAPHelperLib.Demo
 			}
 		}
 
-
-		public static async Task<bool> Test_GetGroupMembershipEntriesForEntry(bool useGlobalCatalog, LdapHelperDTO.KeyEntryAttribute keyAttribute, string keyAttributeFilter, BaseDNEnum baseDN = BaseDNEnum.com)
+		public static async Task<bool> Test_GetGroupMembershipEntriesForEntry(LdapHelperDTO.KeyEntryAttribute filterAttribute, string filterValue, LdapHelperDTO.RequiredEntryAttributes requiredResults)
 		{
 			try
 			{
-				if (useGlobalCatalog)
-					Log_TestTitle("Test_GetGroupMembershipEntriesForEntry (GLOBAL CATALOG)");
-				else
-					Log_TestTitle("Test_GetGroupMembershipEntriesForEntry");
+				log_TestTitle("Test_GetGroupMembershipEntriesForEntry");
 
-				var _connPipeline = getConnectionPipeline();
-				string _baseDN = string.Empty;
-				var _serverSettings = useGlobalCatalog ? getServerSettingsForGlobalCatalog(baseDN, out _baseDN) : getServerSettings(baseDN, out _baseDN);
-				var _userCredentials = getCredentials();
+				var _s = new LdapHelperLib.Searcher(getClientConfiguration());
 
-				var _s = new LdapHelperLib.Searcher(null, _connPipeline, _serverSettings, _baseDN, useGlobalCatalog, _userCredentials)
-				{
-					ServerSettings = _serverSettings,
-					UserCredentials = _userCredentials,
-					BaseDN = _baseDN
-				};
-
-				Log.Information(_baseDN);
-				Log.Information(string.Format("Obteniendo grupos a los que pertenece el {0}: {1}...", keyAttribute.ToString(), keyAttributeFilter));
+				Log.Information(string.Format("Base DN: {0}", _s.BaseDN));
+				Log.Information(string.Format("Obteniendo grupos a los que pertenece el {0}: {1}...", filterAttribute.ToString(), filterValue));
 				Console.WriteLine();
 
-				var _results = await _s.SearchGroupMembershipEntriesForEntry(keyAttribute, keyAttributeFilter, LdapHelperDTO.RequiredEntryAttributes.MinimunWithMemberAndMemberOf);
+				var _results = await _s.SearchGroupMembershipEntriesForEntry(filterAttribute, filterValue, requiredResults);
 
 				foreach (var _entry in _results.OrderBy(f => f.distinguishedName))
-				{
 					Log.Information(_entry.distinguishedName);
-				}
 
 				Log.Warning(string.Format("{0} entries.", _results.Count()));
 
@@ -560,38 +512,22 @@ namespace LDAPHelperLib.Demo
 			}
 		}
 
-
-		public static async Task<bool> Test_GetGroupMembershipCNsForEntry(bool useGlobalCatalog, LdapHelperDTO.KeyEntryAttribute keyAttribute, string keyAttributeFilter, BaseDNEnum baseDN = BaseDNEnum.com)
+		public static async Task<bool> Test_GetGroupMembershipCNsForEntry(LdapHelperDTO.KeyEntryAttribute keyAttribute, string keyAttributeFilter, LdapHelperDTO.RequiredEntryAttributes requiredResults)
 		{
 			try
 			{
-				if (useGlobalCatalog)
-					Log_TestTitle("Test_GetGroupMembershipCNsForEntry (Global Catalog)");
-				else
-					Log_TestTitle("Test_GetGroupMembershipCNsForEntry");
+				log_TestTitle("Test_GetGroupMembershipCNsForEntry");
 
-				var _connPipeline = getConnectionPipeline();
-				string _baseDN = string.Empty;
-				var _serverSettings = useGlobalCatalog ? getServerSettingsForGlobalCatalog(baseDN, out _baseDN) : getServerSettings(baseDN, out _baseDN);
-				var _userCredentials = getCredentials();
+				var _s = new LdapHelperLib.Searcher(getClientConfiguration());
 
-				var _s = new LdapHelperLib.Searcher(null, _connPipeline, _serverSettings, _baseDN, useGlobalCatalog, _userCredentials)
-				{
-					ServerSettings = _serverSettings,
-					UserCredentials = _userCredentials,
-					BaseDN = _baseDN
-				};
-
-				Log.Information(_baseDN);
+				Log.Information(string.Format("Base DN: {0}", _s.BaseDN));
 				Log.Information(string.Format("Obteniendo grupos a los que pertenece el {0}: {1}...", keyAttribute, keyAttributeFilter));
 				Console.WriteLine();
 
 				var _results = await _s.SearchGroupMembershipCNsForEntry(keyAttribute, keyAttributeFilter);
 
 				foreach (var _entry in _results)
-				{
 					Log.Information(_entry);
-				}
 
 				Log.Warning(string.Format("{0} entries.", _results.Count()));
 
@@ -606,38 +542,22 @@ namespace LDAPHelperLib.Demo
 			}
 		}
 
-
-		public static async Task<bool> Test_GetGroupMembershipEntries(bool useGlobalCatalog, LdapHelperDTO.EntryAttribute attribute, string attributeFilter, BaseDNEnum baseDN = BaseDNEnum.com)
+		public static async Task<bool> Test_GetGroupMembershipEntries(string ldapServer, int port, string baseDN, LdapHelperDTO.EntryAttribute attribute, string attributeFilter, LdapHelperDTO.RequiredEntryAttributes requiredResults)
 		{
 			try
 			{
-				if (useGlobalCatalog)
-					Log_TestTitle("Test_GetGroupMembershipEntries (GLOBAL CATALOG)");
-				else
-					Log_TestTitle("Test_GetGroupMembershipEntries");
+				log_TestTitle("Test_GetGroupMembershipEntries");
 
-				var _connPipeline = getConnectionPipeline();
-				string _baseDN = string.Empty;
-				var _serverSettings = useGlobalCatalog ? getServerSettingsForGlobalCatalog(baseDN, out _baseDN) : getServerSettings(baseDN, out _baseDN);
-				var _userCredentials = getCredentials();
+				var _s = new LdapHelperLib.Searcher(getClientConfiguration());
 
-				var _s = new LdapHelperLib.Searcher(null, _connPipeline, _serverSettings, _baseDN, useGlobalCatalog, _userCredentials)
-				{
-					ServerSettings = _serverSettings,
-					UserCredentials = _userCredentials,
-					BaseDN = _baseDN
-				};
-
-				Log.Information(_baseDN);
+				Log.Information(string.Format("Base DN: {0}", _s.BaseDN));
 				Log.Information(string.Format("Obteniendo grupos a los que pertenece el {0}: {1}...", attribute.ToString(), attributeFilter));
 				Console.WriteLine();
 
 				var _results = await _s.SearchGroupMembershipEntries(attribute, attributeFilter, LdapHelperDTO.RequiredEntryAttributes.MinimunWithMemberAndMemberOf);
 
 				foreach (var _entry in _results.OrderBy(f => f.distinguishedName))
-				{
 					Log.Information(_entry.distinguishedName);
-				}
 
 				Log.Warning(string.Format("{0} entries.", _results.Count()));
 

@@ -10,11 +10,11 @@ namespace LdapHelperLib
 	public class Validator : BaseHelper
 	{
 		#region Constructors
-		public Validator(string requestTag, LdapClientConfiguration clientConfiguration) : base(requestTag, clientConfiguration)
+		public Validator(LdapClientConfiguration clientConfiguration) : base(clientConfiguration)
 		{
 		}
 
-		public Validator(string requestTag, LdapConnectionPipeline connectionPipeline, LdapServerSettings serverSettings, string baseDN, bool useGC, LdapUserCredentials userCredentials) : base(requestTag, connectionPipeline, serverSettings, baseDN, useGC, userCredentials) { }
+		public Validator(LdapConnectionInfo serverSettings, string baseDN, LdapUserCredentials userCredentials) : base(serverSettings, baseDN, userCredentials) { }
 		#endregion
 
 
@@ -32,13 +32,8 @@ namespace LdapHelperLib
 			if (samAccountName.Contains("*"))
 				throw new ArgumentException("El parametro samAccountName no debe de contener caracteres comodines *.");
 
-			var _searcher = new Searcher(this.RequestTag, this.ConnectionPipeline, this.ServerSettings, this.BaseDN, this.UseGC, this.UserCredentials);
-			////VBG: A parte del constructor, se vuelven asignar las propiedades
-			//var _searcher = new Searcher(this.DomainProfile, this.ConnectionPipeline, this.ServerSettings, this.BaseDN, this.UserCredentials) {
-			//	ServerSettings = this.ServerSettings,
-			//	UserCredentials = this.UserCredentials,
-			//	BaseDN = this.BaseDN
-			//};
+			var _searcher = new Searcher(this.ConnectionInfo, this.BaseDN, this.UserCredentials);
+
 			var _ldapEntries = await _searcher.SearchUsersAndGroupsByAttributeAsync(EntryAttribute.sAMAccountName, samAccountName, RequiredEntryAttributes.OnlyMemberOf);
 
 			if (_ldapEntries.Count().Equals(0))

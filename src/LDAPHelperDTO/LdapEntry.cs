@@ -7,36 +7,22 @@ namespace LdapHelperDTO
 	public class LdapEntry : IComparable
 	{
 		#region Constructor
-		public LdapEntry(string requestTag, bool? resultFromGC)
+		public LdapEntry(string customTag = null)
 		{
-			_entryFromGC = resultFromGC;
-			_requestTag = requestTag;
+			_customTag = customTag;
 		}
 		#endregion
 
-		private string _requestTag;
-		public string RequestTag
+		private string _customTag;
+		public string CustomTag
 		{
 			set
 			{
-				_requestTag = value;
+				_customTag = value;
 			}
 			get
 			{
-				return _requestTag;
-			}
-		}
-
-		private bool? _entryFromGC;
-		public bool? EntryFromGC
-		{
-			set
-			{
-				_entryFromGC = value;
-			}
-			get
-			{
-				return _entryFromGC;
+				return _customTag;
 			}
 		}
 
@@ -67,6 +53,7 @@ namespace LdapHelperDTO
 			}
 		}
 
+		//Common name
 		private string _cn;
 		public string cn
 		{
@@ -80,6 +67,7 @@ namespace LdapHelperDTO
 			}
 		}
 
+		//Company name
 		private string _company;
 		public string company
 		{
@@ -281,10 +269,8 @@ namespace LdapHelperDTO
 		private string _samAccountType;
 		public string samAccountType { set => _samAccountType = value; get => _samAccountType; }
 
+		//Surname
 		private string _sn;
-		/// <summary>
-		/// Surname
-		/// </summary>
 		public string sn
 		{
 			get

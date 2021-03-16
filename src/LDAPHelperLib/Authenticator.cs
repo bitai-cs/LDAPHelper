@@ -8,11 +8,11 @@ namespace LdapHelperLib
 	public class Authenticator : BaseHelper
 	{
 		#region Constructors
-		public Authenticator(string requestTag, LdapClientConfiguration clientConfiguration) : base(requestTag, clientConfiguration)
+		public Authenticator(LdapClientConfiguration clientConfiguration) : base(clientConfiguration)
 		{
 		}
 
-		public Authenticator(string requestTag, LdapConnectionPipeline connectionPipeline, LdapServerSettings serverSettings, LdapUserCredentials userCredentials) : base(requestTag, connectionPipeline, serverSettings, null, false, userCredentials)
+		public Authenticator(LdapConnectionInfo serverSettings, LdapUserCredentials userCredentials) : base(serverSettings, null, userCredentials)
 		{
 		}
 		#endregion
@@ -21,7 +21,7 @@ namespace LdapHelperLib
 		#region Public methods
 		public async Task<bool> AuthenticateUser(LdapUserCredentials credentials)
 		{
-			using (var connection = await GetBoundLdapConnection(this.ServerSettings, credentials, false))
+			using (var connection = await GetLdapConnection(this.ConnectionInfo, credentials, false))
 			{
 				if (connection.Bound)
 					return true;

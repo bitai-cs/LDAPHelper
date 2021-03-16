@@ -18,11 +18,8 @@
 
   <ItemGroup>
     <Compile Remove="ILdapEntry.cs" />
+    <Compile Remove="LdapConnectionPipeline.cs" />
     <Compile Remove="LdapEntry.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Novell.Directory.Ldap.NETStandard2_0" Version="3.1.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,6 +27,11 @@
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
+    <None Include="LdapConnectionPipeline.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Novell.Directory.Ldap.NETStandard" Version="3.6.0" />
   </ItemGroup>
 
   <ItemGroup>

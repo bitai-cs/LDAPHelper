@@ -127,34 +127,25 @@ namespace LdapHelperLib
 
 
 		#region Properties
-		public string RequestTag { get; set; }
-		public LdapConnectionPipeline ConnectionPipeline { get; set; }
-		public LdapServerSettings ServerSettings { get; set; }
+		public LdapConnectionInfo ConnectionInfo { get; set; }
 		public LdapUserCredentials UserCredentials { get; set; }
 		public string BaseDN { get; set; }
-		public bool UseGC { get; set; }
 		#endregion
 
 
 		#region Constructor
-		protected BaseHelper(string requestTag, LdapClientConfiguration clientConfiguration)
+		protected BaseHelper(LdapClientConfiguration clientConfiguration)
 		{
-			RequestTag = requestTag;
-			ConnectionPipeline = clientConfiguration.ConnectionPipeline;
-			ServerSettings = clientConfiguration.ServerSettings;
-			BaseDN = clientConfiguration.BaseDN;
+			ConnectionInfo = clientConfiguration.ServerSettings;
 			UserCredentials = clientConfiguration.UserCredentials;
-			UseGC = clientConfiguration.UseGC;
+			BaseDN = clientConfiguration.BaseDN;
 		}
 
-		protected BaseHelper(string requestTag, LdapConnectionPipeline connectionPipeline, LdapServerSettings serverSettings, string baseDN, bool useGC, LdapUserCredentials userCredentials)
+		protected BaseHelper(LdapConnectionInfo connectionInfo, string baseDN, LdapUserCredentials userCredentials)
 		{
-			RequestTag = requestTag;
-			ConnectionPipeline = connectionPipeline;
-			ServerSettings = serverSettings;
+			ConnectionInfo = connectionInfo;
 			BaseDN = baseDN;
 			UserCredentials = userCredentials;
-			UseGC = useGC;
 		}
 		#endregion
 
@@ -189,25 +180,27 @@ namespace LdapHelperLib
 			}
 		}
 
-		protected LdapConnection GetLdapConnection()
+		protected async Task<LdapConnection> GetLdapConnection(LdapConnectionInfo server, LdapUserCredentials credentials, bool bindRequired = true)
 		{
-			return new LdapConnection() { SecureSocketLayer = ConnectionPipeline.UseSSL, ConnectionTimeout = ConnectionPipeline.ConnectionTimeOut * 1000 };
-		}
+			if (ConnectionInfo.UseSSL)
+				throw new NotImplementedException("SSL connection not implemented.");
 
-		protected async Task<LdapConnection> GetBoundLdapConnection(LdapServerSettings server, LdapUserCredentials credentials, bool boundRequired = true)
-		{
-			var _bound = GetLdapConnection();
+			var _connection = new LdapConnection
+			{
+				ConnectionTimeout = ConnectionInfo.ConnectionTimeout * 1000,
+			};
+
 			await Task.Run(() =>
 			{
-				_bound.Connect(server.ServerName, server.ServerPort);
+				_connection.Connect(server.ServerName, server.ServerPort);
 
 				try
 				{
-					_bound.Bind(credentials.UserName, credentials.Password);
+					_connection.Bind(credentials.Username, credentials.Password);
 				}
 				catch (LdapException ex)
 				{
-					if (boundRequired)
+					if (bindRequired)
 						throw ex;
 				}
 				catch (Exception ex)
@@ -216,7 +209,7 @@ namespace LdapHelperLib
 				}
 			});
 
-			return _bound;
+			return _connection;
 		}
 
 		protected string ConvertByteToStringSid(Byte[] sidBytes)
@@ -266,8 +259,7 @@ namespace LdapHelperLib
 			}
 			catch (Exception ex)
 			{
-				//Trace.TraceWarning(ex.Message);
-				throw;
+				throw ex;
 			}
 
 			return strSid.ToString();
