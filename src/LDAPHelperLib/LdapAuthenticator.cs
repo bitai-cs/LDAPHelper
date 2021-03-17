@@ -5,14 +5,10 @@ using System.Linq;
 
 namespace LdapHelperLib
 {
-	public class Authenticator : BaseHelper
+	public class LdapAuthenticator : BaseHelper
 	{
 		#region Constructors
-		public Authenticator(LdapClientConfiguration clientConfiguration) : base(clientConfiguration)
-		{
-		}
-
-		public Authenticator(LdapConnectionInfo serverSettings, LdapUserCredentials userCredentials) : base(serverSettings, null, userCredentials)
+		public LdapAuthenticator(LdapConnectionInfo connectionInfo) : base(connectionInfo)
 		{
 		}
 		#endregion

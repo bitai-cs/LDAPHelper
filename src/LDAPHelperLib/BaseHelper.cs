@@ -129,7 +129,7 @@ namespace LdapHelperLib
 		#region Properties
 		public LdapConnectionInfo ConnectionInfo { get; set; }
 		public LdapUserCredentials UserCredentials { get; set; }
-		public string BaseDN { get; set; }
+		public LdapSearchLimits SearchLimits { get; set; }
 		#endregion
 
 
@@ -138,14 +138,23 @@ namespace LdapHelperLib
 		{
 			ConnectionInfo = clientConfiguration.ServerSettings;
 			UserCredentials = clientConfiguration.UserCredentials;
-			BaseDN = clientConfiguration.BaseDN;
+			SearchLimits = clientConfiguration.SearchLimits;
 		}
 
-		protected BaseHelper(LdapConnectionInfo connectionInfo, string baseDN, LdapUserCredentials userCredentials)
+		protected BaseHelper(LdapConnectionInfo connectionInfo, LdapSearchLimits searchLimits, LdapUserCredentials userCredentials)
 		{
 			ConnectionInfo = connectionInfo;
-			BaseDN = baseDN;
+			SearchLimits = searchLimits;
 			UserCredentials = userCredentials;
+		}
+
+		/// <summary>
+		/// Constructor used by <see cref="LdapAuthenticator"/>
+		/// </summary>
+		/// <param name="connectionInfo"><see cref="LdapConnectionInfo"/></param>
+		protected BaseHelper(LdapConnectionInfo connectionInfo)
+		{
+			ConnectionInfo = connectionInfo;
 		}
 		#endregion
 

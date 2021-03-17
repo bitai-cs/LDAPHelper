@@ -7,14 +7,14 @@ using LdapHelperDTO;
 
 namespace LdapHelperLib
 {
-	public class Validator : BaseHelper
+	public class LdapValidator : BaseHelper
 	{
 		#region Constructors
-		public Validator(LdapClientConfiguration clientConfiguration) : base(clientConfiguration)
+		public LdapValidator(LdapClientConfiguration clientConfiguration) : base(clientConfiguration)
 		{
 		}
 
-		public Validator(LdapConnectionInfo serverSettings, string baseDN, LdapUserCredentials userCredentials) : base(serverSettings, baseDN, userCredentials) { }
+		public LdapValidator(LdapConnectionInfo connectionInfo, LdapSearchLimits searchLimits, LdapUserCredentials userCredentials) : base(connectionInfo, searchLimits, userCredentials) { }
 		#endregion
 
 
@@ -32,7 +32,7 @@ namespace LdapHelperLib
 			if (samAccountName.Contains("*"))
 				throw new ArgumentException("El parametro samAccountName no debe de contener caracteres comodines *.");
 
-			var _searcher = new Searcher(this.ConnectionInfo, this.BaseDN, this.UserCredentials);
+			var _searcher = new LdapSearcher(this.ConnectionInfo, this.SearchLimits, this.UserCredentials);
 
 			var _ldapEntries = await _searcher.SearchUsersAndGroupsByAttributeAsync(EntryAttribute.sAMAccountName, samAccountName, RequiredEntryAttributes.OnlyMemberOf);
 

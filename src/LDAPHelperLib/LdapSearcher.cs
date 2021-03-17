@@ -9,21 +9,21 @@ using LdapHelperLib.Extensions;
 
 namespace LdapHelperLib
 {
-	public class Searcher : BaseHelper
+	public class LdapSearcher : BaseHelper
 	{
 		#region Constructor 
-		public Searcher(LdapClientConfiguration clientConfiguration) : base(clientConfiguration)
+		public LdapSearcher(LdapClientConfiguration clientConfiguration) : base(clientConfiguration)
 		{
 		}
 
-		public Searcher(LdapConnectionInfo serverSettings, string baseDN, LdapUserCredentials userCredentials) : base(serverSettings, baseDN, userCredentials)
+		public LdapSearcher(LdapConnectionInfo serverSettings, LdapSearchLimits searchLimits, LdapUserCredentials userCredentials) : base(serverSettings, searchLimits, userCredentials)
 		{
 		}
 		#endregion
 
 
 		#region Private methods
-		private async Task<LdapHelperDTO.LdapEntry> mapAttributeSetToObject(LdapAttributeSet attributeSet, string customTag)
+		private async Task<LdapHelperDTO.LdapEntry> getLdapEntryFromAttributeSet(LdapAttributeSet attributeSet, string customTag)
 		{
 			var _ldapEntry = new LdapHelperDTO.LdapEntry(customTag);
 
@@ -127,24 +127,25 @@ namespace LdapHelperLib
 			return _ldapEntry;
 		}
 
-		private IEnumerable<LdapHelperDTO.LdapEntry> enumerateMemberOfEntriesForEachEntry(IEnumerable<LdapHelperDTO.LdapEntry> entries)
+		private IEnumerable<LdapHelperDTO.LdapEntry> enumerate_MemberOfProperty_Entries(IEnumerable<LdapHelperDTO.LdapEntry> entries, bool recursive)
 		{
 			var _memberOfEntries = new List<LdapHelperDTO.LdapEntry>();
 
 			foreach (var _entry in entries)
 			{
-				_memberOfEntries.AddRange(enumerateMemberOfEntriesForEntry(_entry));
+				_memberOfEntries.AddRange(enumerate_MemberOfProperty_Entries(_entry, recursive));
 			}
 
 			return _memberOfEntries;
 		}
 
 		/// <summary>
-		/// Enumerar recursivamente los memberOf
+		/// Enumerate "memberOf" property entries
 		/// </summary>
 		/// <param name="entry">LdapEntry to evaluate</param>
+		/// <param name="recursive">Recursive mode</param>
 		/// <returns></returns>
-		private IEnumerable<LdapHelperDTO.LdapEntry> enumerateMemberOfEntriesForEntry(LdapHelperDTO.LdapEntry entry)
+		private IEnumerable<LdapHelperDTO.LdapEntry> enumerate_MemberOfProperty_Entries(LdapHelperDTO.LdapEntry entry, bool recursive)
 		{
 			var _memberOfEntries = new List<LdapHelperDTO.LdapEntry>();
 
@@ -152,13 +153,15 @@ namespace LdapHelperLib
 				foreach (var _memberOfEntry in entry.memberOfEntries)
 				{
 					_memberOfEntries.Add(_memberOfEntry);
-					_memberOfEntries.AddRange(enumerateMemberOfEntriesForEntry(_memberOfEntry));
+
+					if (recursive)
+						_memberOfEntries.AddRange(enumerate_MemberOfProperty_Entries(_memberOfEntry, true));
 				}
 
 			return _memberOfEntries;
 		}
 
-		private async Task<IEnumerable<LdapHelperDTO.LdapEntry>> enumerateMemberOfEntriesForEachDN(string[] distinguishedNames, RequiredEntryAttributes requiredEntryAttributes)
+		private async Task<IEnumerable<LdapHelperDTO.LdapEntry>> enumerate_MemberOfProperty_Entries(string[] distinguishedNames, RequiredEntryAttributes requiredEntryAttributes, bool recursive)
 		{
 			var _memberOfEntries = new List<LdapHelperDTO.LdapEntry>();
 
@@ -167,16 +170,21 @@ namespace LdapHelperLib
 				foreach (var _dn in distinguishedNames)
 				{
 					var _result = await this.SearchEntriesByAttributeAsync(EntryAttribute.distinguishedName, _dn, requiredEntryAttributes);
+
 					_memberOfEntries.Add(_result.Single());
-					var _range = await enumerateMemberOfEntriesForDN(_dn, requiredEntryAttributes);
-					_memberOfEntries.AddRange(_range);
+
+					if (recursive)
+					{
+						var _range = await enumerate_MemberOfProperty_Entries(_dn, requiredEntryAttributes, recursive);
+						_memberOfEntries.AddRange(_range);
+					}
 				}
 			}
 
 			return _memberOfEntries;
 		}
 
-		private async Task<IEnumerable<LdapHelperDTO.LdapEntry>> enumerateMemberOfEntriesForDN(string distinguishedName, RequiredEntryAttributes requiredEntryAttributes)
+		private async Task<IEnumerable<LdapHelperDTO.LdapEntry>> enumerate_MemberOfProperty_Entries(string distinguishedName, RequiredEntryAttributes requiredEntryAttributes, bool recursive)
 		{
 			var _memberOfEntries = new List<LdapHelperDTO.LdapEntry>();
 
@@ -184,7 +192,7 @@ namespace LdapHelperLib
 
 			if (_result.Count() > 0)
 			{
-				var _range = await enumerateMemberOfEntriesForEachDN(_result.Single().memberOf, requiredEntryAttributes);
+				var _range = await enumerate_MemberOfProperty_Entries(_result.Single().memberOf, requiredEntryAttributes, recursive);
 				_memberOfEntries.AddRange(_range);
 			}
 
@@ -199,7 +207,12 @@ namespace LdapHelperLib
 
 			using (var _connection = await GetLdapConnection(this.ConnectionInfo, this.UserCredentials))
 			{
-				var search = _connection.Search(this.BaseDN, LdapConnection.ScopeSub, searchFilter, _attributesToLoad.ToArray(), false);
+				var _searchConstraints = new LdapSearchConstraints
+				{
+					MaxResults = this.SearchLimits.MaxSearchResults,
+					ServerTimeLimit = this.SearchLimits.MaxSearchTimeout
+				};
+				var search = _connection.Search(this.SearchLimits.BaseDN, LdapConnection.ScopeSub, searchFilter, _attributesToLoad.ToArray(), false);
 
 				Novell.Directory.Ldap.LdapEntry _entry = null;
 				while (search.HasMore())
@@ -208,7 +221,7 @@ namespace LdapHelperLib
 					{
 						_entry = search.Next();
 
-						var _ldapEntry = await mapAttributeSetToObject(_entry.GetAttributeSet(), customTag);
+						var _ldapEntry = await getLdapEntryFromAttributeSet(_entry.GetAttributeSet(), customTag);
 
 						_results.Add(_ldapEntry);
 					}
@@ -228,25 +241,28 @@ namespace LdapHelperLib
 			return _results;
 		}
 
-		private async Task<QueuedResult> getResultQueuedAsync(RequiredEntryAttributes requiredEntryAttributes, string searchFilter, string customTag)
+		private async Task<LdapHelperDTO.LdapSearchResult> getResultQueuedAsync(RequiredEntryAttributes requiredEntryAttributes, string searchFilter, string customTag)
 		{
-			//Obtenemos el arreglo con los atributos que deseamos obtener
 			var _attributesToLoad = this.GetRequiredAttributeNames(requiredEntryAttributes);
 
-			var _result = new QueuedResult(customTag);
+			var _searchResult = new LdapHelperDTO.LdapSearchResult(customTag);
 			var _entries = new List<LdapHelperDTO.LdapEntry>();
-
 			using (var _connection = await GetLdapConnection(this.ConnectionInfo, this.UserCredentials))
 			{
-				LdapSearchQueue _queue = _connection.Search(this.BaseDN, LdapConnection.ScopeSub, searchFilter, _attributesToLoad.ToArray(), false, (LdapSearchQueue)null, (LdapSearchConstraints)null);
+				var _searchConstraints = new LdapSearchConstraints
+				{
+					ServerTimeLimit = this.SearchLimits.MaxSearchTimeout,
+					MaxResults = this.SearchLimits.MaxSearchResults
+				};
+				LdapSearchQueue _searchQueue = _connection.Search(this.SearchLimits.BaseDN, LdapConnection.ScopeSub, searchFilter, _attributesToLoad.ToArray(), false, (LdapSearchQueue)null, _searchConstraints);
 				LdapMessage _responseMsg = null;
 				try
 				{
-					while ((_responseMsg = _queue.GetResponse()) != null)
+					while ((_responseMsg = _searchQueue.GetResponse()) != null)
 					{
-						if (_responseMsg is LdapSearchResult)
+						if (_responseMsg is Novell.Directory.Ldap.LdapSearchResult)
 						{
-							var _ldapEntry = await mapAttributeSetToObject(((LdapSearchResult)_responseMsg).Entry.GetAttributeSet(), customTag);
+							var _ldapEntry = await getLdapEntryFromAttributeSet(((Novell.Directory.Ldap.LdapSearchResult)_responseMsg).Entry.GetAttributeSet(), customTag);
 
 							_entries.Add(_ldapEntry);
 						}
@@ -254,14 +270,13 @@ namespace LdapHelperLib
 				}
 				catch (Exception ex)
 				{
-					_result.ErrorType = ex.GetType().FullName;
-					_result.ErrorMessage = ex.Message;
+					_searchResult.SetError(ex);
 				}
 			}
 
-			_result.Entries = _entries;
+			_searchResult.Entries = _entries;
 
-			return _result;
+			return _searchResult;
 		}
 		#endregion
 
@@ -279,7 +294,7 @@ namespace LdapHelperLib
 			return _results;
 		}
 
-		public async Task<QueuedResult> SearchUsersAndGroupsByAttributeQueuedModeAsync(EntryAttribute filterAttribute, string filterValue, RequiredEntryAttributes requiredEntryAttributes, string customTag)
+		public async Task<LdapHelperDTO.LdapSearchResult> SearchUsersAndGroupsByAttributeQueuedModeAsync(EntryAttribute filterAttribute, string filterValue, RequiredEntryAttributes requiredEntryAttributes, string customTag)
 		{
 			if (string.IsNullOrEmpty(filterValue) || string.IsNullOrWhiteSpace(filterValue))
 				throw new ArgumentException("Debe de especificar el valor para filtrar el atributo");
@@ -309,7 +324,7 @@ string filterValue, EntryAttribute secondFilterAttribute, string secondFilterVal
 			return _results;
 		}
 
-		public async Task<QueuedResult> SearchUsersAndGroupsBy2AttributesQueuedModeAsync(EntryAttribute filterAttribute,
+		public async Task<LdapHelperDTO.LdapSearchResult> SearchUsersAndGroupsBy2AttributesQueuedModeAsync(EntryAttribute filterAttribute,
 string filterValue, EntryAttribute secondFilterAttribute, string secondFilterValue, bool conjunctiveFilters, RequiredEntryAttributes requiredEntryAttributes, string customTag)
 		{
 			if (string.IsNullOrEmpty(filterValue) || string.IsNullOrWhiteSpace(filterValue))
@@ -339,7 +354,7 @@ string filterValue, EntryAttribute secondFilterAttribute, string secondFilterVal
 			return _results;
 		}
 
-		public async Task<QueuedResult> SearchEntriesByAttributeQueuedModeAsync(EntryAttribute filterAttribute, string filterValue, RequiredEntryAttributes requiredEntryAttributes, string customTag)
+		public async Task<LdapHelperDTO.LdapSearchResult> SearchEntriesByAttributeQueuedModeAsync(EntryAttribute filterAttribute, string filterValue, RequiredEntryAttributes requiredEntryAttributes, string customTag)
 		{
 			if (string.IsNullOrEmpty(filterValue) || string.IsNullOrWhiteSpace(filterValue))
 				throw new ArgumentException("Debe de especificar el valor para filtrar el atributo");
@@ -351,7 +366,7 @@ string filterValue, EntryAttribute secondFilterAttribute, string secondFilterVal
 			return _result;
 		}
 
-		public async Task<IEnumerable<LdapHelperDTO.LdapEntry>> SearchGroupMembershipEntriesForEntry(KeyEntryAttribute filterAttribute, string filterValue, RequiredEntryAttributes requiredEntryAttributes)
+		public async Task<IEnumerable<LdapHelperDTO.LdapEntry>> SearchGroupMembershipEntriesForEntry(KeyEntryAttribute filterAttribute, string filterValue, RequiredEntryAttributes requiredEntryAttributes, bool recursive = true)
 		{
 			if (string.IsNullOrEmpty(filterValue) || string.IsNullOrWhiteSpace(filterValue))
 				throw new ArgumentException("Debe de especificar el valor para filtrar el atributo.");
@@ -379,7 +394,7 @@ string filterValue, EntryAttribute secondFilterAttribute, string secondFilterVal
 			if (_entries.Count().Equals(0))
 				throw new KeyNotFoundException(string.Format("No se encontró una entrada con el filtro de búsqueda {0}={1}", _attribute.ToString(), filterValue));
 
-			var _groupMemberships = await this.enumerateMemberOfEntriesForEachDN(_entries.Single().memberOf, requiredEntryAttributes);
+			var _groupMemberships = await this.enumerate_MemberOfProperty_Entries(_entries.Single().memberOf, requiredEntryAttributes, recursive);
 
 			//Distinct by DistinguishedName
 			return _groupMemberships
@@ -398,7 +413,7 @@ string filterValue, EntryAttribute secondFilterAttribute, string secondFilterVal
 
 
 
-		public async Task<IEnumerable<LdapHelperDTO.LdapEntry>> SearchGroupMembershipEntries(EntryAttribute filterAttribute, string filterValue, RequiredEntryAttributes requiredEntryAttributes)
+		public async Task<IEnumerable<LdapHelperDTO.LdapEntry>> SearchGroupMembershipEntries(EntryAttribute filterAttribute, string filterValue, RequiredEntryAttributes requiredEntryAttributes, bool recursive = true)
 		{
 			if (string.IsNullOrEmpty(filterValue) || string.IsNullOrWhiteSpace(filterValue))
 				throw new ArgumentException("Debe de especificar el valor para filtrar el atributo.");
@@ -415,7 +430,7 @@ string filterValue, EntryAttribute secondFilterAttribute, string secondFilterVal
 			if (_combined.Count() > 1)
 				_combined = _combined.Distinct();
 
-			var _groupMemberships = await this.enumerateMemberOfEntriesForEachDN(_combined.ToArray(), requiredEntryAttributes);
+			var _groupMemberships = await this.enumerate_MemberOfProperty_Entries(_combined.ToArray(), requiredEntryAttributes, recursive);
 
 			//Distinct by DistinguishedName
 			return _groupMemberships

@@ -7,17 +7,32 @@ namespace LdapHelperLib
 {
 	public class LdapClientConfiguration
 	{
-		public LdapHelperLib.LdapConnectionInfo ServerSettings { get; private set; }
+		/// <summary>
+		/// <see cref="LdapConnectionInfo"/>
+		/// </summary>
+		public LdapHelperLib.LdapConnectionInfo ServerSettings { get; set; }
 
-		public LdapHelperLib.LdapUserCredentials UserCredentials { get; private set; }
+		/// <summary>
+		/// <see cref="LdapUserCredentials"/>
+		/// </summary>
+		public LdapHelperLib.LdapUserCredentials UserCredentials { get; set; }
 
-		public string BaseDN { get; private set; }
+		/// <summary>
+		/// <see cref="LdapSearchLimits"/>
+		/// </summary>
+		public LdapHelperLib.LdapSearchLimits SearchLimits { get; set; }
 
-		public LdapClientConfiguration(LdapHelperLib.LdapConnectionInfo serverSettings, LdapHelperLib.LdapUserCredentials userCredentials, string baseDN)
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="serverSettings"><see cref="LdapConnectionInfo"/></param>
+		/// <param name="userCredentials"><see cref="LdapUserCredentials"/></param>
+		/// <param name="searchLimits"><see cref="LdapSearchLimits"/></param>
+		public LdapClientConfiguration(LdapHelperLib.LdapConnectionInfo serverSettings, LdapHelperLib.LdapUserCredentials userCredentials, LdapHelperLib.LdapSearchLimits searchLimits)
 		{
 			this.ServerSettings = serverSettings;
 			this.UserCredentials = userCredentials;
-			this.BaseDN = baseDN;
+			this.SearchLimits = searchLimits;
 		}
 	}
 }

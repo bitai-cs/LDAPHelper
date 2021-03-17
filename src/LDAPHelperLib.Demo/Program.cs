@@ -281,7 +281,7 @@ namespace LDAPHelperLib.Demo
 			{
 				log_TestTitle("Test00_Authenticate");
 
-				var _c = new LdapHelperLib.Authenticator(getClientConfiguration());
+				var _c = new LdapHelperLib.LdapAuthenticator(getClientConfiguration());
 
 				Log.Information("Autenticando usuario...");
 				var _auth = await _c.AuthenticateUser(new LdapHelperLib.LdapUserCredentials(domainUsername, password));
@@ -308,7 +308,7 @@ namespace LDAPHelperLib.Demo
 			{
 				log_TestTitle("Test_GetUsersAndGroupsByAttributeEnumerable");
 
-				var _s = new LdapHelperLib.Searcher(getClientConfiguration());
+				var _s = new LdapHelperLib.LdapSearcher(getClientConfiguration());
 
 				Log.Information(string.Format("Base DN: {0}", _s.BaseDN));
 				Log.Information(string.Format("Búscando con el atributo {0}: {1}...", filterAttribute.ToString(), filterValue));
@@ -350,7 +350,7 @@ namespace LDAPHelperLib.Demo
 			{
 				log_TestTitle("Test_GetUsersAndGroupsByAttributeQueuedResult");
 
-				var _s = new LdapHelperLib.Searcher(getClientConfiguration());
+				var _s = new LdapHelperLib.LdapSearcher(getClientConfiguration());
 
 				Log.Information(string.Format("Base DN: {0}", _s.BaseDN));
 				Log.Information(string.Format("Búscando con el atributo {0}: {1}...", filterAttribute.ToString(), filterValue));
@@ -409,7 +409,7 @@ namespace LDAPHelperLib.Demo
 			{
 				log_TestTitle("Test_GetUsersAndGroupsBy2Attributes");
 
-				var _s = new LdapHelperLib.Searcher(getClientConfiguration());
+				var _s = new LdapHelperLib.LdapSearcher(getClientConfiguration());
 
 				Log.Information(string.Format("Base DN: {0}", _s.BaseDN));
 				Log.Information(string.Format("Búscando con el atributo {1}: {2} {0} {3}: {4}", (conjunctiveFilters ? " Y " : " O "), filterAttribute.ToString(), filterValue, secondFilterAttribute.ToString(), secondFilterValue));
@@ -449,7 +449,7 @@ namespace LDAPHelperLib.Demo
 			{
 				log_TestTitle("Test_GetEntriesByAttribute");
 
-				var _s = new LdapHelperLib.Searcher(getClientConfiguration());
+				var _s = new LdapHelperLib.LdapSearcher(getClientConfiguration());
 
 				Log.Information(string.Format("Base DN: {0}", _s.BaseDN));
 				Log.Information(string.Format("Búscando en por {0}: {1}...", attribute.ToString(), attributeFilter));
@@ -488,7 +488,7 @@ namespace LDAPHelperLib.Demo
 			{
 				log_TestTitle("Test_GetGroupMembershipEntriesForEntry");
 
-				var _s = new LdapHelperLib.Searcher(getClientConfiguration());
+				var _s = new LdapHelperLib.LdapSearcher(getClientConfiguration());
 
 				Log.Information(string.Format("Base DN: {0}", _s.BaseDN));
 				Log.Information(string.Format("Obteniendo grupos a los que pertenece el {0}: {1}...", filterAttribute.ToString(), filterValue));
@@ -518,7 +518,7 @@ namespace LDAPHelperLib.Demo
 			{
 				log_TestTitle("Test_GetGroupMembershipCNsForEntry");
 
-				var _s = new LdapHelperLib.Searcher(getClientConfiguration());
+				var _s = new LdapHelperLib.LdapSearcher(getClientConfiguration());
 
 				Log.Information(string.Format("Base DN: {0}", _s.BaseDN));
 				Log.Information(string.Format("Obteniendo grupos a los que pertenece el {0}: {1}...", keyAttribute, keyAttributeFilter));
@@ -548,7 +548,7 @@ namespace LDAPHelperLib.Demo
 			{
 				log_TestTitle("Test_GetGroupMembershipEntries");
 
-				var _s = new LdapHelperLib.Searcher(getClientConfiguration());
+				var _s = new LdapHelperLib.LdapSearcher(getClientConfiguration());
 
 				Log.Information(string.Format("Base DN: {0}", _s.BaseDN));
 				Log.Information(string.Format("Obteniendo grupos a los que pertenece el {0}: {1}...", attribute.ToString(), attributeFilter));
