@@ -4,10 +4,10 @@ using System.Text;
 
 namespace LdapHelperDTO
 {
-	public class LdapEntry : IComparable
+	public class LdhEntry : IComparable
 	{
 		#region Constructor
-		public LdapEntry(string customTag = null)
+		public LdhEntry(string customTag = null)
 		{
 			_customTag = customTag;
 		}
@@ -217,8 +217,8 @@ namespace LdapHelperDTO
 			}
 		}
 
-		private IEnumerable<LdapEntry> _memberOfEntries;
-		public IEnumerable<LdapEntry> memberOfEntries
+		private IEnumerable<LdhEntry> _memberOfEntries;
+		public IEnumerable<LdhEntry> memberOfEntries
 		{
 			get => _memberOfEntries;
 			set => _memberOfEntries = value;
@@ -390,9 +390,9 @@ namespace LdapHelperDTO
 		#region IComparable Members
 		public int CompareTo(object obj)
 		{
-			if (obj is LdapEntry)
+			if (obj is LdhEntry)
 			{
-				var u2 = (LdapEntry)obj;
+				var u2 = (LdhEntry)obj;
 				return _distinguishedName.CompareTo(u2.distinguishedName);
 			}
 			else

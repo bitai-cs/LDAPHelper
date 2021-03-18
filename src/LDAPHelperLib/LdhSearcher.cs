@@ -9,23 +9,23 @@ using LdapHelperLib.Extensions;
 
 namespace LdapHelperLib
 {
-	public class LdapSearcher : BaseHelper
+	public class LdhSearcher : BaseHelper
 	{
 		#region Constructor 
-		public LdapSearcher(LdapClientConfiguration clientConfiguration) : base(clientConfiguration)
+		public LdhSearcher(LdhClientConfiguration clientConfiguration) : base(clientConfiguration)
 		{
 		}
 
-		public LdapSearcher(LdapConnectionInfo serverSettings, LdapSearchLimits searchLimits, LdapUserCredentials userCredentials) : base(serverSettings, searchLimits, userCredentials)
+		public LdhSearcher(LdhConnectionInfo serverSettings, LdhSearchLimits searchLimits, LdhUserCredentials userCredentials) : base(serverSettings, searchLimits, userCredentials)
 		{
 		}
 		#endregion
 
 
 		#region Private methods
-		private async Task<LdapHelperDTO.LdapEntry> getLdapEntryFromAttributeSet(LdapAttributeSet attributeSet, string customTag)
+		private async Task<LdapHelperDTO.LdhEntry> getLdapEntryFromAttributeSet(LdapAttributeSet attributeSet, string customTag)
 		{
-			var _ldapEntry = new LdapHelperDTO.LdapEntry(customTag);
+			var _ldapEntry = new LdapHelperDTO.LdhEntry(customTag);
 
 			LdapAttribute _attr;
 			byte[] _bytes;
@@ -102,7 +102,7 @@ namespace LdapHelperLib
 
 			if (_ldapEntry.memberOf != null)
 			{
-				var _parentEntries = new List<LdapHelperDTO.LdapEntry>();
+				var _parentEntries = new List<LdapHelperDTO.LdhEntry>();
 				//VBG: Se obvia la siguiente búsqueda para optimizar la ejecuciòn del còdigo 
 				if (true == false)
 				{
@@ -115,7 +115,7 @@ namespace LdapHelperLib
 
 						var _searchResult = await this.SearchEntriesByAttributeAsync(EntryAttribute.distinguishedName, _parentDN.ConvertspecialCharsToScapedChars(), RequiredEntryAttributes.Minimun, customTag);
 						if (_searchResult.Entries.Count() > 0) //Podría ser 0 si el _parentDN esta fuera del baseDN de búsqueda
-							_parentEntries.Add((LdapHelperDTO.LdapEntry)_searchResult.Entries.First());
+							_parentEntries.Add((LdapHelperDTO.LdhEntry)_searchResult.Entries.First());
 					}
 				}
 
@@ -125,9 +125,9 @@ namespace LdapHelperLib
 			return _ldapEntry;
 		}
 
-		private IEnumerable<LdapHelperDTO.LdapEntry> enumerate_MemberOfProperty_Entries(IEnumerable<LdapHelperDTO.LdapEntry> entries, bool recursive)
+		private IEnumerable<LdapHelperDTO.LdhEntry> enumerate_MemberOfProperty_Entries(IEnumerable<LdapHelperDTO.LdhEntry> entries, bool recursive)
 		{
-			var _memberOfEntries = new List<LdapHelperDTO.LdapEntry>();
+			var _memberOfEntries = new List<LdapHelperDTO.LdhEntry>();
 
 			foreach (var _entry in entries)
 			{
@@ -143,9 +143,9 @@ namespace LdapHelperLib
 		/// <param name="entry">LdapEntry to evaluate</param>
 		/// <param name="recursive">Recursive mode</param>
 		/// <returns></returns>
-		private IEnumerable<LdapHelperDTO.LdapEntry> enumerate_MemberOfProperty_Entries(LdapHelperDTO.LdapEntry entry, bool recursive)
+		private IEnumerable<LdapHelperDTO.LdhEntry> enumerate_MemberOfProperty_Entries(LdapHelperDTO.LdhEntry entry, bool recursive)
 		{
-			var _memberOfEntries = new List<LdapHelperDTO.LdapEntry>();
+			var _memberOfEntries = new List<LdapHelperDTO.LdhEntry>();
 
 			if (entry.memberOfEntries != null)
 				foreach (var _memberOfEntry in entry.memberOfEntries)
@@ -159,9 +159,9 @@ namespace LdapHelperLib
 			return _memberOfEntries;
 		}
 
-		private async Task<IEnumerable<LdapHelperDTO.LdapEntry>> enumerate_MemberOfProperty_Entries(string[] distinguishedNames, RequiredEntryAttributes requiredEntryAttributes, string customTag, bool recursive)
+		private async Task<IEnumerable<LdapHelperDTO.LdhEntry>> enumerate_MemberOfProperty_Entries(string[] distinguishedNames, RequiredEntryAttributes requiredEntryAttributes, string customTag, bool recursive)
 		{
-			var _memberOfEntries = new List<LdapHelperDTO.LdapEntry>();
+			var _memberOfEntries = new List<LdapHelperDTO.LdhEntry>();
 
 			if (distinguishedNames != null && distinguishedNames.Length > 0)
 			{
@@ -182,9 +182,9 @@ namespace LdapHelperLib
 			return _memberOfEntries;
 		}
 
-		private async Task<IEnumerable<LdapHelperDTO.LdapEntry>> enumerate_MemberOfProperty_Entries(string distinguishedName, RequiredEntryAttributes requiredEntryAttributes, string customTag, bool recursive)
+		private async Task<IEnumerable<LdapHelperDTO.LdhEntry>> enumerate_MemberOfProperty_Entries(string distinguishedName, RequiredEntryAttributes requiredEntryAttributes, string customTag, bool recursive)
 		{
-			var _memberOfEntries = new List<LdapHelperDTO.LdapEntry>();
+			var _memberOfEntries = new List<LdapHelperDTO.LdhEntry>();
 
 			var _searchResult = await this.SearchEntriesByAttributeAsync(EntryAttribute.distinguishedName, distinguishedName, requiredEntryAttributes, customTag);
 
@@ -197,11 +197,11 @@ namespace LdapHelperLib
 			return _memberOfEntries;
 		}
 
-		private async Task<IEnumerable<LdapHelperDTO.LdapEntry>> getResultListAsync(RequiredEntryAttributes requiredEntryAttributes, string searchFilter, string customTag)
+		private async Task<IEnumerable<LdapHelperDTO.LdhEntry>> getResultListAsync(RequiredEntryAttributes requiredEntryAttributes, string searchFilter, string customTag)
 		{
 			var _attributesToLoad = this.GetRequiredAttributeNames(requiredEntryAttributes);
 
-			var _results = new List<LdapHelperDTO.LdapEntry>();
+			var _results = new List<LdapHelperDTO.LdhEntry>();
 
 			using (var _connection = await GetLdapConnection(this.ConnectionInfo, this.UserCredentials))
 			{
@@ -239,12 +239,12 @@ namespace LdapHelperLib
 			return _results;
 		}
 
-		private async Task<LdapHelperDTO.LdapSearchResult> getSearchResultAsync(RequiredEntryAttributes requiredEntryAttributes, string searchFilter, string customTag)
+		private async Task<LdapHelperDTO.LdhSearchResult> getSearchResultAsync(RequiredEntryAttributes requiredEntryAttributes, string searchFilter, string customTag)
 		{
 			var _attributesToLoad = this.GetRequiredAttributeNames(requiredEntryAttributes);
 
-			var _searchResult = new LdapHelperDTO.LdapSearchResult(customTag);
-			var _entries = new List<LdapHelperDTO.LdapEntry>();
+			var _searchResult = new LdapHelperDTO.LdhSearchResult(customTag);
+			var _entries = new List<LdapHelperDTO.LdhEntry>();
 			using (var _connection = await GetLdapConnection(this.ConnectionInfo, this.UserCredentials))
 			{
 				var _searchConstraints = new LdapSearchConstraints
@@ -280,7 +280,7 @@ namespace LdapHelperLib
 
 
 		#region Public methods
-		public async Task<LdapHelperDTO.LdapSearchResult> SearchUsersAndGroupsByAttributeAsync(EntryAttribute filterAttribute, string filterValue, RequiredEntryAttributes requiredEntryAttributes, string customTag)
+		public async Task<LdapHelperDTO.LdhSearchResult> SearchUsersAndGroupsByAttributeAsync(EntryAttribute filterAttribute, string filterValue, RequiredEntryAttributes requiredEntryAttributes, string customTag)
 		{
 			if (string.IsNullOrEmpty(filterValue) || string.IsNullOrWhiteSpace(filterValue))
 				throw new ArgumentException("Debe de especificar el valor para filtrar el atributo");
@@ -292,7 +292,7 @@ namespace LdapHelperLib
 			return _result;
 		}
 
-		public async Task<LdapHelperDTO.LdapSearchResult> SearchUsersAndGroupsBy2AttributesAsync(EntryAttribute filterAttribute,
+		public async Task<LdapHelperDTO.LdhSearchResult> SearchUsersAndGroupsBy2AttributesAsync(EntryAttribute filterAttribute,
 string filterValue, EntryAttribute secondFilterAttribute, string secondFilterValue, bool conjunctiveFilters, RequiredEntryAttributes requiredEntryAttributes, string customTag)
 		{
 			if (string.IsNullOrEmpty(filterValue) || string.IsNullOrWhiteSpace(filterValue))
@@ -308,7 +308,7 @@ string filterValue, EntryAttribute secondFilterAttribute, string secondFilterVal
 			return _result;
 		}
 
-		public async Task<LdapHelperDTO.LdapSearchResult> SearchEntriesByAttributeAsync(EntryAttribute filterAttribute, string filterValue, RequiredEntryAttributes requiredEntryAttributes, string customTag)
+		public async Task<LdapHelperDTO.LdhSearchResult> SearchEntriesByAttributeAsync(EntryAttribute filterAttribute, string filterValue, RequiredEntryAttributes requiredEntryAttributes, string customTag)
 		{
 			if (string.IsNullOrEmpty(filterValue) || string.IsNullOrWhiteSpace(filterValue))
 				throw new ArgumentException("Debe de especificar el valor para filtrar el atributo");
@@ -320,7 +320,7 @@ string filterValue, EntryAttribute secondFilterAttribute, string secondFilterVal
 			return _result;
 		}
 
-		public async Task<LdapHelperDTO.LdapSearchResult> SearchGroupMembershipEntries(EntryAttribute filterAttribute, string filterValue, RequiredEntryAttributes requiredEntryAttributes, string customTag, bool recursive = true)
+		public async Task<LdapHelperDTO.LdhSearchResult> SearchGroupMembershipEntries(EntryAttribute filterAttribute, string filterValue, RequiredEntryAttributes requiredEntryAttributes, string customTag, bool recursive = true)
 		{
 			if (string.IsNullOrEmpty(filterValue) || string.IsNullOrWhiteSpace(filterValue))
 				throw new ArgumentException("Debe de especificar el valor para filtrar el atributo.");
@@ -331,7 +331,7 @@ string filterValue, EntryAttribute secondFilterAttribute, string secondFilterVal
 				throw _searchResult.ErrorObject;
 
 			if (_searchResult.Entries.Count().Equals(0))
-				throw new LdapEntryNotFoundException(string.Format("No se puede obtener la membresia a los grupos. No se encontraron entradas según el filtro {0}={1}.", filterAttribute.ToString(), filterValue));
+				throw new LdhEntryNotFoundException(string.Format("No se puede obtener la membresia a los grupos. No se encontraron entradas según el filtro {0}={1}.", filterAttribute.ToString(), filterValue));
 
 			//Por cada Entry, combinar memberOf[] en uno solo
 			IEnumerable<string> _combined = new string[0];
@@ -348,13 +348,13 @@ string filterValue, EntryAttribute secondFilterAttribute, string secondFilterVal
 				 .GroupBy(f => new { f.distinguishedName, f.objectSid })
 				 .Select(g => g.First());
 
-			return new LdapHelperDTO.LdapSearchResult(customTag)
+			return new LdapHelperDTO.LdhSearchResult(customTag)
 			{
 				Entries = _return
 			};
 		}
 
-		public async Task<LdapHelperDTO.LdapSearchResult> SearchGroupMembershipEntries(EntryKeyAttribute filterAttribute, string filterValue, RequiredEntryAttributes requiredEntryAttributes, string customTag, bool recursive = true)
+		public async Task<LdapHelperDTO.LdhSearchResult> SearchGroupMembershipEntries(EntryKeyAttribute filterAttribute, string filterValue, RequiredEntryAttributes requiredEntryAttributes, string customTag, bool recursive = true)
 		{
 			if (string.IsNullOrEmpty(filterValue) || string.IsNullOrWhiteSpace(filterValue))
 				throw new ArgumentException("Debe de especificar el valor para filtrar el atributo.");
@@ -393,7 +393,7 @@ string filterValue, EntryAttribute secondFilterAttribute, string secondFilterVal
 				 .GroupBy(f => f.distinguishedName)
 				 .Select(g => g.First());
 
-			return new LdapHelperDTO.LdapSearchResult(customTag)
+			return new LdapHelperDTO.LdhSearchResult(customTag)
 			{
 				Entries = _return
 			};

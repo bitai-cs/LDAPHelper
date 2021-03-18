@@ -5,9 +5,9 @@ using System.Text;
 
 namespace LdapHelperDTO
 {
-	public class LdapSearchResult
+	public class LdhSearchResult
 	{
-		public LdapSearchResult(string customTag)
+		public LdhSearchResult(string customTag)
 		{
 			CustomTag = customTag;
 		}
@@ -15,7 +15,7 @@ namespace LdapHelperDTO
 
 		public string CustomTag { get; private set; }
 
-		public IEnumerable<LdapHelperDTO.LdapEntry> Entries { get; set; }
+		public IEnumerable<LdapHelperDTO.LdhEntry> Entries { get; set; }
 
 		[IgnoreDataMember]
 		public Exception ErrorObject { get; private set; }

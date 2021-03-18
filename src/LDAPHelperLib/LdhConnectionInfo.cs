@@ -4,9 +4,9 @@ using System.Text;
 
 namespace LdapHelperLib
 {
-	public class LdapConnectionInfo
+	public class LdhConnectionInfo
 	{
-		public LdapConnectionInfo(string server, int port, bool useSSL, short connectionTimeout, LdapUserCredentials userCredentials)
+		public LdhConnectionInfo(string server, int port, bool useSSL, short connectionTimeout, LdhUserCredentials userCredentials)
 		{
 			ServerName = server;
 			ServerPort = port;
@@ -26,6 +26,6 @@ namespace LdapHelperLib
 		/// </summary>
 		public short ConnectionTimeout { get; }
 
-		public LdapUserCredentials UserCredentials { get; }
+		public LdhUserCredentials UserCredentials { get; }
 	}
 }

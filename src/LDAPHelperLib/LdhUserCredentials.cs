@@ -5,9 +5,9 @@ using System.Text;
 
 namespace LdapHelperLib
 {
-	public class LdapUserCredentials
+	public class LdhUserCredentials
 	{
-		public LdapUserCredentials(string username, string password)
+		public LdhUserCredentials(string username, string password)
 		{
 			Username = username;
 			Password = password;

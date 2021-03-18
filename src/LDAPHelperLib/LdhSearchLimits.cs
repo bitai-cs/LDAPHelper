@@ -4,7 +4,7 @@ using System.Text;
 
 namespace LdapHelperLib
 {
-	public class LdapSearchLimits
+	public class LdhSearchLimits
 	{
 		/// <summary>
 		/// The base distinguished name (DN) to search from.
@@ -24,7 +24,7 @@ namespace LdapHelperLib
 		/// </summary>
 		public int MaxSearchTimeout { get; set; } = 60;
 
-		public LdapSearchLimits(string baseDN) {
+		public LdhSearchLimits(string baseDN) {
 			this.BaseDN = baseDN;
 		}
 	}

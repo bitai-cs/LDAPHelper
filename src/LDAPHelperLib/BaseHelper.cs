@@ -127,21 +127,21 @@ namespace LdapHelperLib
 
 
 		#region Properties
-		public LdapConnectionInfo ConnectionInfo { get; set; }
-		public LdapUserCredentials UserCredentials { get; set; }
-		public LdapSearchLimits SearchLimits { get; set; }
+		public LdhConnectionInfo ConnectionInfo { get; set; }
+		public LdhUserCredentials UserCredentials { get; set; }
+		public LdhSearchLimits SearchLimits { get; set; }
 		#endregion
 
 
 		#region Constructor
-		protected BaseHelper(LdapClientConfiguration clientConfiguration)
+		protected BaseHelper(LdhClientConfiguration clientConfiguration)
 		{
 			ConnectionInfo = clientConfiguration.ServerSettings;
 			UserCredentials = clientConfiguration.UserCredentials;
 			SearchLimits = clientConfiguration.SearchLimits;
 		}
 
-		protected BaseHelper(LdapConnectionInfo connectionInfo, LdapSearchLimits searchLimits, LdapUserCredentials userCredentials)
+		protected BaseHelper(LdhConnectionInfo connectionInfo, LdhSearchLimits searchLimits, LdhUserCredentials userCredentials)
 		{
 			ConnectionInfo = connectionInfo;
 			SearchLimits = searchLimits;
@@ -149,10 +149,10 @@ namespace LdapHelperLib
 		}
 
 		/// <summary>
-		/// Constructor used by <see cref="LdapAuthenticator"/>
+		/// Constructor used by <see cref="LdhAuthenticator"/>
 		/// </summary>
-		/// <param name="connectionInfo"><see cref="LdapConnectionInfo"/></param>
-		protected BaseHelper(LdapConnectionInfo connectionInfo)
+		/// <param name="connectionInfo"><see cref="LdhConnectionInfo"/></param>
+		protected BaseHelper(LdhConnectionInfo connectionInfo)
 		{
 			ConnectionInfo = connectionInfo;
 		}
@@ -189,7 +189,7 @@ namespace LdapHelperLib
 			}
 		}
 
-		protected async Task<LdapConnection> GetLdapConnection(LdapConnectionInfo server, LdapUserCredentials credentials, bool bindRequired = true)
+		protected async Task<LdapConnection> GetLdapConnection(LdhConnectionInfo server, LdhUserCredentials credentials, bool bindRequired = true)
 		{
 			if (ConnectionInfo.UseSSL)
 				throw new NotImplementedException("SSL connection not implemented.");

@@ -5,17 +5,17 @@ using System.Linq;
 
 namespace LdapHelperLib
 {
-	public class LdapAuthenticator : BaseHelper
+	public class LdhAuthenticator : BaseHelper
 	{
 		#region Constructors
-		public LdapAuthenticator(LdapConnectionInfo connectionInfo) : base(connectionInfo)
+		public LdhAuthenticator(LdhConnectionInfo connectionInfo) : base(connectionInfo)
 		{
 		}
 		#endregion
 
 
 		#region Public methods
-		public async Task<bool> AuthenticateUser(LdapUserCredentials credentials)
+		public async Task<bool> AuthenticateUser(LdhUserCredentials credentials)
 		{
 			using (var connection = await GetLdapConnection(this.ConnectionInfo, credentials, false))
 			{

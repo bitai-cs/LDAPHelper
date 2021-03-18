@@ -7,14 +7,14 @@ using LdapHelperDTO;
 
 namespace LdapHelperLib
 {
-	public class LdapValidator : BaseHelper
+	public class LdhValidator : BaseHelper
 	{
 		#region Constructors
-		public LdapValidator(LdapClientConfiguration clientConfiguration) : base(clientConfiguration)
+		public LdhValidator(LdhClientConfiguration clientConfiguration) : base(clientConfiguration)
 		{
 		}
 
-		public LdapValidator(LdapConnectionInfo connectionInfo, LdapSearchLimits searchLimits, LdapUserCredentials userCredentials) : base(connectionInfo, searchLimits, userCredentials) { }
+		public LdhValidator(LdhConnectionInfo connectionInfo, LdhSearchLimits searchLimits, LdhUserCredentials userCredentials) : base(connectionInfo, searchLimits, userCredentials) { }
 		#endregion
 
 
@@ -32,12 +32,12 @@ namespace LdapHelperLib
 			if (samAccountName.Contains("*"))
 				throw new ArgumentException("El parametro samAccountName no debe de contener caracteres comodines *.");
 
-			var _searcher = new LdapSearcher(this.ConnectionInfo, this.SearchLimits, this.UserCredentials);
+			var _searcher = new LdhSearcher(this.ConnectionInfo, this.SearchLimits, this.UserCredentials);
 
 			var _searchResult = await _searcher.SearchUsersAndGroupsByAttributeAsync(EntryAttribute.sAMAccountName, samAccountName, RequiredEntryAttributes.OnlyMemberOf, null);
 
 			if (_searchResult.Entries.Count().Equals(0))
-				throw new LdapHelperLib.LdapEntryNotFoundException($"No se encontró la cuenta {samAccountName}. No se puede realizar la operación.");
+				throw new LdapHelperLib.LdhEntryNotFoundException($"No se encontró la cuenta {samAccountName}. No se puede realizar la operación.");
 
 			var _entry = _searchResult.Entries.First();
 			var _found = _entry.memberOf.Where(s => s.Equals(groupName, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
