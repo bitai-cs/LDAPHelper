@@ -34,12 +34,12 @@ namespace LdapHelperLib
 
 			var _searcher = new LdapSearcher(this.ConnectionInfo, this.SearchLimits, this.UserCredentials);
 
-			var _ldapEntries = await _searcher.SearchUsersAndGroupsByAttributeAsync(EntryAttribute.sAMAccountName, samAccountName, RequiredEntryAttributes.OnlyMemberOf);
+			var _searchResult = await _searcher.SearchUsersAndGroupsByAttributeAsync(EntryAttribute.sAMAccountName, samAccountName, RequiredEntryAttributes.OnlyMemberOf, null);
 
-			if (_ldapEntries.Count().Equals(0))
+			if (_searchResult.Entries.Count().Equals(0))
 				throw new LdapHelperLib.LdapEntryNotFoundException($"No se encontró la cuenta {samAccountName}. No se puede realizar la operación.");
 
-			var _entry = _ldapEntries.First();
+			var _entry = _searchResult.Entries.First();
 			var _found = _entry.memberOf.Where(s => s.Equals(groupName, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
 			if (string.IsNullOrEmpty(_found))
 				return false;

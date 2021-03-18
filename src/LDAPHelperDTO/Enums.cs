@@ -37,7 +37,7 @@ namespace LdapHelperDTO
 		objectSid
 	}
 
-	public enum KeyEntryAttribute
+	public enum EntryKeyAttribute
 	{
 		objectSid,
 		distinguishedName,

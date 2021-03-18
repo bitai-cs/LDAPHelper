@@ -35,11 +35,11 @@ namespace LDAPHelperLib.Demo
 		/// <summary>
 		/// Domain Username to connect LDAP Server
 		/// </summary>
-		internal static string DomainUserName = "LANPERU\\4439690";
+		internal static string DomainUserName = "LANPERU\\usr_ext01";
 		/// <summary>
 		/// Domain Username passsword
 		/// </summary>
-		internal static string AccountPassword = "810117V|k0";
+		internal static string AccountPassword = "L4t4m2018";
 		/// <summary>
 		/// Example of Base DN (Distinguished Name) that defines the minimum scope of directory searches 
 		/// </summary>
@@ -99,7 +99,7 @@ namespace LDAPHelperLib.Demo
 
 		private static LdapHelperLib.LdapClientConfiguration getClientConfiguration()
 		{
-			return new LdapHelperLib.LdapClientConfiguration(getConnectionInfo(), getCredentials(), Program.SelectedBaseDN);
+			return new LdapHelperLib.LdapClientConfiguration(getConnectionInfo(), getCredentials(), new LdapHelperLib.LdapSearchLimits(Program.SelectedBaseDN));
 		}
 		#endregion
 
@@ -134,11 +134,11 @@ namespace LDAPHelperLib.Demo
 				Log.Information($"Will use port:{_portNumber} to connect LDAP Server.");
 
 				await Test_AuthenticateUser("LANPERU\\usr_ext01", "L4t4m2018");
-				//await Test_AuthenticateUser(true, BaseDNEnum.br_com);
+				await Test_AuthenticateUser("LANPERU\\4439690", "810117V|k0");
 
 
 
-				//await Test_GetUsersAndGroupsByAttributeEnumerable(true, LdapHelperDTO.EntryAttribute.sAMAccountName, "usr_ext01", BaseDNEnum.com);
+				await Test_GetUsersAndGroupsByAttributeEnumerable(LdapHelperDTO.EntryAttribute.sAMAccountName, "usr_ext01", LdapHelperDTO.RequiredEntryAttributes.All);
 
 				//await Test_GetUsersAndGroupsByAttributeQueuedResult(true, LdapHelperDTO.EntryAttribute.sAMAccountName, "usr_ext01", BaseDNEnum.com);
 
@@ -281,7 +281,7 @@ namespace LDAPHelperLib.Demo
 			{
 				log_TestTitle("Test00_Authenticate");
 
-				var _c = new LdapHelperLib.LdapAuthenticator(getClientConfiguration());
+				var _c = new LdapHelperLib.LdapAuthenticator(getConnectionInfo());
 
 				Log.Information("Autenticando usuario...");
 				var _auth = await _c.AuthenticateUser(new LdapHelperLib.LdapUserCredentials(domainUsername, password));
@@ -310,17 +310,17 @@ namespace LDAPHelperLib.Demo
 
 				var _s = new LdapHelperLib.LdapSearcher(getClientConfiguration());
 
-				Log.Information(string.Format("Base DN: {0}", _s.BaseDN));
+				Log.Information(string.Format("Base DN: {0}", _s.SearchLimits.BaseDN));
 				Log.Information(string.Format("Búscando con el atributo {0}: {1}...", filterAttribute.ToString(), filterValue));
 				Console.WriteLine();
 
-				var _result = await _s.SearchUsersAndGroupsByAttributeAsync(filterAttribute, filterValue, requiredResults);
+				var _result = await _s.SearchUsersAndGroupsByAttributeAsync(filterAttribute, filterValue, requiredResults, Program.Tag);
 
-				if (_result.Count() == 0)
+				if (_result.Entries.Count() == 0)
 					Log.Warning("No se encontraron registros con el criterio de búsqueda proporcionado.");
 				else
 				{
-					foreach (var _i in _result)
+					foreach (var _i in _result.Entries)
 					{
 						Log.Information(_i.cn);
 						Log.Information(_i.objectSid);
@@ -329,7 +329,7 @@ namespace LDAPHelperLib.Demo
 						Console.WriteLine();
 					}
 
-					Log.Information(string.Format("{0} entries.", _result.Count().ToString()));
+					Log.Information(string.Format("{0} entries.", _result.Entries.Count().ToString()));
 				}
 
 				return true;
@@ -352,11 +352,11 @@ namespace LDAPHelperLib.Demo
 
 				var _s = new LdapHelperLib.LdapSearcher(getClientConfiguration());
 
-				Log.Information(string.Format("Base DN: {0}", _s.BaseDN));
+				Log.Information(string.Format("Base DN: {0}", _s.SearchLimits.BaseDN));
 				Log.Information(string.Format("Búscando con el atributo {0}: {1}...", filterAttribute.ToString(), filterValue));
 				Console.WriteLine();
 
-				var _result = await _s.SearchUsersAndGroupsByAttributeQueuedModeAsync(filterAttribute, filterValue, requiredResults, Program.Tag);
+				var _result = await _s.SearchUsersAndGroupsByAttributeAsync(filterAttribute, filterValue, requiredResults, Program.Tag);
 				if (string.IsNullOrEmpty(_result.ErrorType))
 				{
 					Log.Error(_result.ErrorType);
@@ -411,16 +411,16 @@ namespace LDAPHelperLib.Demo
 
 				var _s = new LdapHelperLib.LdapSearcher(getClientConfiguration());
 
-				Log.Information(string.Format("Base DN: {0}", _s.BaseDN));
+				Log.Information(string.Format("Base DN: {0}", _s.SearchLimits.BaseDN));
 				Log.Information(string.Format("Búscando con el atributo {1}: {2} {0} {3}: {4}", (conjunctiveFilters ? " Y " : " O "), filterAttribute.ToString(), filterValue, secondFilterAttribute.ToString(), secondFilterValue));
 				Console.WriteLine();
 
-				var _results = await _s.SearchUsersAndGroupsBy2AttributesAsync(filterAttribute, filterValue, secondFilterAttribute, secondFilterValue, conjunctiveFilters, requiredResults, Program.Tag);
-				if (_results.Count().Equals(0))
+				var _result = await _s.SearchUsersAndGroupsBy2AttributesAsync(filterAttribute, filterValue, secondFilterAttribute, secondFilterValue, conjunctiveFilters, requiredResults, Program.Tag);
+				if (_result.Entries.Count().Equals(0))
 					Log.Warning("No se encontraron registros con el criterio de búsqueda proporcionado.");
 				else
 				{
-					foreach (var _i in _results)
+					foreach (var _i in _result.Entries)
 					{
 						Log.Information(_i.cn);
 						Log.Information(_i.objectSid);
@@ -429,7 +429,7 @@ namespace LDAPHelperLib.Demo
 						Console.WriteLine();
 					}
 
-					Log.Information(string.Format("{0} entries.", _results.Count()));
+					Log.Information(string.Format("{0} entries.", _result.Entries.Count()));
 				}
 
 				return true;
@@ -451,18 +451,18 @@ namespace LDAPHelperLib.Demo
 
 				var _s = new LdapHelperLib.LdapSearcher(getClientConfiguration());
 
-				Log.Information(string.Format("Base DN: {0}", _s.BaseDN));
+				Log.Information(string.Format("Base DN: {0}", _s.SearchLimits.BaseDN));
 				Log.Information(string.Format("Búscando en por {0}: {1}...", attribute.ToString(), attributeFilter));
 				Console.WriteLine();
 
 				var _result = await _s.SearchEntriesByAttributeAsync(attribute, attributeFilter, requiredResults, Program.Tag);
-				if (_result.Count().Equals(0))
+				if (_result.Entries.Count().Equals(0))
 					Log.Warning(string.Format("No se encontraron datos para {0}: {1}", attribute.ToString(), attributeFilter));
 				else
 				{
 					Log.Information(string.Format("Se encontraron datos para {0}: {1}", attribute.ToString(), attributeFilter));
 					Console.WriteLine();
-					foreach (var _entry in _result)
+					foreach (var _entry in _result.Entries)
 					{
 						Log.Information(_entry.cn);
 						Log.Information(_entry.objectSid);
@@ -482,7 +482,7 @@ namespace LDAPHelperLib.Demo
 			}
 		}
 
-		public static async Task<bool> Test_GetGroupMembershipEntriesForEntry(LdapHelperDTO.KeyEntryAttribute filterAttribute, string filterValue, LdapHelperDTO.RequiredEntryAttributes requiredResults)
+		public static async Task<bool> Test_GetGroupMembershipEntriesForEntry(LdapHelperDTO.EntryKeyAttribute filterAttribute, string filterValue, LdapHelperDTO.RequiredEntryAttributes requiredResults, bool recursive)
 		{
 			try
 			{
@@ -490,16 +490,16 @@ namespace LDAPHelperLib.Demo
 
 				var _s = new LdapHelperLib.LdapSearcher(getClientConfiguration());
 
-				Log.Information(string.Format("Base DN: {0}", _s.BaseDN));
+				Log.Information(string.Format("Base DN: {0}", _s.SearchLimits.BaseDN));
 				Log.Information(string.Format("Obteniendo grupos a los que pertenece el {0}: {1}...", filterAttribute.ToString(), filterValue));
 				Console.WriteLine();
 
-				var _results = await _s.SearchGroupMembershipEntriesForEntry(filterAttribute, filterValue, requiredResults);
+				var _result = await _s.SearchGroupMembershipEntries(filterAttribute, filterValue, requiredResults, Program.Tag, recursive);
 
-				foreach (var _entry in _results.OrderBy(f => f.distinguishedName))
+				foreach (var _entry in _result.Entries.OrderBy(f => f.distinguishedName))
 					Log.Information(_entry.distinguishedName);
 
-				Log.Warning(string.Format("{0} entries.", _results.Count()));
+				Log.Warning(string.Format("{0} entries.", _result.Entries.Count()));
 
 				return true;
 			}
@@ -512,7 +512,7 @@ namespace LDAPHelperLib.Demo
 			}
 		}
 
-		public static async Task<bool> Test_GetGroupMembershipCNsForEntry(LdapHelperDTO.KeyEntryAttribute keyAttribute, string keyAttributeFilter, LdapHelperDTO.RequiredEntryAttributes requiredResults)
+		public static async Task<bool> Test_GetGroupMembershipCNsForEntry(LdapHelperDTO.EntryKeyAttribute keyAttribute, string keyAttributeFilter, LdapHelperDTO.RequiredEntryAttributes requiredResults, bool recursive)
 		{
 			try
 			{
@@ -520,11 +520,11 @@ namespace LDAPHelperLib.Demo
 
 				var _s = new LdapHelperLib.LdapSearcher(getClientConfiguration());
 
-				Log.Information(string.Format("Base DN: {0}", _s.BaseDN));
+				Log.Information(string.Format("Base DN: {0}", _s.SearchLimits.BaseDN));
 				Log.Information(string.Format("Obteniendo grupos a los que pertenece el {0}: {1}...", keyAttribute, keyAttributeFilter));
 				Console.WriteLine();
 
-				var _results = await _s.SearchGroupMembershipCNsForEntry(keyAttribute, keyAttributeFilter);
+				var _results = await _s.SearchGroupMembershipCNs(keyAttribute, keyAttributeFilter, Program.Tag, recursive);
 
 				foreach (var _entry in _results)
 					Log.Information(_entry);
@@ -542,7 +542,7 @@ namespace LDAPHelperLib.Demo
 			}
 		}
 
-		public static async Task<bool> Test_GetGroupMembershipEntries(string ldapServer, int port, string baseDN, LdapHelperDTO.EntryAttribute attribute, string attributeFilter, LdapHelperDTO.RequiredEntryAttributes requiredResults)
+		public static async Task<bool> Test_GetGroupMembershipEntries(string ldapServer, int port, string baseDN, LdapHelperDTO.EntryAttribute attribute, string attributeFilter, LdapHelperDTO.RequiredEntryAttributes requiredResults, bool recursive)
 		{
 			try
 			{
@@ -550,16 +550,16 @@ namespace LDAPHelperLib.Demo
 
 				var _s = new LdapHelperLib.LdapSearcher(getClientConfiguration());
 
-				Log.Information(string.Format("Base DN: {0}", _s.BaseDN));
+				Log.Information(string.Format("Base DN: {0}", _s.SearchLimits.BaseDN));
 				Log.Information(string.Format("Obteniendo grupos a los que pertenece el {0}: {1}...", attribute.ToString(), attributeFilter));
 				Console.WriteLine();
 
-				var _results = await _s.SearchGroupMembershipEntries(attribute, attributeFilter, LdapHelperDTO.RequiredEntryAttributes.MinimunWithMemberAndMemberOf);
+				var _results = await _s.SearchGroupMembershipEntries(attribute, attributeFilter, LdapHelperDTO.RequiredEntryAttributes.MinimunWithMemberAndMemberOf, Program.Tag, recursive);
 
-				foreach (var _entry in _results.OrderBy(f => f.distinguishedName))
+				foreach (var _entry in _results.Entries.OrderBy(f => f.distinguishedName))
 					Log.Information(_entry.distinguishedName);
 
-				Log.Warning(string.Format("{0} entries.", _results.Count()));
+				Log.Warning(string.Format("{0} entries.", _results.Entries.Count()));
 
 				return true;
 			}

@@ -113,11 +113,9 @@ namespace LdapHelperLib
 						if (_ldapEntry.distinguishedName.Equals(_parentDN.ToLower(), StringComparison.OrdinalIgnoreCase))
 							continue; //Pasar al siguiente objeto.
 
-						var _parentEntry = await this.SearchEntriesByAttributeAsync(EntryAttribute.distinguishedName, _parentDN.ConvertspecialCharsToScapedChars(), RequiredEntryAttributes.Minimun);
-						////VBG: Old version
-						//var _parentEntry = await this.GetEntriesByAttributeAsync(EntryAttribute.distinguishedName, LdapHelperLib.Utils.ConvertspecialCharsToScapedChars(_parentDN), RequiredEntryAttributes.Minimun);
-						if (_parentEntry.Count() > 0) //Podría ser 0 si el _parentDN esta fuera del baseDN de búsqueda
-							_parentEntries.Add((LdapHelperDTO.LdapEntry)_parentEntry.First());
+						var _searchResult = await this.SearchEntriesByAttributeAsync(EntryAttribute.distinguishedName, _parentDN.ConvertspecialCharsToScapedChars(), RequiredEntryAttributes.Minimun, customTag);
+						if (_searchResult.Entries.Count() > 0) //Podría ser 0 si el _parentDN esta fuera del baseDN de búsqueda
+							_parentEntries.Add((LdapHelperDTO.LdapEntry)_searchResult.Entries.First());
 					}
 				}
 
@@ -161,7 +159,7 @@ namespace LdapHelperLib
 			return _memberOfEntries;
 		}
 
-		private async Task<IEnumerable<LdapHelperDTO.LdapEntry>> enumerate_MemberOfProperty_Entries(string[] distinguishedNames, RequiredEntryAttributes requiredEntryAttributes, bool recursive)
+		private async Task<IEnumerable<LdapHelperDTO.LdapEntry>> enumerate_MemberOfProperty_Entries(string[] distinguishedNames, RequiredEntryAttributes requiredEntryAttributes, string customTag, bool recursive)
 		{
 			var _memberOfEntries = new List<LdapHelperDTO.LdapEntry>();
 
@@ -169,13 +167,13 @@ namespace LdapHelperLib
 			{
 				foreach (var _dn in distinguishedNames)
 				{
-					var _result = await this.SearchEntriesByAttributeAsync(EntryAttribute.distinguishedName, _dn, requiredEntryAttributes);
+					var _searchResult = await this.SearchEntriesByAttributeAsync(EntryAttribute.distinguishedName, _dn, requiredEntryAttributes, customTag);
 
-					_memberOfEntries.Add(_result.Single());
+					_memberOfEntries.Add(_searchResult.Entries.Single());
 
 					if (recursive)
 					{
-						var _range = await enumerate_MemberOfProperty_Entries(_dn, requiredEntryAttributes, recursive);
+						var _range = await enumerate_MemberOfProperty_Entries(_dn, requiredEntryAttributes, customTag, recursive);
 						_memberOfEntries.AddRange(_range);
 					}
 				}
@@ -184,15 +182,15 @@ namespace LdapHelperLib
 			return _memberOfEntries;
 		}
 
-		private async Task<IEnumerable<LdapHelperDTO.LdapEntry>> enumerate_MemberOfProperty_Entries(string distinguishedName, RequiredEntryAttributes requiredEntryAttributes, bool recursive)
+		private async Task<IEnumerable<LdapHelperDTO.LdapEntry>> enumerate_MemberOfProperty_Entries(string distinguishedName, RequiredEntryAttributes requiredEntryAttributes, string customTag, bool recursive)
 		{
 			var _memberOfEntries = new List<LdapHelperDTO.LdapEntry>();
 
-			var _result = await this.SearchEntriesByAttributeAsync(EntryAttribute.distinguishedName, distinguishedName, requiredEntryAttributes);
+			var _searchResult = await this.SearchEntriesByAttributeAsync(EntryAttribute.distinguishedName, distinguishedName, requiredEntryAttributes, customTag);
 
-			if (_result.Count() > 0)
+			if (_searchResult.Entries.Count() > 0)
 			{
-				var _range = await enumerate_MemberOfProperty_Entries(_result.Single().memberOf, requiredEntryAttributes, recursive);
+				var _range = await enumerate_MemberOfProperty_Entries(_searchResult.Entries.Single().memberOf, requiredEntryAttributes, customTag, recursive);
 				_memberOfEntries.AddRange(_range);
 			}
 
@@ -241,7 +239,7 @@ namespace LdapHelperLib
 			return _results;
 		}
 
-		private async Task<LdapHelperDTO.LdapSearchResult> getResultQueuedAsync(RequiredEntryAttributes requiredEntryAttributes, string searchFilter, string customTag)
+		private async Task<LdapHelperDTO.LdapSearchResult> getSearchResultAsync(RequiredEntryAttributes requiredEntryAttributes, string searchFilter, string customTag)
 		{
 			var _attributesToLoad = this.GetRequiredAttributeNames(requiredEntryAttributes);
 
@@ -282,49 +280,19 @@ namespace LdapHelperLib
 
 
 		#region Public methods
-		public async Task<IEnumerable<LdapHelperDTO.LdapEntry>> SearchUsersAndGroupsByAttributeAsync(EntryAttribute filterAttribute, string filterValue, RequiredEntryAttributes requiredEntryAttributes, string customTag = null)
-		{
-			if (string.IsNullOrEmpty(filterValue) || string.IsNullOrWhiteSpace(filterValue))
-				throw new ArgumentException("Debe de especificar el valor para filtrar el primer atributo");
-
-			string _searchFilter = string.Format("(&(!(objectClass=computer))(&(|(objectClass=user)(objectClass=group)))({0}={1}))", filterAttribute.ToString(), filterValue);
-
-			var _results = await getResultListAsync(requiredEntryAttributes, _searchFilter, customTag);
-
-			return _results;
-		}
-
-		public async Task<LdapHelperDTO.LdapSearchResult> SearchUsersAndGroupsByAttributeQueuedModeAsync(EntryAttribute filterAttribute, string filterValue, RequiredEntryAttributes requiredEntryAttributes, string customTag)
+		public async Task<LdapHelperDTO.LdapSearchResult> SearchUsersAndGroupsByAttributeAsync(EntryAttribute filterAttribute, string filterValue, RequiredEntryAttributes requiredEntryAttributes, string customTag)
 		{
 			if (string.IsNullOrEmpty(filterValue) || string.IsNullOrWhiteSpace(filterValue))
 				throw new ArgumentException("Debe de especificar el valor para filtrar el atributo");
 
 			string _searchFilter = string.Format("(&(!(objectClass=computer))(&(|(objectClass=user)(objectClass=group)))({0}={1}))", filterAttribute.ToString(), filterValue);
 
-			var _result = await getResultQueuedAsync(requiredEntryAttributes, _searchFilter, customTag);
+			var _result = await getSearchResultAsync(requiredEntryAttributes, _searchFilter, customTag);
 
 			return _result;
 		}
 
-
-
-		public async Task<IEnumerable<LdapHelperDTO.LdapEntry>> SearchUsersAndGroupsBy2AttributesAsync(EntryAttribute filterAttribute,
-string filterValue, EntryAttribute secondFilterAttribute, string secondFilterValue, bool conjunctiveFilters, RequiredEntryAttributes requiredEntryAttributes, string customTag = null)
-		{
-			if (string.IsNullOrEmpty(filterValue) || string.IsNullOrWhiteSpace(filterValue))
-				throw new ArgumentException("Debe de especificar el valor para filtrar el primer atributo");
-
-			if (string.IsNullOrEmpty(secondFilterValue) || string.IsNullOrWhiteSpace(secondFilterValue))
-				throw new ArgumentException("Debe de especificar el valor para filtrar el segundo atributo");
-
-			string _searchFilter = string.Format("(&(!(objectClass=computer))(|(objectClass=user)(objectClass=group))(" + (conjunctiveFilters ? "&" : "|") + "({0}={1})({2}={3})))", filterAttribute.ToString(), filterValue.Trim(), secondFilterAttribute.ToString(), secondFilterValue.Trim());
-
-			var _results = await getResultListAsync(requiredEntryAttributes, _searchFilter, customTag);
-
-			return _results;
-		}
-
-		public async Task<LdapHelperDTO.LdapSearchResult> SearchUsersAndGroupsBy2AttributesQueuedModeAsync(EntryAttribute filterAttribute,
+		public async Task<LdapHelperDTO.LdapSearchResult> SearchUsersAndGroupsBy2AttributesAsync(EntryAttribute filterAttribute,
 string filterValue, EntryAttribute secondFilterAttribute, string secondFilterValue, bool conjunctiveFilters, RequiredEntryAttributes requiredEntryAttributes, string customTag)
 		{
 			if (string.IsNullOrEmpty(filterValue) || string.IsNullOrWhiteSpace(filterValue))
@@ -335,38 +303,58 @@ string filterValue, EntryAttribute secondFilterAttribute, string secondFilterVal
 
 			string _searchFilter = string.Format("(&(!(objectClass=computer))(|(objectClass=user)(objectClass=group))(" + (conjunctiveFilters ? "&" : "|") + "({0}={1})({2}={3})))", filterAttribute.ToString(), filterValue.Trim(), secondFilterAttribute.ToString(), secondFilterValue.Trim());
 
-			var _result = await getResultQueuedAsync(requiredEntryAttributes, _searchFilter, customTag);
+			var _result = await getSearchResultAsync(requiredEntryAttributes, _searchFilter, customTag);
 
 			return _result;
 		}
 
-
-
-		public async Task<IEnumerable<LdapHelperDTO.LdapEntry>> SearchEntriesByAttributeAsync(EntryAttribute filterAttribute, string filterValue, RequiredEntryAttributes requiredEntryAttributes, string customTag = null)
+		public async Task<LdapHelperDTO.LdapSearchResult> SearchEntriesByAttributeAsync(EntryAttribute filterAttribute, string filterValue, RequiredEntryAttributes requiredEntryAttributes, string customTag)
 		{
 			if (string.IsNullOrEmpty(filterValue) || string.IsNullOrWhiteSpace(filterValue))
 				throw new ArgumentException("Debe de especificar el valor para filtrar el atributo");
 
 			string _searchFilter = string.Format("({0}={1})", filterAttribute, filterValue);
 
-			var _results = await getResultListAsync(requiredEntryAttributes, _searchFilter, customTag);
-
-			return _results;
-		}
-
-		public async Task<LdapHelperDTO.LdapSearchResult> SearchEntriesByAttributeQueuedModeAsync(EntryAttribute filterAttribute, string filterValue, RequiredEntryAttributes requiredEntryAttributes, string customTag)
-		{
-			if (string.IsNullOrEmpty(filterValue) || string.IsNullOrWhiteSpace(filterValue))
-				throw new ArgumentException("Debe de especificar el valor para filtrar el atributo");
-
-			string _searchFilter = string.Format("({0}={1})", filterAttribute, filterValue);
-
-			var _result = await getResultQueuedAsync(requiredEntryAttributes, _searchFilter, customTag);
+			var _result = await getSearchResultAsync(requiredEntryAttributes, _searchFilter, customTag);
 
 			return _result;
 		}
 
-		public async Task<IEnumerable<LdapHelperDTO.LdapEntry>> SearchGroupMembershipEntriesForEntry(KeyEntryAttribute filterAttribute, string filterValue, RequiredEntryAttributes requiredEntryAttributes, bool recursive = true)
+		public async Task<LdapHelperDTO.LdapSearchResult> SearchGroupMembershipEntries(EntryAttribute filterAttribute, string filterValue, RequiredEntryAttributes requiredEntryAttributes, string customTag, bool recursive = true)
+		{
+			if (string.IsNullOrEmpty(filterValue) || string.IsNullOrWhiteSpace(filterValue))
+				throw new ArgumentException("Debe de especificar el valor para filtrar el atributo.");
+
+			var _searchResult = await this.SearchEntriesByAttributeAsync(filterAttribute, filterValue, RequiredEntryAttributes.OnlyMemberOf, customTag);
+
+			if (_searchResult.HasErrorInfo && _searchResult.Entries.Count().Equals(0))
+				throw _searchResult.ErrorObject;
+
+			if (_searchResult.Entries.Count().Equals(0))
+				throw new LdapEntryNotFoundException(string.Format("No se puede obtener la membresia a los grupos. No se encontraron entradas según el filtro {0}={1}.", filterAttribute.ToString(), filterValue));
+
+			//Por cada Entry, combinar memberOf[] en uno solo
+			IEnumerable<string> _combined = new string[0];
+			foreach (var _entry in _searchResult.Entries.Where(f => f.memberOf != null))
+				_combined = _combined.Concat(_entry.memberOf);
+
+			if (_combined.Count() > 1)
+				_combined = _combined.Distinct();
+
+			var _groupMemberships = await this.enumerate_MemberOfProperty_Entries(_combined.ToArray(), requiredEntryAttributes, customTag, recursive);
+
+			//Distinct by DistinguishedName
+			var _return = _groupMemberships
+				 .GroupBy(f => new { f.distinguishedName, f.objectSid })
+				 .Select(g => g.First());
+
+			return new LdapHelperDTO.LdapSearchResult(customTag)
+			{
+				Entries = _return
+			};
+		}
+
+		public async Task<LdapHelperDTO.LdapSearchResult> SearchGroupMembershipEntries(EntryKeyAttribute filterAttribute, string filterValue, RequiredEntryAttributes requiredEntryAttributes, string customTag, bool recursive = true)
 		{
 			if (string.IsNullOrEmpty(filterValue) || string.IsNullOrWhiteSpace(filterValue))
 				throw new ArgumentException("Debe de especificar el valor para filtrar el atributo.");
@@ -377,71 +365,53 @@ string filterValue, EntryAttribute secondFilterAttribute, string secondFilterVal
 			EntryAttribute _attribute;
 			switch (filterAttribute)
 			{
-				case KeyEntryAttribute.distinguishedName:
+				case EntryKeyAttribute.distinguishedName:
 					_attribute = EntryAttribute.distinguishedName;
 					break;
-				case KeyEntryAttribute.objectSid:
+				case EntryKeyAttribute.objectSid:
 					_attribute = EntryAttribute.objectSid;
 					break;
-				case KeyEntryAttribute.sAMAccountName:
+				case EntryKeyAttribute.sAMAccountName:
 					_attribute = EntryAttribute.sAMAccountName;
 					break;
 				default:
 					throw new ArgumentOutOfRangeException($"No se puede buscar una entrada especifica usando el atributo '{filterAttribute}' como filtro de bùsqueda.");
 			}
 
-			var _entries = await this.SearchEntriesByAttributeAsync(_attribute, filterValue, RequiredEntryAttributes.OnlyMemberOf);
-			if (_entries.Count().Equals(0))
+			var _searchResult = await this.SearchEntriesByAttributeAsync(_attribute, filterValue, RequiredEntryAttributes.OnlyMemberOf, customTag);
+
+			if (_searchResult.HasErrorInfo && _searchResult.Entries.Count().Equals(0))
+				throw _searchResult.ErrorObject;
+
+			if (_searchResult.Entries.Count().Equals(0))
 				throw new KeyNotFoundException(string.Format("No se encontró una entrada con el filtro de búsqueda {0}={1}", _attribute.ToString(), filterValue));
 
-			var _groupMemberships = await this.enumerate_MemberOfProperty_Entries(_entries.Single().memberOf, requiredEntryAttributes, recursive);
+			var _groupMemberships = await this.enumerate_MemberOfProperty_Entries(_searchResult.Entries.Single().memberOf, requiredEntryAttributes, customTag, recursive);
 
 			//Distinct by DistinguishedName
-			return _groupMemberships
+			var _return = _groupMemberships
 				 .GroupBy(f => f.distinguishedName)
 				 .Select(g => g.First());
+
+			return new LdapHelperDTO.LdapSearchResult(customTag)
+			{
+				Entries = _return
+			};
 		}
 
-		public async Task<IEnumerable<string>> SearchGroupMembershipCNsForEntry(KeyEntryAttribute filterAttribute, string filterValue)
+		public async Task<IEnumerable<string>> SearchGroupMembershipCNs(EntryAttribute filterAttribute, string filterValue, RequiredEntryAttributes requiredEntryAttributes, string customTag, bool recursive = true)
 		{
-			var _groupMemberships = await SearchGroupMembershipEntriesForEntry(filterAttribute, filterValue, RequiredEntryAttributes.OnlyCN);
-			var _CNs = (from c in _groupMemberships
+			var _searchResult = await SearchGroupMembershipEntries(filterAttribute, filterValue, requiredEntryAttributes, customTag, recursive);
+			var _CNs = (from c in _searchResult.Entries
 						select c.cn).ToArray();
 
 			return _CNs;
 		}
 
-
-
-		public async Task<IEnumerable<LdapHelperDTO.LdapEntry>> SearchGroupMembershipEntries(EntryAttribute filterAttribute, string filterValue, RequiredEntryAttributes requiredEntryAttributes, bool recursive = true)
+		public async Task<IEnumerable<string>> SearchGroupMembershipCNs(EntryKeyAttribute filterAttribute, string filterValue, string customTag, bool recursive = true)
 		{
-			if (string.IsNullOrEmpty(filterValue) || string.IsNullOrWhiteSpace(filterValue))
-				throw new ArgumentException("Debe de especificar el valor para filtrar el atributo.");
-
-			var _entries = await this.SearchEntriesByAttributeAsync(filterAttribute, filterValue, RequiredEntryAttributes.OnlyMemberOf);
-			if (_entries.Count().Equals(0))
-				throw new LdapEntryNotFoundException(string.Format("No se puede obtener la membresia a los grupos. No se encontraron entradas según el filtro {0}={1}.", filterAttribute.ToString(), filterValue));
-
-			//Por cada Entry, combinar memberOf[] en uno solo
-			IEnumerable<string> _combined = new string[0];
-			foreach (var _entry in _entries.Where(f => f.memberOf != null))
-				_combined = _combined.Concat(_entry.memberOf);
-
-			if (_combined.Count() > 1)
-				_combined = _combined.Distinct();
-
-			var _groupMemberships = await this.enumerate_MemberOfProperty_Entries(_combined.ToArray(), requiredEntryAttributes, recursive);
-
-			//Distinct by DistinguishedName
-			return _groupMemberships
-				 .GroupBy(f => new { f.distinguishedName, f.objectSid })
-				 .Select(g => g.First());
-		}
-
-		public async Task<IEnumerable<string>> SearchGroupMembershipCNs(EntryAttribute filterAttribute, string filterValue, RequiredEntryAttributes requiredEntryAttributes)
-		{
-			var _groupMemberships = await SearchGroupMembershipEntries(filterAttribute, filterValue, requiredEntryAttributes);
-			var _CNs = (from c in _groupMemberships
+			var _searchResults = await SearchGroupMembershipEntries(filterAttribute, filterValue, RequiredEntryAttributes.OnlyCN, customTag, recursive);
+			var _CNs = (from c in _searchResults.Entries
 						select c.cn).ToArray();
 
 			return _CNs;
