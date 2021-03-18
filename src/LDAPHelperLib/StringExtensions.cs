@@ -6,24 +6,24 @@ namespace LdapHelperLib.Extensions
 {
 	public static class StringExtensions
 	{
-		public static string ConvertParenthesisCharsToScapedChars(this string input)
+		public static string ReplaceParenthesisCharsToScapedChars(this string input)
 		{
 			return input.Replace("(", "\\28").Replace(")", "\\29");
 		}
 
-		public static string ConvertAsteriskCharsToScapedChars(this string input)
+		public static string ReplaceAsteriskCharsToScapedChars(this string input)
 		{
 			return input.Replace("*", "\\2A");
 		}
 
-		public static string ConvertBackslashCharsToScapedChars(this string input)
+		public static string ReplaceBackslashCharsToScapedChars(this string input)
 		{
 			return input.Replace("\\", "\\5C");
 		}
 
-		public static string ConvertspecialCharsToScapedChars(this string input)
+		public static string ReplaceSpecialCharsToScapedChars(this string input)
 		{
-			return ConvertParenthesisCharsToScapedChars(ConvertAsteriskCharsToScapedChars(ConvertBackslashCharsToScapedChars(input)));
+			return ReplaceParenthesisCharsToScapedChars(ReplaceAsteriskCharsToScapedChars(ReplaceBackslashCharsToScapedChars(input)));
 		}
 	}
 }

@@ -4,20 +4,22 @@ using Serilog;
 using Serilog.Sinks.SystemConsole;
 using System.Linq;
 using System.Security;
+using Microsoft.Extensions.Configuration;
+using System.Collections.Generic;
 
 namespace LDAPHelperLib.Demo
 {
-	//public enum BaseDNEnum
-	//{
-	//	com,
-	//	cl_com,
-	//	br_com,
-	//	pe_com,
-	//	ar_com,
-	//}
-
+	/// <summary>
+	/// Demo Program
+	/// </summary>
 	public class Program
 	{
+		internal const string SetupDemoFilePath = "C:\\LDAPHelperLib_DemoSetup.json";
+
+		/// <summary>
+		/// DemoSetup object
+		/// </summary>
+		internal static DemoSetup DemoSetup;
 		/// <summary>
 		/// Custom (optional) tag value to label request. Can be null. 
 		/// </summary>
@@ -25,53 +27,50 @@ namespace LDAPHelperLib.Demo
 		/// <summary>
 		/// LDAP Server ip or DNS name
 		/// </summary>
-		internal static string LdapServer = "10.11.58.13";
+		internal static string Selected_LdapServer;
 		/// <summary>
 		/// LDAP Server port 
 		/// </summary>
-		internal static int LdapServerPort = (int)LdapHelperLib.LdapServerCommonPorts.DefaultPort;
-		internal static bool UseSsl = false;
-		internal static short ConnectionTimeout = 15;
+		internal static int Selected_LdapServerPort;
+		/// <summary>
+		/// connection to LDAP Server will use SSL encryption
+		/// </summary>
+		internal static bool Selected_UseSsl = false;
+		/// <summary>
+		/// Max time in seconds to connect a LDAP Server 		
+		/// </summary>
+		internal static short Selected_ConnectionTimeout = 15;
 		/// <summary>
 		/// Domain Username to connect LDAP Server
 		/// </summary>
-		internal static string DomainUserName = "LANPERU\\usr_ext01";
+		internal static string Selected_DomainAccountName;
 		/// <summary>
 		/// Domain Username passsword
 		/// </summary>
-		internal static string AccountPassword = "L4t4m2018";
+		internal static string Selected_AccountNamePassword;
 		/// <summary>
-		/// Example of Base DN (Distinguished Name) that defines the minimum scope of directory searches 
+		/// Selected BaseDN for DEMO
 		/// </summary>
-		internal static string BaseDN_1 = "DC=lan, DC=com";
-		/// <summary>
-		/// Example of Base DN (Distinguished Name) that defines the minimum scope of directory searches 
-		/// </summary>
-		internal static string BaseDN_2 = "DC=pe, DC=lan, DC=com";
-		/// <summary>
-		/// Example of Base DN (Distinguished Name) that defines the minimum scope of directory searches 
-		/// </summary>
-		internal static string BaseDN_3 = "DC=cl, DC=lan, DC=com";
-		/// <summary>
-		/// Example of Base DN (Distinguished Name) that defines the minimum scope of directory searches 
-		/// </summary>
-		internal static string BaseDN_4 = "DC=ar, DC=lan, DC=com";
-		/// <summary>
-		/// Example of Base DN (Distinguished Name) that defines the minimum scope of directory searches 
-		/// </summary>
-		internal static string BaseDN_5 = "DC=br, DC=lan, DC=com";
-		/// <summary>
-		/// Example of Base DN (Distinguished Name) that defines the minimum scope of directory searches 
-		/// </summary>
-		internal static string BaseDN_6 = "DC=us, DC=lan, DC=com";
-		/// <summary>
-		/// Example of Base DN (Distinguished Name) that defines the minimum scope of directory searches 
-		/// </summary>
-		internal static string BaseDN_7 = "DC=ca, DC=lan, DC=com";
-		internal static string SelectedBaseDN = BaseDN_1;
+		internal static string Selected_BaseDN;
 
 
 		#region Private Static Methods
+		private static void loadSetup()
+		{
+			var _cb = new ConfigurationBuilder()
+				.AddJsonFile(Program.SetupDemoFilePath, false, false);
+			var _cr = _cb.Build();
+
+			Program.DemoSetup = _cr.Get<DemoSetup>();
+
+			Program.Selected_LdapServer = Program.DemoSetup.LdapServers[0].Address;
+			Program.Selected_LdapServerPort = (int)LdapHelperLib.LdapServerCommonPorts.DefaultPort;
+			Program.Selected_UseSsl = Program.DemoSetup.UseSSL;
+			Program.Selected_ConnectionTimeout = Program.DemoSetup.ConnectionTimeout;
+			Program.Selected_DomainAccountName = Program.DemoSetup.DomainAccountName;
+			Program.Selected_BaseDN = Program.DemoSetup.BaseDNs[0].DN;
+		}
+
 		private static void configLog()
 		{
 			Log.Logger = new LoggerConfiguration()
@@ -79,7 +78,7 @@ namespace LDAPHelperLib.Demo
 				.CreateLogger();
 		}
 
-		private static void log_TestTitle(string title)
+		private static void logTestTitle(string title)
 		{
 			Console.WriteLine();
 			Console.WriteLine("**********************************************");
@@ -89,17 +88,147 @@ namespace LDAPHelperLib.Demo
 
 		private static LdapHelperLib.LdhConnectionInfo getConnectionInfo()
 		{
-			return new LdapHelperLib.LdhConnectionInfo(Program.LdapServer, Program.LdapServerPort, Program.UseSsl, Program.ConnectionTimeout, getCredentials());
+			return new LdapHelperLib.LdhConnectionInfo(Program.Selected_LdapServer, Program.Selected_LdapServerPort, Program.Selected_UseSsl, Program.Selected_ConnectionTimeout);
 		}
 
 		private static LdapHelperLib.LdhUserCredentials getCredentials()
 		{
-			return new LdapHelperLib.LdhUserCredentials(Program.DomainUserName, Program.AccountPassword);
+			return new LdapHelperLib.LdhUserCredentials(Program.Selected_DomainAccountName, Program.Selected_AccountNamePassword);
+		}
+
+		public static LdapHelperLib.LdhSearchLimits getSearchLimits()
+		{
+			return new LdapHelperLib.LdhSearchLimits(Program.Selected_BaseDN);
 		}
 
 		private static LdapHelperLib.LdhClientConfiguration getClientConfiguration()
 		{
-			return new LdapHelperLib.LdhClientConfiguration(getConnectionInfo(), getCredentials(), new LdapHelperLib.LdhSearchLimits(Program.SelectedBaseDN));
+			return new LdapHelperLib.LdhClientConfiguration(getConnectionInfo(), getCredentials(), getSearchLimits());
+		}
+
+		private static void requestLdapServer()
+		{
+			Console.WriteLine();
+			Console.WriteLine("SELECT OR ENTER LDAP SERVER DNS OR IP:");
+			var _position = 0;
+			foreach (var _s in Program.DemoSetup.LdapServers)
+			{
+				_position++;
+				Console.WriteLine($"({_position}) {_s.Address}");
+			}
+			Console.WriteLine($"Leave empty to use {Program.Selected_LdapServer}");
+			//Wait for answer...
+			var _ldapServerEntered = Console.ReadLine();
+			Program.Selected_LdapServer = string.IsNullOrEmpty(_ldapServerEntered) ?
+				Program.Selected_LdapServer : (Program.DemoSetup.LdapServers[Convert.ToInt32(_ldapServerEntered) - 1].Address);
+			Log.Information($"Will use {Program.Selected_LdapServer} LDAP Server.");
+		}
+
+		private static void requestLdapServerPort()
+		{
+			Console.WriteLine();
+			Console.WriteLine("SELECT OR ENTER LDAP SERVER PORT:");
+			Console.WriteLine($"(1) Default -> {(int)LdapHelperLib.LdapServerCommonPorts.DefaultPort}");
+			Console.WriteLine($"(2) Default Global Catalog -> {(int)LdapHelperLib.LdapServerCommonPorts.GlobalCatalogPort}");
+			Console.WriteLine($"(3) Default SSL -> {(int)LdapHelperLib.LdapServerCommonPorts.DefaultSslPort}");
+			Console.WriteLine($"Leave empty to use {Program.Selected_LdapServerPort}");
+			var _portEntered = Console.ReadLine();
+			if (!string.IsNullOrEmpty(_portEntered))
+			{
+				var _portNumber = Convert.ToInt32(_portEntered);
+				if (_portNumber <= 3)
+				{
+					switch (_portNumber)
+					{
+						case 1:
+							Program.Selected_LdapServerPort = (int)LdapHelperLib.LdapServerCommonPorts.DefaultPort;
+							break;
+						case 2:
+							Program.Selected_LdapServerPort = (int)LdapHelperLib.LdapServerCommonPorts.GlobalCatalogPort;
+							break;
+						case 3:
+							Program.Selected_LdapServerPort = (int)LdapHelperLib.LdapServerCommonPorts.DefaultSslPort;
+							break;
+					}
+				}
+				else
+				{
+					Program.Selected_LdapServerPort = _portNumber;
+				}
+			}
+			Log.Information($"Will use port:{Program.Selected_LdapServerPort} to connect LDAP Server.");
+		}
+
+		private static void requesAccounNamePassword()
+		{
+			Console.WriteLine();
+		REQUEST_PASSWORD:
+			Console.WriteLine($"ENTER PASSWORD FOR {Program.Selected_DomainAccountName}:");
+			var _password = readPassword('*');
+			if (string.IsNullOrEmpty(_password) || string.IsNullOrWhiteSpace(_password)) goto REQUEST_PASSWORD;
+			Program.Selected_AccountNamePassword = _password;
+			Log.Information($"Password entered. Thanks!");
+		}
+
+		private static void requestBaseDN()
+		{
+			Console.WriteLine();
+			Console.WriteLine("SELECT OR ENTER BASE DN:");
+			var _position = 0;
+			foreach (var _dn in Program.DemoSetup.BaseDNs)
+			{
+				_position++;
+				Console.WriteLine($"({_position}) {_dn.DN}");
+			}
+			Console.WriteLine($"Leave empty to use {Program.Selected_BaseDN}");
+			//Wait for answer...
+			var _baseDNEntered = Console.ReadLine();
+			Program.Selected_BaseDN = string.IsNullOrEmpty(_baseDNEntered) ?
+				Program.Selected_BaseDN : (Program.DemoSetup.BaseDNs[Convert.ToInt32(_baseDNEntered) - 1].DN);
+			Log.Information($"Will use {Program.Selected_BaseDN} LDAP Server.");
+
+		}
+
+		public static string readPassword(char passwordChar)
+		{
+			const int _ENTER = 13, _BACKSP = 8, _CTRLBACKSP = 127;
+			int[] _FILTERED = { 0, 27, 9, 10 /*, 32 space, if you care */ }; // const
+
+			var _pass = new Stack<char>();
+			char _chr = (char)0;
+
+			while ((_chr = Console.ReadKey(true).KeyChar) != _ENTER)
+			{
+				if (_chr == _BACKSP)
+				{
+					if (_pass.Count > 0)
+					{
+						System.Console.Write("\b \b");
+						_pass.Pop();
+					}
+				}
+				else if (_chr == _CTRLBACKSP)
+				{
+					while (_pass.Count > 0)
+					{
+						System.Console.Write("\b \b");
+						_pass.Pop();
+					}
+				}
+				else if (_FILTERED.Count(x => _chr == x) > 0)
+				{
+					//Nothing to do
+				}
+				else
+				{
+					_pass.Push((char)_chr);
+					System.Console.Write(passwordChar);
+				}
+			}
+
+			System.Console.WriteLine();
+
+			return new string(_pass.Reverse().ToArray());
 		}
 		#endregion
 
@@ -118,144 +247,102 @@ namespace LDAPHelperLib.Demo
 
 				Log.Warning("Inicio: " + DateTime.Now.ToString());
 
-				string _attributeFiler = null;
+				loadSetup();
 
-				Console.WriteLine("Enter LDAP server IP address or DNS name:");
-				Console.WriteLine($"Leave empty to use {Program.LdapServer}");
-				var _ldapServerEntered = Console.ReadLine();
-				if (string.IsNullOrEmpty(_ldapServerEntered))
-					_ldapServerEntered = Program.LdapServer;
-				Log.Information($"Will use {_ldapServerEntered} LDAP Server.");
+				requestLdapServer();
 
-				Console.WriteLine("Enter LDAP server port:");
-				Console.WriteLine($"Leave empty to use {Program.LdapServerPort}");
-				var _portEntered = Console.ReadLine();
-				var _portNumber = string.IsNullOrEmpty(_portEntered) ? Program.LdapServerPort : Convert.ToInt32(_portEntered);
-				Log.Information($"Will use port:{_portNumber} to connect LDAP Server.");
+				requestLdapServerPort();
 
-				await Test_AuthenticateUser("LANPERU\\usr_ext01", "L4t4m2018");
-				await Test_AuthenticateUser("LANPERU\\4439690", "810117V|k0");
+				requesAccounNamePassword();
 
+				requestBaseDN();
 
+				//await Test_AuthenticateUser("LANPERU\\usr_ext01", "L4t4m2018");
+				//await Test_AuthenticateUser("LANPERU\\4439690", "810117V|k0");
 
-				await Test_GetUsersAndGroupsByAttributeEnumerable(LdapHelperDTO.EntryAttribute.sAMAccountName, "usr_ext01", LdapHelperDTO.RequiredEntryAttributes.All);
+				await Demo_SearchUsersAndGroupsByAttributeAsync(LdapHelperDTO.EntryAttribute.sAMAccountName, "usr_ext01", LdapHelperDTO.RequiredEntryAttributes.All);
 
-				//await Test_GetUsersAndGroupsByAttributeQueuedResult(true, LdapHelperDTO.EntryAttribute.sAMAccountName, "usr_ext01", BaseDNEnum.com);
+				await Demo_SearchUsersAndGroupsByAttributeAsync(LdapHelperDTO.EntryAttribute.sAMAccountName, "4270826", LdapHelperDTO.RequiredEntryAttributes.All);
 
-				//await Test_GetUsersAndGroupsByAttributeQueuedResult(true, LdapHelperDTO.EntryAttribute.cn, "*caba*", BaseDNEnum.ar_com);
+				await Demo_SearchUsersAndGroupsByAttributeAsync(LdapHelperDTO.EntryAttribute.cn, "*bastidas*", LdapHelperDTO.RequiredEntryAttributes.All);
 
-				//await Test_GetUsersAndGroupsByAttributeQueuedResult(true, LdapHelperDTO.EntryAttribute.cn, "*caba*", BaseDNEnum.br_com);
+				await Demo_SearchUsersAndGroupsByAttributeAsync(LdapHelperDTO.EntryAttribute.cn, "Cristian Hernán*", LdapHelperDTO.RequiredEntryAttributes.All);
 
-				//await Test_GetUsersAndGroupsByAttributeQueuedResult(true, LdapHelperDTO.EntryAttribute.cn, "*caba*", BaseDNEnum.cl_com);
+				await Demo_SearchUsersAndGroupsByAttributeAsync(LdapHelperDTO.EntryAttribute.distinguishedName, "CN=Grupo Seguridad Lanperu (LANPERU),OU=Security,OU=Groups,OU=LAN Peru,OU=Equipos,DC=pe,DC=lan,DC=com", LdapHelperDTO.RequiredEntryAttributes.All);
 
-				//await Test_GetUsersAndGroupsByAttributeQueuedResult(true, LdapHelperDTO.EntryAttribute.cn, "Incandela", BaseDNEnum.pe_com, WildcardTypeEnum.atBeginningAtEnd);
-
-				//_attributeFiler = "*" + LdapHelperLib.Utils.ConvertspecialCharsToScapedChars("(LIMCAR)") + "*";
-				//await Test_GetUsersAndGroupsByAttributeQueuedResult(true, LdapHelperDTO.EntryAttribute.cn, _attributeFiler, BaseDNEnum.pe_com);
-
-				//_attributeFiler = LdapHelperLib.Utils.ConvertspecialCharsToScapedChars("4303259");
-				//await Test_GetUsersAndGroupsByAttributeQueuedResult(true, LdapHelperDTO.EntryAttribute.sAMAccountName, _attributeFiler, BaseDNEnum.com);
-
-				//_attributeFiler = LdapHelperLib.Utils.ConvertspecialCharsToScapedChars("usr_ext01");
-				//await Test_GetUsersAndGroupsByAttributeQueuedResult(true, LdapHelperDTO.EntryAttribute.sAMAccountName, _attributeFiler, BaseDNEnum.pe_com);
-
-				//_attributeFiler = "*" + LdapHelperLib.Utils.ConvertspecialCharsToScapedChars("ramirez arce") + "*";
-				//await Test_GetUsersAndGroupsByAttributeQueuedResult(true, LdapHelperDTO.EntryAttribute.cn, _attributeFiler, BaseDNEnum.pe_com);
-
-				//await Test_GetUsersAndGroupsByAttributeQueuedResult(true, LdapHelperDTO.EntryAttribute.distinguishedName, "CN=Grupo Seguridad Lanperu (LANPERU),OU=Security,OU=Groups,OU=LAN Peru,OU=Equipos,DC=pe,DC=lan,DC=com", BaseDNEnum.pe_com, WildcardTypeEnum.none);
-
-				//await Test_GetUsersAndGroupsByAttributeQueuedResult(true, LdapHelperDTO.EntryAttribute.cn, "*usr*", BaseDNEnum.pe_com);
-
-				//await Test_GetUsersAndGroupsByAttributeQueuedResult(true, LdapHelperDTO.EntryAttribute.cn, "*simon*", BaseDNEnum.cl_com);
-
-				//await Test_GetUsersAndGroupsByAttributeQueuedResult(true, LdapHelperDTO.EntryAttribute.cn, "*simon*", BaseDNEnum.br_com);
-
-				//await Test_GetUsersAndGroupsByAttributeQueuedResult(true, LdapHelperDTO.EntryAttribute.cn, "*tordeur*", BaseDNEnum.com);
-
-				//await Test_GetUsersAndGroupsByAttributeQueuedResult(true, LdapHelperDTO.EntryAttribute.sAMAccountName, "*atordeur*", BaseDNEnum.cl_com);
-
-				//sAMAccountName: 4270826
-				//distinguishedName: CN=Joanna Pamela Martinez Bazalar,CN=Users,DC=cl,DC=lan,DC=com
-				//distinguishedName: CN=Tordeur Coeurnelle\, Alienor Claude Catherine,OU=Expiran,OU=TemporalOU,DC=cl,DC=lan,DC=com
-				//name: Tordeur Coeurnelle, Alienor Claude Catherine
-				//await Test_GetUsersAndGroupsByAttributeQueuedResult(true, LdapHelperDTO.EntryAttribute.name, "Tordeur Coeurnelle, Alienor Claude Catherine", BaseDNEnum.cl_com);
-
-				//await Test_GetUsersAndGroupsByAttributeQueuedResult(true, LdapHelperDTO.EntryAttribute.cn, "*silva lucidato*", BaseDNEnum.br_com);
-
-				//await Test_GetUsersAndGroupsByAttributeQueuedResult(true, LdapHelperDTO.EntryAttribute.objectSid, "S-1-5-21-1913140505-990805927-1540833222-54805", BaseDNEnum.com);
 
 
 
 				//_attributeFiler = "*" + LdapHelperLib.Utils.ConvertspecialCharsToScapedChars("simon_") + "*";
-				//await Test_GetUsersAndGroupsBy2Attributes(true, LdapHelperDTO.EntryAttribute.sAMAccountName, _attributeFiler, LdapHelperDTO.EntryAttribute.cn, _attributeFiler, false, BaseDNEnum.cl_com);
+				//await Demo_SearchUsersAndGroupsBy2AttributesAsync(true, LdapHelperDTO.EntryAttribute.sAMAccountName, _attributeFiler, LdapHelperDTO.EntryAttribute.cn, _attributeFiler, false, BaseDNEnum.cl_com);
 
-				//await Test_GetUsersAndGroupsBy2Attributes(false, LdapHelperDTO.EntryAttribute.sAMAccountName, "*administrator*", LdapHelperDTO.EntryAttribute.cn, "*administrator*", true);
+				//await Demo_SearchUsersAndGroupsBy2AttributesAsync(false, LdapHelperDTO.EntryAttribute.sAMAccountName, "*administrator*", LdapHelperDTO.EntryAttribute.cn, "*administrator*", true);
 
-				//await Test_GetUsersAndGroupsBy2Attributes(true, LdapHelperDTO.EntryAttribute.sAMAccountName, "4250889", LdapHelperDTO.EntryAttribute.cn, "4250889", false);
+				//await Demo_SearchUsersAndGroupsBy2AttributesAsync(true, LdapHelperDTO.EntryAttribute.sAMAccountName, "4250889", LdapHelperDTO.EntryAttribute.cn, "4250889", false);
 
-				//await Test_GetUsersAndGroupsBy2Attributes(true, LdapHelperDTO.EntryAttribute.sAMAccountName, "4238977", LdapHelperDTO.EntryAttribute.cn, "4238977", false);
+				//await Demo_SearchUsersAndGroupsBy2AttributesAsync(true, LdapHelperDTO.EntryAttribute.sAMAccountName, "4238977", LdapHelperDTO.EntryAttribute.cn, "4238977", false);
 
-				//await Test_GetUsersAndGroupsBy2Attributes(true, LdapHelperDTO.EntryAttribute.sAMAccountName, "atordeur", LdapHelperDTO.EntryAttribute.cn, "atordeur", false, BaseDNEnum.cl_com);
+				//await Demo_SearchUsersAndGroupsBy2AttributesAsync(true, LdapHelperDTO.EntryAttribute.sAMAccountName, "atordeur", LdapHelperDTO.EntryAttribute.cn, "atordeur", false, BaseDNEnum.cl_com);
 
-				//await Test_GetUsersAndGroupsBy2Attributes(true, LdapHelperDTO.EntryAttribute.sAMAccountName, "atordeur", LdapHelperDTO.EntryAttribute.cn, "*tordeur*", false, BaseDNEnum.cl_com);
-
-
-
-				//await Test_GetEntriesByAttribute(true, LdapHelperDTO.EntryAttribute.sAMAccountName, "usr*", BaseDNEnum.cl_com);
-
-				//await Test_GetEntriesByAttribute(true, LdapHelperDTO.EntryAttribute.sAMAccountName, "usr*", BaseDNEnum.br_com);
-
-				//await Test_GetEntriesByAttribute(true, LdapHelperDTO.EntryAttribute.sAMAccountName, "usr*", BaseDNEnum.com);
-
-				//await Test_GetEntriesByAttribute(false, LdapHelperDTO.EntryAttribute.sAMAccountName, "victor.bastidas.g");
-
-				//await Test_GetEntriesByAttribute(true, LdapHelperDTO.EntryAttribute.objectSid, "S-1-5-21-1913140505-990805927-1540833222-54805", BaseDNEnum.cl_com);
-
-				//await Test_GetEntriesByAttribute(true, LdapHelperDTO.EntryAttribute.objectSid, "S-1-5-21-1913140505-990805927-1540833222-54805", BaseDNEnum.br_com);
-
-				//await Test_GetEntriesByAttribute(true, LdapHelperDTO.EntryAttribute.objectSid, "S-1-5-21-1913140505-990805927-1540833222-54805", BaseDNEnum.com);
-
-				//await Test_GetEntriesByAttribute(false, LdapHelperDTO.EntryAttribute.objectSid, "S-1-5-21-1913140505-990805927-1540833222-54805");
-
-				//await Test_GetEntriesByAttribute(true, LdapHelperDTO.EntryAttribute.distinguishedName, "CN=SIMON_Administrador,OU=Aplicaciones,OU=Grupos,DC=cl,DC=lan,DC=com", BaseDNEnum.cl_com);
-
-				//await Test_GetEntriesByAttribute(true, LdapHelperDTO.EntryAttribute.distinguishedName, "CN=SIMON_Administrador,OU=Aplicaciones,OU=Grupos,DC=cl,DC=lan,DC=com", BaseDNEnum.br_com);
-
-				//await Test_GetEntriesByAttribute(true, LdapHelperDTO.EntryAttribute.distinguishedName, "CN=SIMON_Administrador,OU=Aplicaciones,OU=Grupos,DC=cl,DC=lan,DC=com", BaseDNEnum.com);
-
-				//await Test_GetEntriesByAttribute(false, LdapHelperDTO.EntryAttribute.distinguishedName, "CN=SIMON_Administrador,OU=Aplicaciones,OU=Grupos,DC=cl,DC=lan,DC=com");
+				//await Demo_SearchUsersAndGroupsBy2AttributesAsync(true, LdapHelperDTO.EntryAttribute.sAMAccountName, "atordeur", LdapHelperDTO.EntryAttribute.cn, "*tordeur*", false, BaseDNEnum.cl_com);
 
 
 
-				//await Test_GetGroupMembershipEntriesForEntry(true, LdapHelperDTO.KeyEntryAttribute.sAMAccountName, "usr_ext01", BaseDNEnum.com);
+				//await Demo_GetEntriesByAttributeAsync(true, LdapHelperDTO.EntryAttribute.sAMAccountName, "usr*", BaseDNEnum.cl_com);
 
-				//await Test_GetGroupMembershipEntriesForEntry(true, LdapHelperDTO.KeyEntryAttribute.sAMAccountName, "4303259", BaseDNEnum.com);
+				//await Demo_GetEntriesByAttributeAsync(true, LdapHelperDTO.EntryAttribute.sAMAccountName, "usr*", BaseDNEnum.br_com);
 
-				//await Test_GetGroupMembershipEntriesForEntry(true, LdapHelperDTO.KeyEntryAttribute.distinguishedName, "CN=Administrator,CN=Users,DC=pe,DC=lan,DC=com", true, BaseDNEnum.cl_com);
+				//await Demo_GetEntriesByAttributeAsync(true, LdapHelperDTO.EntryAttribute.sAMAccountName, "usr*", BaseDNEnum.com);
 
-				//await Test_GetGroupMembershipEntriesForEntry(true, LdapHelperDTO.KeyEntryAttribute.distinguishedName, "CN=Administrator,CN=Users,DC=pe,DC=lan,DC=com", true, BaseDNEnum.com);
+				//await Demo_GetEntriesByAttributeAsync(false, LdapHelperDTO.EntryAttribute.sAMAccountName, "victor.bastidas.g");
 
-				//await Test_GetGroupMembershipEntriesForEntry(false, LdapHelperDTO.KeyEntryAttribute.distinguishedName, "CN=Administrator,CN=Users,DC=pe,DC=lan,DC=com", true);
+				//await Demo_GetEntriesByAttributeAsync(true, LdapHelperDTO.EntryAttribute.objectSid, "S-1-5-21-1913140505-990805927-1540833222-54805", BaseDNEnum.cl_com);
 
-				//await Test_GetGroupMembershipEntriesForEntry(true, LdapHelperDTO.KeyEntryAttribute.sAMAccountName, "victor.bastidas.g", BaseDNEnum.br_com);
+				//await Demo_GetEntriesByAttributeAsync(true, LdapHelperDTO.EntryAttribute.objectSid, "S-1-5-21-1913140505-990805927-1540833222-54805", BaseDNEnum.br_com);
 
-				//await Test_GetGroupMembershipEntriesForEntry(true, LdapHelperDTO.KeyEntryAttribute.sAMAccountName, "victor.bastidas.g", BaseDNEnum.cl_com);
+				//await Demo_GetEntriesByAttributeAsync(true, LdapHelperDTO.EntryAttribute.objectSid, "S-1-5-21-1913140505-990805927-1540833222-54805", BaseDNEnum.com);
 
-				//await Test_GetGroupMembershipEntriesForEntry(true, LdapHelperDTO.KeyEntryAttribute.sAMAccountName, "victor.bastidas.g", BaseDNEnum.com);
+				//await Demo_GetEntriesByAttributeAsync(false, LdapHelperDTO.EntryAttribute.objectSid, "S-1-5-21-1913140505-990805927-1540833222-54805");
 
-				//await Test_GetGroupMembershipEntriesForEntry(false, LdapHelperDTO.KeyEntryAttribute.sAMAccountName, "victor.bastidas.g");
+				//await Demo_GetEntriesByAttributeAsync(true, LdapHelperDTO.EntryAttribute.distinguishedName, "CN=SIMON_Administrador,OU=Aplicaciones,OU=Grupos,DC=cl,DC=lan,DC=com", BaseDNEnum.cl_com);
 
-				//await Test_GetGroupMembershipEntriesForEntry(true, LdapHelperDTO.KeyEntryAttribute.objectSid, "S-1-5-21-1913140505-990805927-1540833222-54805", true, BaseDNEnum.br_com);
+				//await Demo_GetEntriesByAttributeAsync(true, LdapHelperDTO.EntryAttribute.distinguishedName, "CN=SIMON_Administrador,OU=Aplicaciones,OU=Grupos,DC=cl,DC=lan,DC=com", BaseDNEnum.br_com);
 
-				//await Test_GetGroupMembershipEntriesForEntry(true, LdapHelperDTO.KeyEntryAttribute.objectSid, "S-1-5-21-1913140505-990805927-1540833222-54805", true, BaseDNEnum.cl_com);
+				//await Demo_GetEntriesByAttributeAsync(true, LdapHelperDTO.EntryAttribute.distinguishedName, "CN=SIMON_Administrador,OU=Aplicaciones,OU=Grupos,DC=cl,DC=lan,DC=com", BaseDNEnum.com);
 
-				//await Test_GetGroupMembershipEntriesForEntry(true, LdapHelperDTO.KeyEntryAttribute.objectSid, "S-1-5-21-1913140505-990805927-1540833222-54805", true, BaseDNEnum.com);
-
-				//await Test_GetGroupMembershipEntriesForEntry(false, LdapHelperDTO.KeyEntryAttribute.objectSid, "S-1-5-21-1913140505-990805927-1540833222-54805", true);
+				//await Demo_GetEntriesByAttributeAsync(false, LdapHelperDTO.EntryAttribute.distinguishedName, "CN=SIMON_Administrador,OU=Aplicaciones,OU=Grupos,DC=cl,DC=lan,DC=com");
 
 
 
-				//await Test_GetGroupMembershipEntries(true, LdapHelperDTO.EntryAttribute.sAMAccountName, "4303259", BaseDNEnum.com);
+				//await Demo_GetGroupMembershipEntriesAsync(true, LdapHelperDTO.KeyEntryAttribute.sAMAccountName, "usr_ext01", BaseDNEnum.com);
+
+				//await Demo_GetGroupMembershipEntriesAsync(true, LdapHelperDTO.KeyEntryAttribute.sAMAccountName, "4303259", BaseDNEnum.com);
+
+				//await Demo_GetGroupMembershipEntriesAsync(true, LdapHelperDTO.KeyEntryAttribute.distinguishedName, "CN=Administrator,CN=Users,DC=pe,DC=lan,DC=com", true, BaseDNEnum.cl_com);
+
+				//await Demo_GetGroupMembershipEntriesAsync(true, LdapHelperDTO.KeyEntryAttribute.distinguishedName, "CN=Administrator,CN=Users,DC=pe,DC=lan,DC=com", true, BaseDNEnum.com);
+
+				//await Demo_GetGroupMembershipEntriesAsync(false, LdapHelperDTO.KeyEntryAttribute.distinguishedName, "CN=Administrator,CN=Users,DC=pe,DC=lan,DC=com", true);
+
+				//await Demo_GetGroupMembershipEntriesAsync(true, LdapHelperDTO.KeyEntryAttribute.sAMAccountName, "victor.bastidas.g", BaseDNEnum.br_com);
+
+				//await Demo_GetGroupMembershipEntriesAsync(true, LdapHelperDTO.KeyEntryAttribute.sAMAccountName, "victor.bastidas.g", BaseDNEnum.cl_com);
+
+				//await Demo_GetGroupMembershipEntriesAsync(true, LdapHelperDTO.KeyEntryAttribute.sAMAccountName, "victor.bastidas.g", BaseDNEnum.com);
+
+				//await Demo_GetGroupMembershipEntriesAsync(false, LdapHelperDTO.KeyEntryAttribute.sAMAccountName, "victor.bastidas.g");
+
+				//await Demo_GetGroupMembershipEntriesAsync(true, LdapHelperDTO.KeyEntryAttribute.objectSid, "S-1-5-21-1913140505-990805927-1540833222-54805", true, BaseDNEnum.br_com);
+
+				//await Demo_GetGroupMembershipEntriesAsync(true, LdapHelperDTO.KeyEntryAttribute.objectSid, "S-1-5-21-1913140505-990805927-1540833222-54805", true, BaseDNEnum.cl_com);
+
+				//await Demo_GetGroupMembershipEntriesAsync(true, LdapHelperDTO.KeyEntryAttribute.objectSid, "S-1-5-21-1913140505-990805927-1540833222-54805", true, BaseDNEnum.com);
+
+				//await Demo_GetGroupMembershipEntriesAsync(false, LdapHelperDTO.KeyEntryAttribute.objectSid, "S-1-5-21-1913140505-990805927-1540833222-54805", true);
+
+
+
+				//await Demo_GetGroupMembershipEntriesAsync(true, LdapHelperDTO.EntryAttribute.sAMAccountName, "4303259", BaseDNEnum.com);
 
 
 				Console.WriteLine();
@@ -279,7 +366,7 @@ namespace LDAPHelperLib.Demo
 		{
 			try
 			{
-				log_TestTitle("Test00_Authenticate");
+				logTestTitle("Test00_Authenticate");
 
 				var _c = new LdapHelperLib.LdhAuthenticator(getConnectionInfo());
 
@@ -302,11 +389,11 @@ namespace LDAPHelperLib.Demo
 			}
 		}
 
-		public static async Task<bool> Test_GetUsersAndGroupsByAttributeEnumerable(LdapHelperDTO.EntryAttribute filterAttribute, string filterValue, LdapHelperDTO.RequiredEntryAttributes requiredResults)
+		public static async Task<bool> Demo_SearchUsersAndGroupsByAttributeAsync(LdapHelperDTO.EntryAttribute filterAttribute, string filterValue, LdapHelperDTO.RequiredEntryAttributes requiredResults)
 		{
 			try
 			{
-				log_TestTitle("Test_GetUsersAndGroupsByAttributeEnumerable");
+				logTestTitle("Demo_SearchUsersAndGroupsByAttributeAsync");
 
 				var _s = new LdapHelperLib.LdhSearcher(getClientConfiguration());
 
@@ -317,7 +404,17 @@ namespace LDAPHelperLib.Demo
 				var _result = await _s.SearchUsersAndGroupsByAttributeAsync(filterAttribute, filterValue, requiredResults, Program.Tag);
 
 				if (_result.Entries.Count() == 0)
-					Log.Warning("No se encontraron registros con el criterio de búsqueda proporcionado.");
+				{
+					if (_result.HasErrorInfo)
+					{
+						Log.Error(_result.ErrorType);
+						Log.Error(_result.ErrorMessage);
+					}
+					else
+					{
+						Log.Warning("No se encontraron registros con el criterio de búsqueda proporcionado.");
+					}
+				}
 				else
 				{
 					foreach (var _i in _result.Entries)
@@ -343,57 +440,8 @@ namespace LDAPHelperLib.Demo
 				return false;
 			}
 		}
-
-		public static async Task<bool> Test_GetUsersAndGroupsByAttributeQueuedResult(LdapHelperDTO.EntryAttribute filterAttribute, string filterValue, LdapHelperDTO.RequiredEntryAttributes requiredResults)
-		{
-			try
-			{
-				log_TestTitle("Test_GetUsersAndGroupsByAttributeQueuedResult");
-
-				var _s = new LdapHelperLib.LdhSearcher(getClientConfiguration());
-
-				Log.Information(string.Format("Base DN: {0}", _s.SearchLimits.BaseDN));
-				Log.Information(string.Format("Búscando con el atributo {0}: {1}...", filterAttribute.ToString(), filterValue));
-				Console.WriteLine();
-
-				var _result = await _s.SearchUsersAndGroupsByAttributeAsync(filterAttribute, filterValue, requiredResults, Program.Tag);
-				if (string.IsNullOrEmpty(_result.ErrorType))
-				{
-					Log.Error(_result.ErrorType);
-					Log.Error(_result.ErrorMessage);
-					//Log.Error(_result.Error.StackTrace);
-					Console.WriteLine();
-				}
-
-				if (_result.Entries.Count().Equals(0))
-					Log.Warning("No se encontraron registros con el criterio de búsqueda proporcionado.");
-				else
-				{
-					foreach (var _i in _result.Entries)
-					{
-						Log.Information(_i.cn);
-						Log.Information(_i.objectSid);
-						Log.Information(_i.samAccountName);
-						Log.Information(_i.distinguishedName);
-						Console.WriteLine();
-					}
-
-					Log.Information(string.Format("{0} entries.", _result.Entries.Count().ToString()));
-				}
-
-				return true;
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine();
-				Log.Error(ex.Message);
-				Log.Error(ex.StackTrace);
-
-				return false;
-			}
-		}
-
-		public static async Task<bool> Test_GetUsersAndGroupsBy2Attributes(LdapHelperDTO.EntryAttribute filterAttribute, string filterValue, LdapHelperDTO.EntryAttribute secondFilterAttribute, string secondFilterValue, bool conjunctiveFilters, LdapHelperDTO.RequiredEntryAttributes requiredResults)
+		
+		public static async Task<bool> Demo_SearchUsersAndGroupsBy2AttributesAsync(LdapHelperDTO.EntryAttribute filterAttribute, string filterValue, LdapHelperDTO.EntryAttribute secondFilterAttribute, string secondFilterValue, bool conjunctiveFilters, LdapHelperDTO.RequiredEntryAttributes requiredResults)
 		{
 			if (string.IsNullOrEmpty(filterValue))
 			{
@@ -407,7 +455,7 @@ namespace LDAPHelperLib.Demo
 
 			try
 			{
-				log_TestTitle("Test_GetUsersAndGroupsBy2Attributes");
+				logTestTitle("Demo_SearchUsersAndGroupsBy2AttributesAsync");
 
 				var _s = new LdapHelperLib.LdhSearcher(getClientConfiguration());
 
@@ -443,11 +491,11 @@ namespace LDAPHelperLib.Demo
 			}
 		}
 
-		public static async Task<bool> Test_GetEntriesByAttribute(LdapHelperDTO.EntryAttribute attribute, string attributeFilter, LdapHelperDTO.RequiredEntryAttributes requiredResults)
+		public static async Task<bool> Demo_GetEntriesByAttributeAsync(LdapHelperDTO.EntryAttribute attribute, string attributeFilter, LdapHelperDTO.RequiredEntryAttributes requiredResults)
 		{
 			try
 			{
-				log_TestTitle("Test_GetEntriesByAttribute");
+				logTestTitle("Demo_GetEntriesByAttributeAsync");
 
 				var _s = new LdapHelperLib.LdhSearcher(getClientConfiguration());
 
@@ -482,11 +530,11 @@ namespace LDAPHelperLib.Demo
 			}
 		}
 
-		public static async Task<bool> Test_GetGroupMembershipEntriesForEntry(LdapHelperDTO.EntryKeyAttribute filterAttribute, string filterValue, LdapHelperDTO.RequiredEntryAttributes requiredResults, bool recursive)
+		public static async Task<bool> Demo_GetGroupMembershipEntriesAsync(LdapHelperDTO.EntryKeyAttribute filterAttribute, string filterValue, LdapHelperDTO.RequiredEntryAttributes requiredResults, bool recursive)
 		{
 			try
 			{
-				log_TestTitle("Test_GetGroupMembershipEntriesForEntry");
+				logTestTitle("Demo_GetGroupMembershipEntriesAsync");
 
 				var _s = new LdapHelperLib.LdhSearcher(getClientConfiguration());
 
@@ -512,11 +560,11 @@ namespace LDAPHelperLib.Demo
 			}
 		}
 
-		public static async Task<bool> Test_GetGroupMembershipCNsForEntry(LdapHelperDTO.EntryKeyAttribute keyAttribute, string keyAttributeFilter, LdapHelperDTO.RequiredEntryAttributes requiredResults, bool recursive)
+		public static async Task<bool> Demo_GetGroupMembershipCNs(LdapHelperDTO.EntryKeyAttribute keyAttribute, string keyAttributeFilter, LdapHelperDTO.RequiredEntryAttributes requiredResults, bool recursive)
 		{
 			try
 			{
-				log_TestTitle("Test_GetGroupMembershipCNsForEntry");
+				logTestTitle("Demo_GetGroupMembershipCNs");
 
 				var _s = new LdapHelperLib.LdhSearcher(getClientConfiguration());
 
@@ -542,11 +590,11 @@ namespace LDAPHelperLib.Demo
 			}
 		}
 
-		public static async Task<bool> Test_GetGroupMembershipEntries(string ldapServer, int port, string baseDN, LdapHelperDTO.EntryAttribute attribute, string attributeFilter, LdapHelperDTO.RequiredEntryAttributes requiredResults, bool recursive)
+		public static async Task<bool> Demo_GetGroupMembershipEntriesAsync(string ldapServer, int port, string baseDN, LdapHelperDTO.EntryAttribute attribute, string attributeFilter, LdapHelperDTO.RequiredEntryAttributes requiredResults, bool recursive)
 		{
 			try
 			{
-				log_TestTitle("Test_GetGroupMembershipEntries");
+				logTestTitle("Demo_GetGroupMembershipEntriesAsync");
 
 				var _s = new LdapHelperLib.LdhSearcher(getClientConfiguration());
 

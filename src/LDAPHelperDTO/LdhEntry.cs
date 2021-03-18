@@ -81,6 +81,8 @@ namespace LdapHelperDTO
 			}
 		}
 
+		public string co { get; set; }
+
 		private string _description;
 		public string description
 		{

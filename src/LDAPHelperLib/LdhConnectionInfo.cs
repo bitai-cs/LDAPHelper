@@ -6,13 +6,12 @@ namespace LdapHelperLib
 {
 	public class LdhConnectionInfo
 	{
-		public LdhConnectionInfo(string server, int port, bool useSSL, short connectionTimeout, LdhUserCredentials userCredentials)
+		public LdhConnectionInfo(string server, int port, bool useSSL, short connectionTimeout)
 		{
 			ServerName = server;
 			ServerPort = port;
 			UseSSL = useSSL;
 			ConnectionTimeout = connectionTimeout;
-			UserCredentials = userCredentials;
 		}
 
 		public string ServerName { get; }
@@ -25,7 +24,5 @@ namespace LdapHelperLib
 		/// Connection timeout in seconds
 		/// </summary>
 		public short ConnectionTimeout { get; }
-
-		public LdhUserCredentials UserCredentials { get; }
 	}
 }

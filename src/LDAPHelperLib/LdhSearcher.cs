@@ -23,82 +23,103 @@ namespace LdapHelperLib
 
 
 		#region Private methods
-		private async Task<LdapHelperDTO.LdhEntry> getLdapEntryFromAttributeSet(LdapAttributeSet attributeSet, string customTag)
+		private async Task<LdapHelperDTO.LdhEntry> getEntryFromAttributeSet(LdapAttributeSet attributeSet, string customTag)
 		{
 			var _ldapEntry = new LdapHelperDTO.LdhEntry(customTag);
 
 			LdapAttribute _attr;
 			byte[] _bytes;
+			string _temp;
 
-			_attr = attributeSet.GetAttribute("objectSid");
-			if (_attr != null)
+			if (attributeSet.ContainsKey(LdapHelperDTO.EntryAttribute.objectSid.ToString()))
 			{
-				_bytes = (byte[])(Array)_attr.ByteValue;
-				_ldapEntry.objectSidBytes = _bytes;
-				_ldapEntry.objectSid = ConvertByteToStringSid(_bytes);
+				_attr = attributeSet.GetAttribute(LdapHelperDTO.EntryAttribute.objectSid.ToString());
+				if (_attr != null)
+				{
+					_bytes = (byte[])(Array)_attr.ByteValue;
+					_ldapEntry.objectSidBytes = _bytes;
+					_ldapEntry.objectSid = ConvertByteToStringSid(_bytes);
+				}
 			}
 
-			_attr = attributeSet.GetAttribute("objectGUID");
-			if (_attr != null)
+			if (attributeSet.ContainsKey(LdapHelperDTO.EntryAttribute.objectGuid.ToString()))
 			{
-				_bytes = (byte[])(Array)_attr.ByteValue;
-				_ldapEntry.objectGuidBytes = _bytes;
-				_ldapEntry.objectGuid = new Guid(_bytes).ToString();
+				_attr = attributeSet.GetAttribute(LdapHelperDTO.EntryAttribute.objectGuid.ToString());
+				if (_attr != null)
+				{
+					_bytes = (byte[])(Array)_attr.ByteValue;
+					_ldapEntry.objectGuidBytes = _bytes;
+					_ldapEntry.objectGuid = new Guid(_bytes).ToString();
+				}
 			}
 
-			_ldapEntry.objectCategory = attributeSet.GetAttribute("objectCategory")?.StringValue;
+			_ldapEntry.objectCategory = attributeSet.ContainsKey(EntryAttribute.objectCategory.ToString()) ? attributeSet.GetAttribute(EntryAttribute.objectCategory.ToString()).StringValue : null;
 
-			_ldapEntry.objectClass = attributeSet.GetAttribute("objectClass")?.StringValueArray;
+			_ldapEntry.objectClass = attributeSet.ContainsKey(EntryAttribute.objectClass.ToString()) ? attributeSet.GetAttribute(EntryAttribute.objectClass.ToString()).StringValueArray : null;
 
-			_ldapEntry.company = attributeSet.GetAttribute("company")?.StringValue;
+			_ldapEntry.company = attributeSet.ContainsKey(EntryAttribute.company.ToString()) ? attributeSet.GetAttribute(EntryAttribute.company.ToString()).StringValue : null;
 
-			_ldapEntry.manager = attributeSet.GetAttribute("manager")?.StringValue;
+			_ldapEntry.co = attributeSet.ContainsKey(EntryAttribute.co.ToString()) ? attributeSet.GetAttribute(EntryAttribute.co.ToString()).StringValue : null;
 
-			_attr = attributeSet.GetAttribute("whenCreated");
-			if (_attr == null)
-				_ldapEntry.whenCreated = null;
-			else
-				_ldapEntry.whenCreated = DateTime.ParseExact(_attr.StringValue, "yyyyMMddHHmmss.0Z", System.Globalization.CultureInfo.InvariantCulture);
+			_ldapEntry.manager = attributeSet.ContainsKey(EntryAttribute.manager.ToString()) ? attributeSet.GetAttribute(EntryAttribute.manager.ToString()).StringValue : null;
 
-			_attr = attributeSet.GetAttribute("lastLogonTimestamp");
-			_ldapEntry.lastLogon = (_attr == null) ? null : new DateTime?(DateTime.FromFileTime(Convert.ToInt64(_attr.StringValue)));
+			if (attributeSet.ContainsKey(EntryAttribute.whenCreated.ToString()))
+			{
+				_attr = attributeSet.GetAttribute(EntryAttribute.whenCreated.ToString());
+				if (_attr == null)
+					_ldapEntry.whenCreated = null;
+				else
+					_ldapEntry.whenCreated = DateTime.ParseExact(_attr.StringValue, "yyyyMMddHHmmss.0Z", System.Globalization.CultureInfo.InvariantCulture);
+			}
 
-			_ldapEntry.department = attributeSet.GetAttribute("department")?.StringValue;
+			if (attributeSet.ContainsKey(EntryAttribute.lastLogonTimestamp.ToString()))
+			{
+				_attr = attributeSet.GetAttribute(EntryAttribute.lastLogonTimestamp.ToString());
+				_ldapEntry.lastLogon = (_attr == null) ? null : new DateTime?(DateTime.FromFileTime(Convert.ToInt64(_attr.StringValue)));
+			}
 
-			_ldapEntry.cn = attributeSet.GetAttribute("cn")?.StringValue;
+			_ldapEntry.department = attributeSet.ContainsKey(EntryAttribute.department.ToString()) ? attributeSet.GetAttribute(EntryAttribute.department.ToString()).StringValue : null;
 
-			_ldapEntry.name = attributeSet.GetAttribute("name")?.StringValue;
+			_ldapEntry.cn = attributeSet.ContainsKey(EntryAttribute.cn.ToString()) ? attributeSet.GetAttribute(EntryAttribute.cn.ToString()).StringValue : null;
 
-			_ldapEntry.samAccountName = attributeSet.GetAttribute("sAMAccountName")?.StringValue;
+			_ldapEntry.name = attributeSet.ContainsKey(EntryAttribute.name.ToString()) ? attributeSet.GetAttribute(EntryAttribute.name.ToString()).StringValue : null;
 
-			_ldapEntry.userPrincipalName = attributeSet.GetAttribute("userPrincipalName")?.StringValue;
+			_ldapEntry.samAccountName = attributeSet.ContainsKey(EntryAttribute.sAMAccountName.ToString()) ? attributeSet.GetAttribute(EntryAttribute.sAMAccountName.ToString()).StringValue : null;
 
-			_ldapEntry.distinguishedName = attributeSet.GetAttribute("distinguishedName")?.StringValue;
+			_ldapEntry.userPrincipalName = attributeSet.ContainsKey(EntryAttribute.userPrincipalName.ToString()) ? attributeSet.GetAttribute(EntryAttribute.userPrincipalName.ToString()).StringValue : null;
 
-			_ldapEntry.displayName = attributeSet.GetAttribute("displayName")?.StringValue;
+			_ldapEntry.distinguishedName = attributeSet.ContainsKey(EntryAttribute.displayName.ToString()) ? attributeSet.GetAttribute(EntryAttribute.displayName.ToString()).StringValue : null;
 
-			_ldapEntry.givenName = attributeSet.GetAttribute("givenName")?.StringValue;
+			_ldapEntry.displayName = attributeSet.ContainsKey(EntryAttribute.displayName.ToString()) ? attributeSet.GetAttribute(EntryAttribute.displayName.ToString()).StringValue : null;
 
-			_ldapEntry.sn = attributeSet.GetAttribute("sn")?.StringValue;
+			_ldapEntry.givenName = attributeSet.ContainsKey(EntryAttribute.givenName.ToString()) ? attributeSet.GetAttribute(EntryAttribute.givenName.ToString()).StringValue : null;
 
-			_ldapEntry.description = attributeSet.GetAttribute("description")?.StringValue;
+			_ldapEntry.sn = attributeSet.ContainsKey(EntryAttribute.sn.ToString()) ? attributeSet.GetAttribute(EntryAttribute.sn.ToString()).StringValue : null;
 
-			_ldapEntry.telephoneNumber = attributeSet.GetAttribute("telephoneNumber")?.StringValue;
+			_ldapEntry.description = attributeSet.ContainsKey(EntryAttribute.description.ToString()) ? attributeSet.GetAttribute(EntryAttribute.description.ToString()).StringValue : null;
 
-			_ldapEntry.mail = attributeSet.GetAttribute("mail")?.StringValue;
+			_ldapEntry.telephoneNumber = attributeSet.ContainsKey(EntryAttribute.telephoneNumber.ToString()) ? attributeSet.GetAttribute(EntryAttribute.telephoneNumber.ToString()).StringValue : null;
 
-			_ldapEntry.title = attributeSet.GetAttribute("title")?.StringValue;
+			_ldapEntry.mail = attributeSet.ContainsKey(EntryAttribute.mail.ToString()) ? attributeSet.GetAttribute(EntryAttribute.mail.ToString()).StringValue : null;
 
-			_ldapEntry.l = attributeSet.GetAttribute("l")?.StringValue;
+			_ldapEntry.title = attributeSet.ContainsKey(EntryAttribute.title.ToString()) ? attributeSet.GetAttribute(EntryAttribute.title.ToString()).StringValue : null;
 
-			_ldapEntry.c = attributeSet.GetAttribute("c")?.StringValue;
+			_ldapEntry.l = attributeSet.ContainsKey(EntryAttribute.l.ToString()) ? attributeSet.GetAttribute(EntryAttribute.l.ToString()).StringValue : null;
 
-			_attr = attributeSet.GetAttribute("sAMAccountType");
-			_ldapEntry.samAccountType = GetSAMAccountTypeName(_attr?.StringValue);
+			_ldapEntry.c = attributeSet.ContainsKey(EntryAttribute.c.ToString()) ? attributeSet.GetAttribute(EntryAttribute.c.ToString()).StringValue : null;
 
-			_ldapEntry.member = attributeSet.GetAttribute("member")?.StringValueArray;
+			_temp = attributeSet.ContainsKey(EntryAttribute.sAMAccountType.ToString()) ? attributeSet.GetAttribute(EntryAttribute.sAMAccountType.ToString()).StringValue : null;
+			_ldapEntry.samAccountType = GetSAMAccountTypeName(_temp);
 
-			_ldapEntry.memberOf = attributeSet.GetAttribute("memberOf")?.StringValueArray;
+			if (attributeSet.ContainsKey(EntryAttribute.member.ToString()))
+			{
+				_ldapEntry.member = attributeSet.GetAttribute(EntryAttribute.member.ToString()).StringValueArray;
+			}
+
+			if (attributeSet.ContainsKey(EntryAttribute.memberOf.ToString()))
+			{
+				_ldapEntry.memberOf = attributeSet.GetAttribute(EntryAttribute.memberOf.ToString()).StringValueArray;
+			}
 
 			if (_ldapEntry.memberOf != null)
 			{
@@ -113,7 +134,7 @@ namespace LdapHelperLib
 						if (_ldapEntry.distinguishedName.Equals(_parentDN.ToLower(), StringComparison.OrdinalIgnoreCase))
 							continue; //Pasar al siguiente objeto.
 
-						var _searchResult = await this.SearchEntriesByAttributeAsync(EntryAttribute.distinguishedName, _parentDN.ConvertspecialCharsToScapedChars(), RequiredEntryAttributes.Minimun, customTag);
+						var _searchResult = await this.SearchEntriesByAttributeAsync(EntryAttribute.distinguishedName, _parentDN.ReplaceSpecialCharsToScapedChars(), RequiredEntryAttributes.Minimun, customTag);
 						if (_searchResult.Entries.Count() > 0) //Podría ser 0 si el _parentDN esta fuera del baseDN de búsqueda
 							_parentEntries.Add((LdapHelperDTO.LdhEntry)_searchResult.Entries.First());
 					}
@@ -197,6 +218,7 @@ namespace LdapHelperLib
 			return _memberOfEntries;
 		}
 
+		[Obsolete("Could be removed in future updates")]
 		private async Task<IEnumerable<LdapHelperDTO.LdhEntry>> getResultListAsync(RequiredEntryAttributes requiredEntryAttributes, string searchFilter, string customTag)
 		{
 			var _attributesToLoad = this.GetRequiredAttributeNames(requiredEntryAttributes);
@@ -219,7 +241,7 @@ namespace LdapHelperLib
 					{
 						_entry = search.Next();
 
-						var _ldapEntry = await getLdapEntryFromAttributeSet(_entry.GetAttributeSet(), customTag);
+						var _ldapEntry = await getEntryFromAttributeSet(_entry.GetAttributeSet(), customTag);
 
 						_results.Add(_ldapEntry);
 					}
@@ -260,7 +282,7 @@ namespace LdapHelperLib
 					{
 						if (_responseMsg is Novell.Directory.Ldap.LdapSearchResult)
 						{
-							var _ldapEntry = await getLdapEntryFromAttributeSet(((Novell.Directory.Ldap.LdapSearchResult)_responseMsg).Entry.GetAttributeSet(), customTag);
+							var _ldapEntry = await getEntryFromAttributeSet(((Novell.Directory.Ldap.LdapSearchResult)_responseMsg).Entry.GetAttributeSet(), customTag);
 
 							_entries.Add(_ldapEntry);
 						}
@@ -285,7 +307,7 @@ namespace LdapHelperLib
 			if (string.IsNullOrEmpty(filterValue) || string.IsNullOrWhiteSpace(filterValue))
 				throw new ArgumentException("Debe de especificar el valor para filtrar el atributo");
 
-			string _searchFilter = string.Format("(&(!(objectClass=computer))(&(|(objectClass=user)(objectClass=group)))({0}={1}))", filterAttribute.ToString(), filterValue);
+			string _searchFilter = string.Format("(&(!(objectClass=computer))(&(|(objectClass=user)(objectClass=group)))({0}={1}))", filterAttribute.ToString(), filterValue.ReplaceSpecialCharsToScapedChars());
 
 			var _result = await getSearchResultAsync(requiredEntryAttributes, _searchFilter, customTag);
 
@@ -301,7 +323,7 @@ string filterValue, EntryAttribute secondFilterAttribute, string secondFilterVal
 			if (string.IsNullOrEmpty(secondFilterValue) || string.IsNullOrWhiteSpace(secondFilterValue))
 				throw new ArgumentException("Debe de especificar el valor para filtrar el segundo atributo");
 
-			string _searchFilter = string.Format("(&(!(objectClass=computer))(|(objectClass=user)(objectClass=group))(" + (conjunctiveFilters ? "&" : "|") + "({0}={1})({2}={3})))", filterAttribute.ToString(), filterValue.Trim(), secondFilterAttribute.ToString(), secondFilterValue.Trim());
+			string _searchFilter = string.Format("(&(!(objectClass=computer))(|(objectClass=user)(objectClass=group))(" + (conjunctiveFilters ? "&" : "|") + "({0}={1})({2}={3})))", filterAttribute.ToString(), filterValue.ReplaceSpecialCharsToScapedChars(), secondFilterAttribute.ToString(), secondFilterValue.ReplaceSpecialCharsToScapedChars());
 
 			var _result = await getSearchResultAsync(requiredEntryAttributes, _searchFilter, customTag);
 
@@ -313,7 +335,7 @@ string filterValue, EntryAttribute secondFilterAttribute, string secondFilterVal
 			if (string.IsNullOrEmpty(filterValue) || string.IsNullOrWhiteSpace(filterValue))
 				throw new ArgumentException("Debe de especificar el valor para filtrar el atributo");
 
-			string _searchFilter = string.Format("({0}={1})", filterAttribute, filterValue);
+			string _searchFilter = string.Format("({0}={1})", filterAttribute, filterValue.ReplaceSpecialCharsToScapedChars());
 
 			var _result = await getSearchResultAsync(requiredEntryAttributes, _searchFilter, customTag);
 

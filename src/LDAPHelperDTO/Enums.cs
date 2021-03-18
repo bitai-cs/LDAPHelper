@@ -12,6 +12,7 @@ namespace LdapHelperDTO
 		c,
 		cn,
 		company,
+		co,
 		department,
 		description,
 		displayName,
