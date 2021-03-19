@@ -6,6 +6,7 @@ using System.Linq;
 using System.Security;
 using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
+using LDAPHelper.Extensions;
 
 namespace LDAPHelper.Demo
 {
@@ -255,6 +256,7 @@ namespace LDAPHelper.Demo
 		}
 		#endregion
 
+
 		public static void Main(string[] args)
 		{
 			Task.Run(() => MainAsync(args)).GetAwaiter().GetResult();
@@ -262,6 +264,8 @@ namespace LDAPHelper.Demo
 
 		public static async Task MainAsync(string[] args)
 		{
+			string _filterValue;
+
 			try
 			{
 				configLog();
@@ -284,46 +288,42 @@ namespace LDAPHelper.Demo
 
 				requestBaseDN();
 
+				#region Authenticate
 				//await Test_AuthenticateUser("LANPERU\\usr_ext01", "L4t4m2018");
 				//await Test_AuthenticateUser("LANPERU\\4439690", "810117V|k0");
+				#endregion
 
-				await Demo_SearchUsersAndGroupsByAttributeAsync(LDAPHelper.DTO.EntryAttribute.sAMAccountName, "usr_ext01", LDAPHelper.DTO.RequiredEntryAttributes.All);
+				#region Search User & Groups 1
+				//await Demo_SearchUsersAndGroupsByAttributeAsync(LDAPHelper.DTO.EntryAttribute.sAMAccountName, "usr_ext01", LDAPHelper.DTO.RequiredEntryAttributes.All);
 
-				await Demo_SearchUsersAndGroupsByAttributeAsync(LDAPHelper.DTO.EntryAttribute.sAMAccountName, "4270826", LDAPHelper.DTO.RequiredEntryAttributes.All);
+				await Demo_SearchUsersAndGroupsByAttributeAsync(LDAPHelper.DTO.EntryAttribute.sAMAccountName, "4439690", LDAPHelper.DTO.RequiredEntryAttributes.All);
 
-				await Demo_SearchUsersAndGroupsByAttributeAsync(LDAPHelper.DTO.EntryAttribute.cn, "*bastidas*", LDAPHelper.DTO.RequiredEntryAttributes.All);
+				//await Demo_SearchUsersAndGroupsByAttributeAsync(LDAPHelper.DTO.EntryAttribute.cn, "*bastidas*", LDAPHelper.DTO.RequiredEntryAttributes.All);
 
-				await Demo_SearchUsersAndGroupsByAttributeAsync(LDAPHelper.DTO.EntryAttribute.cn, "Cristian Hernán*", LDAPHelper.DTO.RequiredEntryAttributes.All);
+				//await Demo_SearchUsersAndGroupsByAttributeAsync(LDAPHelper.DTO.EntryAttribute.cn, "Cristian Hernán*", LDAPHelper.DTO.RequiredEntryAttributes.All);
 
-				await Demo_SearchUsersAndGroupsByAttributeAsync(LDAPHelper.DTO.EntryAttribute.distinguishedName, "CN=Grupo Seguridad Lanperu (LANPERU),OU=Security,OU=Groups,OU=LAN Peru,OU=Equipos,DC=pe,DC=lan,DC=com", LDAPHelper.DTO.RequiredEntryAttributes.All);
+				//_filterValue = "CN=Grupo Seguridad Lanperu (LANPERU),OU=Security,OU=Groups,OU=LAN Peru,OU=Equipos,DC=pe,DC=lan,DC=com";
+				//_filterValue = _filterValue.ReplaceSpecialCharsToScapedChars();
+				//await Demo_SearchUsersAndGroupsByAttributeAsync(LDAPHelper.DTO.EntryAttribute.distinguishedName, _filterValue, LDAPHelper.DTO.RequiredEntryAttributes.All);
+				#endregion
 
+				#region Search User & Groups 2
+				//_filterValue = "*simon_*";
+				//await Demo_SearchUsersAndGroupsBy2AttributesAsync(LDAPHelper.DTO.EntryAttribute.sAMAccountName, _filterValue, LDAPHelper.DTO.EntryAttribute.cn, _filterValue, false, DTO.RequiredEntryAttributes.All);
 
+				await Demo_SearchUsersAndGroupsBy2AttributesAsync(LDAPHelper.DTO.EntryAttribute.sAMAccountName, "*administrator*", LDAPHelper.DTO.EntryAttribute.cn, "*administrator*", true, DTO.RequiredEntryAttributes.All);
+				#endregion
 
+				#region Seaarch Any kind of Entries 
+				await Demo_GetEntriesByAttributeAsync(LDAPHelper.DTO.EntryAttribute.sAMAccountName, "usr*", DTO.RequiredEntryAttributes.All);
 
-				//_attributeFiler = "*" + LDAPHelper.Utils.ConvertspecialCharsToScapedChars("simon_") + "*";
-				//await Demo_SearchUsersAndGroupsBy2AttributesAsync(true, LDAPHelper.DTO.EntryAttribute.sAMAccountName, _attributeFiler, LDAPHelper.DTO.EntryAttribute.cn, _attributeFiler, false, BaseDNEnum.cl_com);
-
-				//await Demo_SearchUsersAndGroupsBy2AttributesAsync(false, LDAPHelper.DTO.EntryAttribute.sAMAccountName, "*administrator*", LDAPHelper.DTO.EntryAttribute.cn, "*administrator*", true);
-
-				//await Demo_SearchUsersAndGroupsBy2AttributesAsync(true, LDAPHelper.DTO.EntryAttribute.sAMAccountName, "4250889", LDAPHelper.DTO.EntryAttribute.cn, "4250889", false);
-
-				//await Demo_SearchUsersAndGroupsBy2AttributesAsync(true, LDAPHelper.DTO.EntryAttribute.sAMAccountName, "4238977", LDAPHelper.DTO.EntryAttribute.cn, "4238977", false);
-
-				//await Demo_SearchUsersAndGroupsBy2AttributesAsync(true, LDAPHelper.DTO.EntryAttribute.sAMAccountName, "atordeur", LDAPHelper.DTO.EntryAttribute.cn, "atordeur", false, BaseDNEnum.cl_com);
-
-				//await Demo_SearchUsersAndGroupsBy2AttributesAsync(true, LDAPHelper.DTO.EntryAttribute.sAMAccountName, "atordeur", LDAPHelper.DTO.EntryAttribute.cn, "*tordeur*", false, BaseDNEnum.cl_com);
-
-
-
-				//await Demo_GetEntriesByAttributeAsync(true, LDAPHelper.DTO.EntryAttribute.sAMAccountName, "usr*", BaseDNEnum.cl_com);
+				await Demo_GetEntriesByAttributeAsync(LDAPHelper.DTO.EntryAttribute.objectSid, "S-1-5-21-638406840-1180129177-883519231-179439", DTO.RequiredEntryAttributes.All);
 
 				//await Demo_GetEntriesByAttributeAsync(true, LDAPHelper.DTO.EntryAttribute.sAMAccountName, "usr*", BaseDNEnum.br_com);
 
 				//await Demo_GetEntriesByAttributeAsync(true, LDAPHelper.DTO.EntryAttribute.sAMAccountName, "usr*", BaseDNEnum.com);
 
 				//await Demo_GetEntriesByAttributeAsync(false, LDAPHelper.DTO.EntryAttribute.sAMAccountName, "victor.bastidas.g");
-
-				//await Demo_GetEntriesByAttributeAsync(true, LDAPHelper.DTO.EntryAttribute.objectSid, "S-1-5-21-1913140505-990805927-1540833222-54805", BaseDNEnum.cl_com);
 
 				//await Demo_GetEntriesByAttributeAsync(true, LDAPHelper.DTO.EntryAttribute.objectSid, "S-1-5-21-1913140505-990805927-1540833222-54805", BaseDNEnum.br_com);
 
@@ -338,7 +338,7 @@ namespace LDAPHelper.Demo
 				//await Demo_GetEntriesByAttributeAsync(true, LDAPHelper.DTO.EntryAttribute.distinguishedName, "CN=SIMON_Administrador,OU=Aplicaciones,OU=Grupos,DC=cl,DC=lan,DC=com", BaseDNEnum.com);
 
 				//await Demo_GetEntriesByAttributeAsync(false, LDAPHelper.DTO.EntryAttribute.distinguishedName, "CN=SIMON_Administrador,OU=Aplicaciones,OU=Grupos,DC=cl,DC=lan,DC=com");
-
+				#endregion
 
 
 				//await Demo_GetGroupMembershipEntriesAsync(true, LDAPHelper.DTO.KeyEntryAttribute.sAMAccountName, "usr_ext01", BaseDNEnum.com);
@@ -447,12 +447,15 @@ namespace LDAPHelper.Demo
 				}
 				else
 				{
-					foreach (var _i in _result.Entries)
+					foreach (var _entry in _result.Entries)
 					{
-						Log.Information(_i.cn);
-						Log.Information(_i.objectSid);
-						Log.Information(_i.samAccountName);
-						Log.Information(_i.distinguishedName);
+						Log.Information(_entry.company);
+						Log.Information(_entry.co);
+						Log.Information(_entry.samAccountName);
+						Log.Information(_entry.cn);
+						Log.Information(_entry.displayName);
+						Log.Information(_entry.distinguishedName);
+						Log.Information(_entry.objectSid);
 						Console.WriteLine();
 					}
 
@@ -498,12 +501,15 @@ namespace LDAPHelper.Demo
 					Log.Warning("No se encontraron registros con el criterio de búsqueda proporcionado.");
 				else
 				{
-					foreach (var _i in _result.Entries)
+					foreach (var _entry in _result.Entries)
 					{
-						Log.Information(_i.cn);
-						Log.Information(_i.objectSid);
-						Log.Information(_i.samAccountName);
-						Log.Information(_i.distinguishedName);
+						Log.Information(_entry.company);
+						Log.Information(_entry.co);
+						Log.Information(_entry.samAccountName);
+						Log.Information(_entry.cn);
+						Log.Information(_entry.displayName);
+						Log.Information(_entry.distinguishedName);
+						Log.Information(_entry.objectSid);
 						Console.WriteLine();
 					}
 
@@ -542,10 +548,14 @@ namespace LDAPHelper.Demo
 					Console.WriteLine();
 					foreach (var _entry in _result.Entries)
 					{
-						Log.Information(_entry.cn);
-						Log.Information(_entry.objectSid);
+						Log.Information(_entry.company);
+						Log.Information(_entry.co);
 						Log.Information(_entry.samAccountName);
+						Log.Information(_entry.cn);
+						Log.Information(_entry.displayName);
 						Log.Information(_entry.distinguishedName);
+						Log.Information(_entry.objectSid);
+						Console.WriteLine();
 					}
 				}
 

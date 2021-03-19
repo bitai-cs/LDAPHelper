@@ -34,7 +34,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\LDAPHelperDTO\LDAPHelper.DTO.csproj" />
+    <ProjectReference Include="..\LDAPHelper.DTO\LDAPHelper.DTO.csproj" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">

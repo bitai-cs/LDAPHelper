@@ -9,385 +9,79 @@ namespace LDAPHelper.DTO
 		#region Constructor
 		public LdhEntry(string customTag = null)
 		{
-			_customTag = customTag;
+			this.CustomTag = customTag;
 		}
 		#endregion
 
-		private string _customTag;
-		public string CustomTag
-		{
-			set
-			{
-				_customTag = value;
-			}
-			get
-			{
-				return _customTag;
-			}
-		}
+		public string CustomTag { get; set; }
 
-		private string _directoryEntryPath;
-		public string DirectoryEntryPath
-		{
-			set
-			{
-				_directoryEntryPath = value;
-			}
-			get
-			{
-				return _directoryEntryPath;
-			}
-		}
+		public string DirectoryEntryPath { get; set; }
 
 		//Country Abrev.
-		private string _c;
-		public string c
-		{
-			get
-			{
-				return _c;
-			}
-			set
-			{
-				_c = value;
-			}
-		}
+		public string c { get; set; }
 
 		//Common name
-		private string _cn;
-		public string cn
-		{
-			get
-			{
-				return _cn;
-			}
-			set
-			{
-				_cn = value;
-			}
-		}
+		public string cn { get; set; }
 
 		//Company name
-		private string _company;
-		public string company
-		{
-			get
-			{
-				return _company;
-			}
-			set
-			{
-				_company = value;
-			}
-		}
+		public string company { get; set; }
 
 		public string co { get; set; }
 
-		private string _description;
-		public string description
-		{
-			get
-			{
-				return _description;
-			}
-			set
-			{
-				_description = value;
-			}
-		}
+		public string description { get; set; }
 
-		private string _department;
-		public string department
-		{
-			get
-			{
-				return _department;
-			}
-			set
-			{
-				_department = value;
-			}
-		}
+		public string department { get; set; }
 
-		private string _displayName;
-		public string displayName
-		{
-			get
-			{
-				return _displayName;
-			}
-			set
-			{
-				_displayName = value;
-			}
-		}
+		public string displayName { get; set; }
 
-		private string _distinguishedName;
-		public string distinguishedName
-		{
-			get
-			{
-				return _distinguishedName;
-			}
-			set
-			{
-				_distinguishedName = value;
-			}
-		}
+		public string distinguishedName { get; set; }
 
-		private string _givenName;
 		/// <summary>
 		/// First name
 		/// </summary>
-		public string givenName
-		{
-			get
-			{
-				return _givenName;
-			}
-			set
-			{
-				_givenName = value;
-			}
-		}
+		public string givenName { get; set; }
 
-		private string _l;
-		public string l { set => _l = value; get => _l; }
+		public string l { get; set; }
 
-		private DateTime? _lastLogon;
-		public DateTime? lastLogon
-		{
-			get
-			{
-				return _lastLogon;
-			}
-			set
-			{
-				_lastLogon = value;
-			}
-		}
+		public DateTime? lastLogon { get; set; }
 
-		private string _mail;
-		public string mail
-		{
-			get
-			{
-				return _mail;
-			}
-			set
-			{
-				_mail = value;
-			}
-		}
+		public string mail { get; set; }
 
-		private string _manager;
-		public string manager
-		{
-			get
-			{
-				return _manager;
-			}
-			set
-			{
-				_manager = value;
-			}
-		}
+		public string manager { get; set; }
 
-		private string[] _member;
-		public string[] member
-		{
-			get
-			{
-				return _member;
-			}
-			set
-			{
-				_member = value;
-			}
-		}
+		public string[] member { get; set; }
 
-		private string[] _memberOf;
-		public string[] memberOf
-		{
-			get
-			{
-				return _memberOf;
-			}
-			set
-			{
-				_memberOf = value;
-			}
-		}
+		public string[] memberOf { get; set; }
 
-		private IEnumerable<LdhEntry> _memberOfEntries;
-		public IEnumerable<LdhEntry> memberOfEntries
-		{
-			get => _memberOfEntries;
-			set => _memberOfEntries = value;
-		}
+		public IEnumerable<LdhEntry> memberOfEntries { get; set; }
 
-		private string _name;
-		public string name { set => _name = value; get => _name; }
+		public string name { get; set; }
 
-		private string _objectCategory;
-		public string objectCategory
-		{
-			get
-			{
-				return _objectCategory;
-			}
-			set
-			{
-				_objectCategory = value;
-			}
-		}
+		public string objectCategory { get; set; }
 
-		private string[] _objectClass;
-		public string[] objectClass
-		{
-			get
-			{
-				return _objectClass;
-			}
-			set
-			{
-				_objectClass = value;
-			}
-		}
+		public string[] objectClass { get; set; }
 
-		private string _samAccountName;
-		public string samAccountName
-		{
-			get
-			{
-				return _samAccountName;
-			}
-			set
-			{
-				_samAccountName = value;
-			}
-		}
+		public string samAccountName { get; set; }
 
-		private string _samAccountType;
-		public string samAccountType { set => _samAccountType = value; get => _samAccountType; }
+		public string samAccountType { get; set; }
 
-		//Surname
-		private string _sn;
-		public string sn
-		{
-			get
-			{
-				return _sn;
-			}
-			set
-			{
-				_sn = value;
-			}
-		}
+		public string sn { get; set; }
 
-		private string _telephoneNumber;
-		public string telephoneNumber
-		{
-			get
-			{
-				return _telephoneNumber;
-			}
-			set
-			{
-				_telephoneNumber = value;
-			}
-		}
+		public string telephoneNumber { get; set; }
 
-		private string _title;
-		public string title
-		{
-			get
-			{
-				return _title;
-			}
-			set
-			{
-				_title = value;
-			}
-		}
+		public string title { get; set; }
 
-		private string _userPrincipalName;
-		public string userPrincipalName
-		{
-			get
-			{
-				return _userPrincipalName;
-			}
-			set
-			{
-				_userPrincipalName = value;
-			}
-		}
+		public string userPrincipalName { get; set; }
 
-		private DateTime? _whenCreated;
-		public DateTime? whenCreated
-		{
-			get
-			{
-				return _whenCreated;
-			}
-			set
-			{
-				_whenCreated = value;
-			}
-		}
+		public DateTime? whenCreated { get; set; }
 
-		private string _objectGuid;
-		public string objectGuid
-		{
-			get
-			{
-				return _objectGuid;
-			}
-			set
-			{
-				_objectGuid = value;
-			}
-		}
+		public string objectGuid { get; set; }
 
-		private byte[] _objectGuidBytes;
-		public byte[] objectGuidBytes
-		{
-			get
-			{
-				return _objectGuidBytes;
-			}
-			set
-			{
-				_objectGuidBytes = value;
-			}
-		}
+		public byte[] objectGuidBytes { get; set; }
 
-		private string _objectSid;
-		public string objectSid
-		{
-			get
-			{
-				return _objectSid;
-			}
-			set
-			{
-				_objectSid = value;
-			}
-		}
+		public string objectSid { get; set; }
 
-		private byte[] _objectSidBytes;
-		public byte[] objectSidBytes
-		{
-			get
-			{
-				return _objectSidBytes;
-			}
-			set
-			{
-				_objectSidBytes = value;
-			}
-		}
+		public byte[] objectSidBytes { get; set; }
 
 		#region IComparable Members
 		public int CompareTo(object obj)
@@ -395,7 +89,7 @@ namespace LDAPHelper.DTO
 			if (obj is LdhEntry)
 			{
 				var u2 = (LdhEntry)obj;
-				return _distinguishedName.CompareTo(u2.distinguishedName);
+				return this.distinguishedName.CompareTo(u2.distinguishedName);
 			}
 			else
 				throw new ArgumentException("Object has not implemented ILdapEntry interface.");

@@ -88,7 +88,7 @@ namespace LDAPHelper
 
 			_ldapEntry.userPrincipalName = attributeSet.ContainsKey(EntryAttribute.userPrincipalName.ToString()) ? attributeSet.GetAttribute(EntryAttribute.userPrincipalName.ToString()).StringValue : null;
 
-			_ldapEntry.distinguishedName = attributeSet.ContainsKey(EntryAttribute.displayName.ToString()) ? attributeSet.GetAttribute(EntryAttribute.displayName.ToString()).StringValue : null;
+			_ldapEntry.distinguishedName = attributeSet.ContainsKey(EntryAttribute.distinguishedName.ToString()) ? attributeSet.GetAttribute(EntryAttribute.distinguishedName.ToString()).StringValue : null;
 
 			_ldapEntry.displayName = attributeSet.ContainsKey(EntryAttribute.displayName.ToString()) ? attributeSet.GetAttribute(EntryAttribute.displayName.ToString()).StringValue : null;
 
@@ -307,7 +307,7 @@ namespace LDAPHelper
 			if (string.IsNullOrEmpty(filterValue) || string.IsNullOrWhiteSpace(filterValue))
 				throw new ArgumentException("Debe de especificar el valor para filtrar el atributo");
 
-			string _searchFilter = string.Format("(&(!(objectClass=computer))(&(|(objectClass=user)(objectClass=group)))({0}={1}))", filterAttribute.ToString(), filterValue.ReplaceSpecialCharsToScapedChars());
+			string _searchFilter = string.Format("(&(!(objectClass=computer))(&(|(objectClass=user)(objectClass=group)))({0}={1}))", filterAttribute.ToString(), filterValue);
 
 			var _result = await getSearchResultAsync(requiredEntryAttributes, _searchFilter, customTag);
 
@@ -323,7 +323,7 @@ string filterValue, EntryAttribute secondFilterAttribute, string secondFilterVal
 			if (string.IsNullOrEmpty(secondFilterValue) || string.IsNullOrWhiteSpace(secondFilterValue))
 				throw new ArgumentException("Debe de especificar el valor para filtrar el segundo atributo");
 
-			string _searchFilter = string.Format("(&(!(objectClass=computer))(|(objectClass=user)(objectClass=group))(" + (conjunctiveFilters ? "&" : "|") + "({0}={1})({2}={3})))", filterAttribute.ToString(), filterValue.ReplaceSpecialCharsToScapedChars(), secondFilterAttribute.ToString(), secondFilterValue.ReplaceSpecialCharsToScapedChars());
+			string _searchFilter = string.Format("(&(!(objectClass=computer))(|(objectClass=user)(objectClass=group))(" + (conjunctiveFilters ? "&" : "|") + "({0}={1})({2}={3})))", filterAttribute.ToString(), filterValue, secondFilterAttribute.ToString(), secondFilterValue);
 
 			var _result = await getSearchResultAsync(requiredEntryAttributes, _searchFilter, customTag);
 
@@ -335,7 +335,7 @@ string filterValue, EntryAttribute secondFilterAttribute, string secondFilterVal
 			if (string.IsNullOrEmpty(filterValue) || string.IsNullOrWhiteSpace(filterValue))
 				throw new ArgumentException("Debe de especificar el valor para filtrar el atributo");
 
-			string _searchFilter = string.Format("({0}={1})", filterAttribute, filterValue.ReplaceSpecialCharsToScapedChars());
+			string _searchFilter = string.Format("({0}={1})", filterAttribute, filterValue);
 
 			var _result = await getSearchResultAsync(requiredEntryAttributes, _searchFilter, customTag);
 
