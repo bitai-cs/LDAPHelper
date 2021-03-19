@@ -5,15 +5,15 @@
     <Authors>Viko Bastidas</Authors>
     <Company>Bastidas IT</Company>
     <Product>LDAP Proxy Services</Product>
-    <Description>Library to wrap  Novell.Directory.Ldap.NETStandard2_0 functionality to make LDAP common queries to search accounts and objects ina Directory Service.</Description>
-    <Copyright>Copyright © 2017-2020 Bastidas IT. All rights reserved.</Copyright>
-    <Version>2.1.1</Version>
-    <AssemblyVersion>2.1.1.7</AssemblyVersion>
+    <Description>Library to wrap  Novell.Directory.Ldap.NETStandard functionality to make LDAP common queries to search accounts and objects in a Directory Service.</Description>
+    <Copyright>Copyright © 2021 Bastidas IT. All rights reserved.</Copyright>
+    <Version>2.2.0</Version>
+    <AssemblyVersion>2.2.0.1</AssemblyVersion>
     <PackageIcon>hierarchy-1.png</PackageIcon>
-    <FileVersion>2.1.1.7</FileVersion>
+    <FileVersion>2.2.0.1</FileVersion>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageId>LDAPHelperLib</PackageId>
-    <AssemblyName>LDAPHelperLib</AssemblyName>
+    <PackageId>LDAPHelper</PackageId>
+    <AssemblyName>LDAPHelper</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
@@ -34,7 +34,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\LDAPHelperDTO\LDAPHelperDTO.csproj" />
+    <ProjectReference Include="..\LDAPHelperDTO\LDAPHelper.DTO.csproj" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">

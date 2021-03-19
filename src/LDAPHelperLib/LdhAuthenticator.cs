@@ -3,7 +3,7 @@ using System;
 using System.Threading.Tasks;
 using System.Linq;
 
-namespace LdapHelperLib
+namespace LDAPHelper
 {
 	public class LdhAuthenticator : BaseHelper
 	{

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace LdapHelperLib.Extensions
+namespace LDAPHelper.Extensions
 {
 	public static class StringExtensions
 	{

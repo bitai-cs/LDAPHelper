@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace LDAPHelperLib.Demo
+namespace LDAPHelper.Demo
 {
 	public class DemoSetup
 	{

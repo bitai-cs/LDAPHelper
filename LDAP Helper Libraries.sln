@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29920.165
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LDAPHelperDTO", "src\LDAPHelperDTO\LDAPHelperDTO.csproj", "{5929B5FD-E864-41AF-B980-722C75781B25}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LDAPHelper.DTO", "src\LDAPHelperDTO\LDAPHelper.DTO.csproj", "{5929B5FD-E864-41AF-B980-722C75781B25}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LDAPHelperLib", "src\LDAPHelperLib\LDAPHelperLib.csproj", "{AFC39427-6E92-4BAA-ADC0-087BAC79C38B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LDAPHelper", "src\LDAPHelperLib\LDAPHelper.csproj", "{AFC39427-6E92-4BAA-ADC0-087BAC79C38B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LDAPHelperLib.Demo", "src\LDAPHelperLib.Demo\LDAPHelperLib.Demo.csproj", "{6AB02982-E4EA-4E31-8088-B49ECA7B7E59}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LDAPHelper.Demo", "src\LDAPHelperLib.Demo\LDAPHelper.Demo.csproj", "{6AB02982-E4EA-4E31-8088-B49ECA7B7E59}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

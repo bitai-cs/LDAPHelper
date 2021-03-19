@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using System.Linq;
-using LdapHelperDTO;
+using LDAPHelper.DTO;
 
-namespace LdapHelperLib
+namespace LDAPHelper
 {
 	public class LdhValidator : BaseHelper
 	{
@@ -37,7 +37,7 @@ namespace LdapHelperLib
 			var _searchResult = await _searcher.SearchUsersAndGroupsAsync(EntryAttribute.sAMAccountName, samAccountName, RequiredEntryAttributes.OnlyMemberOf, null);
 
 			if (_searchResult.Entries.Count().Equals(0))
-				throw new LdapHelperLib.LdhEntryNotFoundException($"No se encontró la cuenta {samAccountName}. No se puede realizar la operación.");
+				throw new LDAPHelper.LdhEntryNotFoundException($"No se encontró la cuenta {samAccountName}. No se puede realizar la operación.");
 
 			var _entry = _searchResult.Entries.First();
 			var _found = _entry.memberOf.Where(s => s.Equals(groupName, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();

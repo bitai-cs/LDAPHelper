@@ -1,4 +1,4 @@
-﻿using LdapHelperDTO;
+﻿using LDAPHelper.DTO;
 using Novell.Directory.Ldap;
 using System;
 using System.Linq;
@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LdapHelperLib
+namespace LDAPHelper
 {
 	public abstract class BaseHelper
 	{
@@ -38,7 +38,7 @@ namespace LdapHelperLib
 		#region Static methods
 		internal static IEnumerable<string> GetMinimunAttributeNames()
 		{
-			return new string[] { LdapHelperDTO.EntryAttribute.objectSid.ToString(), LdapHelperDTO.EntryAttribute.distinguishedName.ToString(), LdapHelperDTO.EntryAttribute.sAMAccountName.ToString(), LdapHelperDTO.EntryAttribute.cn.ToString(), LdapHelperDTO.EntryAttribute.displayName.ToString(), LdapHelperDTO.EntryAttribute.objectClass.ToString() };
+			return new string[] { LDAPHelper.DTO.EntryAttribute.objectSid.ToString(), LDAPHelper.DTO.EntryAttribute.distinguishedName.ToString(), LDAPHelper.DTO.EntryAttribute.sAMAccountName.ToString(), LDAPHelper.DTO.EntryAttribute.cn.ToString(), LDAPHelper.DTO.EntryAttribute.displayName.ToString(), LDAPHelper.DTO.EntryAttribute.objectClass.ToString() };
 		}
 
 		internal static IEnumerable<string> GetMinimunWithMemberAttributeNames()
@@ -58,7 +58,7 @@ namespace LdapHelperLib
 
 		internal static IEnumerable<string> GetFewAttributeNames()
 		{
-			return new string[] { LdapHelperDTO.EntryAttribute.objectSid.ToString(), LdapHelperDTO.EntryAttribute.objectGuid.ToString(), LdapHelperDTO.EntryAttribute.distinguishedName.ToString(), LdapHelperDTO.EntryAttribute.sAMAccountName.ToString(), LdapHelperDTO.EntryAttribute.cn.ToString(), LdapHelperDTO.EntryAttribute.name.ToString(), LdapHelperDTO.EntryAttribute.displayName.ToString(), LdapHelperDTO.EntryAttribute.objectClass.ToString(), LdapHelperDTO.EntryAttribute.objectCategory.ToString() };
+			return new string[] { LDAPHelper.DTO.EntryAttribute.objectSid.ToString(), LDAPHelper.DTO.EntryAttribute.objectGuid.ToString(), LDAPHelper.DTO.EntryAttribute.distinguishedName.ToString(), LDAPHelper.DTO.EntryAttribute.sAMAccountName.ToString(), LDAPHelper.DTO.EntryAttribute.cn.ToString(), LDAPHelper.DTO.EntryAttribute.name.ToString(), LDAPHelper.DTO.EntryAttribute.displayName.ToString(), LDAPHelper.DTO.EntryAttribute.objectClass.ToString(), LDAPHelper.DTO.EntryAttribute.objectCategory.ToString() };
 		}
 
 		internal static IEnumerable<string> GetFewWithMemberAttributeNames()
@@ -101,11 +101,11 @@ namespace LdapHelperLib
 		#region Static constructor
 		static BaseHelper()
 		{
-			ObjectSidAndSAMAccountNameAttributeNames = new string[2] { LdapHelperDTO.EntryAttribute.objectSid.ToString(), LdapHelperDTO.EntryAttribute.sAMAccountName.ToString() };
-			ObjectSidAttributeName = new string[1] { LdapHelperDTO.EntryAttribute.objectSid.ToString() };
-			CNAttributeName = new string[1] { LdapHelperDTO.EntryAttribute.cn.ToString() };
-			MemberAttributeName = new string[1] { LdapHelperDTO.EntryAttribute.member.ToString() };
-			MemberOfAttributeName = new string[1] { LdapHelperDTO.EntryAttribute.memberOf.ToString() };
+			ObjectSidAndSAMAccountNameAttributeNames = new string[2] { LDAPHelper.DTO.EntryAttribute.objectSid.ToString(), LDAPHelper.DTO.EntryAttribute.sAMAccountName.ToString() };
+			ObjectSidAttributeName = new string[1] { LDAPHelper.DTO.EntryAttribute.objectSid.ToString() };
+			CNAttributeName = new string[1] { LDAPHelper.DTO.EntryAttribute.cn.ToString() };
+			MemberAttributeName = new string[1] { LDAPHelper.DTO.EntryAttribute.member.ToString() };
+			MemberOfAttributeName = new string[1] { LDAPHelper.DTO.EntryAttribute.memberOf.ToString() };
 			MemberAndMemberOfAttributeNames = MemberAttributeName.Concat(MemberOfAttributeName);
 
 			MinimunAttributeNames = GetMinimunAttributeNames().ToArray();

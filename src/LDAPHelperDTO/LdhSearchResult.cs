@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text;
 
-namespace LdapHelperDTO
+namespace LDAPHelper.DTO
 {
 	public class LdhSearchResult
 	{
@@ -15,7 +15,7 @@ namespace LdapHelperDTO
 
 		public string CustomTag { get; private set; }
 
-		public IEnumerable<LdapHelperDTO.LdhEntry> Entries { get; set; }
+		public IEnumerable<LDAPHelper.DTO.LdhEntry> Entries { get; set; }
 
 		[IgnoreDataMember]
 		public Exception ErrorObject { get; private set; }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace LdapHelperDTO
+namespace LDAPHelper.DTO
 {
 	public class LdhEntry : IComparable
 	{

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Security;
 using System.Text;
 
-namespace LdapHelperLib
+namespace LDAPHelper
 {
 	public class LdhUserCredentials
 	{
