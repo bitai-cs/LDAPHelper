@@ -34,7 +34,7 @@ namespace LdapHelperLib
 
 			var _searcher = new LdhSearcher(this.ConnectionInfo, this.SearchLimits, this.UserCredentials);
 
-			var _searchResult = await _searcher.SearchUsersAndGroupsByAttributeAsync(EntryAttribute.sAMAccountName, samAccountName, RequiredEntryAttributes.OnlyMemberOf, null);
+			var _searchResult = await _searcher.SearchUsersAndGroupsAsync(EntryAttribute.sAMAccountName, samAccountName, RequiredEntryAttributes.OnlyMemberOf, null);
 
 			if (_searchResult.Entries.Count().Equals(0))
 				throw new LdapHelperLib.LdhEntryNotFoundException($"No se encontró la cuenta {samAccountName}. No se puede realizar la operación.");

@@ -401,7 +401,7 @@ namespace LDAPHelperLib.Demo
 				Log.Information(string.Format("Búscando con el atributo {0}: {1}...", filterAttribute.ToString(), filterValue));
 				Console.WriteLine();
 
-				var _result = await _s.SearchUsersAndGroupsByAttributeAsync(filterAttribute, filterValue, requiredResults, Program.Tag);
+				var _result = await _s.SearchUsersAndGroupsAsync(filterAttribute, filterValue, requiredResults, Program.Tag);
 
 				if (_result.Entries.Count() == 0)
 				{
@@ -463,7 +463,7 @@ namespace LDAPHelperLib.Demo
 				Log.Information(string.Format("Búscando con el atributo {1}: {2} {0} {3}: {4}", (conjunctiveFilters ? " Y " : " O "), filterAttribute.ToString(), filterValue, secondFilterAttribute.ToString(), secondFilterValue));
 				Console.WriteLine();
 
-				var _result = await _s.SearchUsersAndGroupsBy2AttributesAsync(filterAttribute, filterValue, secondFilterAttribute, secondFilterValue, conjunctiveFilters, requiredResults, Program.Tag);
+				var _result = await _s.SearchUsersAndGroupsAsync(filterAttribute, filterValue, secondFilterAttribute, secondFilterValue, conjunctiveFilters, requiredResults, Program.Tag);
 				if (_result.Entries.Count().Equals(0))
 					Log.Warning("No se encontraron registros con el criterio de búsqueda proporcionado.");
 				else
@@ -503,7 +503,7 @@ namespace LDAPHelperLib.Demo
 				Log.Information(string.Format("Búscando en por {0}: {1}...", attribute.ToString(), attributeFilter));
 				Console.WriteLine();
 
-				var _result = await _s.SearchEntriesByAttributeAsync(attribute, attributeFilter, requiredResults, Program.Tag);
+				var _result = await _s.SearchEntriesAsync(attribute, attributeFilter, requiredResults, Program.Tag);
 				if (_result.Entries.Count().Equals(0))
 					Log.Warning(string.Format("No se encontraron datos para {0}: {1}", attribute.ToString(), attributeFilter));
 				else
@@ -542,7 +542,7 @@ namespace LDAPHelperLib.Demo
 				Log.Information(string.Format("Obteniendo grupos a los que pertenece el {0}: {1}...", filterAttribute.ToString(), filterValue));
 				Console.WriteLine();
 
-				var _result = await _s.SearchGroupMembershipEntries(filterAttribute, filterValue, requiredResults, Program.Tag, recursive);
+				var _result = await _s.SearchGroupMembershipEntriesAsync(filterAttribute, filterValue, requiredResults, Program.Tag, recursive);
 
 				foreach (var _entry in _result.Entries.OrderBy(f => f.distinguishedName))
 					Log.Information(_entry.distinguishedName);
@@ -572,7 +572,7 @@ namespace LDAPHelperLib.Demo
 				Log.Information(string.Format("Obteniendo grupos a los que pertenece el {0}: {1}...", keyAttribute, keyAttributeFilter));
 				Console.WriteLine();
 
-				var _results = await _s.SearchGroupMembershipCNs(keyAttribute, keyAttributeFilter, Program.Tag, recursive);
+				var _results = await _s.SearchGroupMembershipCNsAsync(keyAttribute, keyAttributeFilter, Program.Tag, recursive);
 
 				foreach (var _entry in _results)
 					Log.Information(_entry);
@@ -602,7 +602,7 @@ namespace LDAPHelperLib.Demo
 				Log.Information(string.Format("Obteniendo grupos a los que pertenece el {0}: {1}...", attribute.ToString(), attributeFilter));
 				Console.WriteLine();
 
-				var _results = await _s.SearchGroupMembershipEntries(attribute, attributeFilter, LdapHelperDTO.RequiredEntryAttributes.MinimunWithMemberAndMemberOf, Program.Tag, recursive);
+				var _results = await _s.SearchGroupMembershipEntriesAsync(attribute, attributeFilter, LdapHelperDTO.RequiredEntryAttributes.MinimunWithMemberAndMemberOf, Program.Tag, recursive);
 
 				foreach (var _entry in _results.Entries.OrderBy(f => f.distinguishedName))
 					Log.Information(_entry.distinguishedName);
