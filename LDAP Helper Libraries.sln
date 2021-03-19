@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29920.165
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LDAPHelper.DTO", "src\LDAPHelperDTO\LDAPHelper.DTO.csproj", "{5929B5FD-E864-41AF-B980-722C75781B25}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LDAPHelper.DTO", "src\LDAPHelper.DTO\LDAPHelper.DTO.csproj", "{B9216872-587D-40F9-B68C-13F63127AB25}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LDAPHelper", "src\LDAPHelperLib\LDAPHelper.csproj", "{AFC39427-6E92-4BAA-ADC0-087BAC79C38B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LDAPHelper", "src\LDAPHelper\LDAPHelper.csproj", "{9EAB4E43-6B70-4B9E-8A1C-363E418CB079}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LDAPHelper.Demo", "src\LDAPHelperLib.Demo\LDAPHelper.Demo.csproj", "{6AB02982-E4EA-4E31-8088-B49ECA7B7E59}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LDAPHelper.Demo", "src\LDAPHelper.Demo\LDAPHelper.Demo.csproj", "{7C152968-0C52-4410-A6F7-EC501B148B65}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,18 +15,18 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{5929B5FD-E864-41AF-B980-722C75781B25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5929B5FD-E864-41AF-B980-722C75781B25}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5929B5FD-E864-41AF-B980-722C75781B25}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5929B5FD-E864-41AF-B980-722C75781B25}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AFC39427-6E92-4BAA-ADC0-087BAC79C38B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AFC39427-6E92-4BAA-ADC0-087BAC79C38B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AFC39427-6E92-4BAA-ADC0-087BAC79C38B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AFC39427-6E92-4BAA-ADC0-087BAC79C38B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6AB02982-E4EA-4E31-8088-B49ECA7B7E59}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6AB02982-E4EA-4E31-8088-B49ECA7B7E59}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6AB02982-E4EA-4E31-8088-B49ECA7B7E59}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6AB02982-E4EA-4E31-8088-B49ECA7B7E59}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B9216872-587D-40F9-B68C-13F63127AB25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B9216872-587D-40F9-B68C-13F63127AB25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B9216872-587D-40F9-B68C-13F63127AB25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B9216872-587D-40F9-B68C-13F63127AB25}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9EAB4E43-6B70-4B9E-8A1C-363E418CB079}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9EAB4E43-6B70-4B9E-8A1C-363E418CB079}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9EAB4E43-6B70-4B9E-8A1C-363E418CB079}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9EAB4E43-6B70-4B9E-8A1C-363E418CB079}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C152968-0C52-4410-A6F7-EC501B148B65}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C152968-0C52-4410-A6F7-EC501B148B65}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C152968-0C52-4410-A6F7-EC501B148B65}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C152968-0C52-4410-A6F7-EC501B148B65}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
