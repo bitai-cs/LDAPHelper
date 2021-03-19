@@ -12,7 +12,7 @@
     <PackageIcon>hierarchy-1.png</PackageIcon>
     <FileVersion>2.2.0.1</FileVersion>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageId>LDAPHelper</PackageId>
+    <PackageId>LDAPHelperLib</PackageId>
     <AssemblyName>LDAPHelper</AssemblyName>
   </PropertyGroup>
 
