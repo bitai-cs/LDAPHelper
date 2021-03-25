@@ -13,9 +13,9 @@ namespace LDAPHelper
 		public LDAPHelper.LdhConnectionInfo ServerSettings { get; set; }
 
 		/// <summary>
-		/// <see cref="LdhUserCredentials"/>
+		/// <see cref="LdhCredentials"/>
 		/// </summary>
-		public LDAPHelper.LdhUserCredentials UserCredentials { get; set; }
+		public LDAPHelper.LdhCredentials UserCredentials { get; set; }
 
 		/// <summary>
 		/// <see cref="LdhSearchLimits"/>
@@ -26,9 +26,9 @@ namespace LDAPHelper
 		/// Constructor
 		/// </summary>
 		/// <param name="serverSettings"><see cref="LdhConnectionInfo"/></param>
-		/// <param name="userCredentials"><see cref="LdhUserCredentials"/></param>
+		/// <param name="userCredentials"><see cref="LdhCredentials"/></param>
 		/// <param name="searchLimits"><see cref="LdhSearchLimits"/></param>
-		public LdhClientConfiguration(LDAPHelper.LdhConnectionInfo serverSettings, LDAPHelper.LdhUserCredentials userCredentials, LDAPHelper.LdhSearchLimits searchLimits)
+		public LdhClientConfiguration(LDAPHelper.LdhConnectionInfo serverSettings, LDAPHelper.LdhCredentials userCredentials, LDAPHelper.LdhSearchLimits searchLimits)
 		{
 			this.ServerSettings = serverSettings;
 			this.UserCredentials = userCredentials;

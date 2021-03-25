@@ -5,9 +5,10 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <RootNamespace>LDAPHelper.Demo</RootNamespace>
     <Authors>Viko Bastidas</Authors>
-    <Company>Bastidas IT</Company>
+    <Company>Bastide</Company>
     <Product>LDAP Proxy Services</Product>
     <Description>LDAPHelper (Assembly) demo of use.</Description>
+    <PackageId>Bastide.LDAPHelper.Demo</PackageId>
   </PropertyGroup>
 
   <ItemGroup>

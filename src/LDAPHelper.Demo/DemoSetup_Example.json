@@ -2,7 +2,7 @@
 	"DomainAccountName": "DOMAIN\\AccountName",
 	"LdapServers": [
 		{
-			"Address": "10.11.58.13"
+			"Address": "10.113.58.132"
 		},
 		{
 			"Address": "140.141.33.65"
@@ -34,7 +34,7 @@
 			"DN": "DC=br, DC=company, DC=com"
 		},
 		{
-			"DN": "DC=py, DC=company, DC=com"
+			"DN": "DC=pe, DC=company, DC=com"
 		},
 		{
 			"DN": "DC=es, DC=company, DC=com"

@@ -38,13 +38,6 @@ namespace LDAPHelper.DTO
 		objectSid
 	}
 
-	public enum EntryKeyAttribute
-	{
-		objectSid,
-		distinguishedName,
-		sAMAccountName
-	}
-
 	public enum RequiredEntryAttributes
 	{
 		Minimun,
