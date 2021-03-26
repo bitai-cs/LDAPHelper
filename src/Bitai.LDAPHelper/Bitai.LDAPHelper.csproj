@@ -3,8 +3,8 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Authors>Viko Bastidas</Authors>
-    <Company>Bastide</Company>
-    <Product>LDAP Proxy Services</Product>
+    <Company>Bitai</Company>
+    <Product>LDAP Services Wrappers</Product>
     <Description>Library to wrap  Novell.Directory.Ldap.NETStandard functionality to make LDAP common queries to search accounts and objects in a Directory Service.</Description>
     <Copyright></Copyright>
     <Version>2.3.0</Version>
@@ -12,7 +12,7 @@
     <PackageIcon>hierarchy-1.png</PackageIcon>
     <FileVersion>2.3.0.1</FileVersion>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageId>Bastide.LDAPHelper</PackageId>
+    <PackageId>Bitai.LDAPHelper</PackageId>
     <AssemblyName>LDAPHelper</AssemblyName>
   </PropertyGroup>
 
@@ -34,7 +34,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\LDAPHelper.DTO\LDAPHelper.DTO.csproj" />
+    <ProjectReference Include="..\LDAPHelper.DTO\Bitai.LDAPHelper.DTO.csproj" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">

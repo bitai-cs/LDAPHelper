@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29920.165
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LDAPHelper.DTO", "src\LDAPHelper.DTO\LDAPHelper.DTO.csproj", "{B9216872-587D-40F9-B68C-13F63127AB25}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bitai.LDAPHelper.DTO", "src\Bitai.LDAPHelper.DTO\Bitai.LDAPHelper.DTO.csproj", "{2386A126-F237-43FD-9A7C-FDF6718ACAD7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LDAPHelper", "src\LDAPHelper\LDAPHelper.csproj", "{9EAB4E43-6B70-4B9E-8A1C-363E418CB079}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bitai.LDAPHelper", "src\Bitai.LDAPHelper\Bitai.LDAPHelper.csproj", "{87B1AB51-6C42-4EC0-9ECB-189370A724C2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LDAPHelper.Demo", "src\LDAPHelper.Demo\LDAPHelper.Demo.csproj", "{7C152968-0C52-4410-A6F7-EC501B148B65}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bitai.LDAPHelper.Demo", "src\Bitai.LDAPHelper.Demo\Bitai.LDAPHelper.Demo.csproj", "{694F8CFE-3DA4-4167-BB6F-A82677BD55DE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,18 +15,18 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{B9216872-587D-40F9-B68C-13F63127AB25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B9216872-587D-40F9-B68C-13F63127AB25}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B9216872-587D-40F9-B68C-13F63127AB25}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B9216872-587D-40F9-B68C-13F63127AB25}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9EAB4E43-6B70-4B9E-8A1C-363E418CB079}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9EAB4E43-6B70-4B9E-8A1C-363E418CB079}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9EAB4E43-6B70-4B9E-8A1C-363E418CB079}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9EAB4E43-6B70-4B9E-8A1C-363E418CB079}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7C152968-0C52-4410-A6F7-EC501B148B65}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7C152968-0C52-4410-A6F7-EC501B148B65}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7C152968-0C52-4410-A6F7-EC501B148B65}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7C152968-0C52-4410-A6F7-EC501B148B65}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2386A126-F237-43FD-9A7C-FDF6718ACAD7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2386A126-F237-43FD-9A7C-FDF6718ACAD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2386A126-F237-43FD-9A7C-FDF6718ACAD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2386A126-F237-43FD-9A7C-FDF6718ACAD7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{87B1AB51-6C42-4EC0-9ECB-189370A724C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87B1AB51-6C42-4EC0-9ECB-189370A724C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87B1AB51-6C42-4EC0-9ECB-189370A724C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87B1AB51-6C42-4EC0-9ECB-189370A724C2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{694F8CFE-3DA4-4167-BB6F-A82677BD55DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{694F8CFE-3DA4-4167-BB6F-A82677BD55DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{694F8CFE-3DA4-4167-BB6F-A82677BD55DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{694F8CFE-3DA4-4167-BB6F-A82677BD55DE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

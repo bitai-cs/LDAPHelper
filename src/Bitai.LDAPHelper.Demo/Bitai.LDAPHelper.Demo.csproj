@@ -5,10 +5,10 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <RootNamespace>LDAPHelper.Demo</RootNamespace>
     <Authors>Viko Bastidas</Authors>
-    <Company>Bastide</Company>
-    <Product>LDAP Proxy Services</Product>
-    <Description>LDAPHelper (Assembly) demo of use.</Description>
-    <PackageId>Bastide.LDAPHelper.Demo</PackageId>
+    <Company>Bitai</Company>
+    <Product>LDAP Services Wrappers</Product>
+    <Description>Demo of Bitai.LDAPHelper usage.</Description>
+    <PackageId>Bitai.LDAPHelper.Demo</PackageId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,10 +16,6 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
     <PackageReference Include="Serilog" Version="2.10.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\LDAPHelper\LDAPHelper.csproj" />
   </ItemGroup>
 
 </Project>
