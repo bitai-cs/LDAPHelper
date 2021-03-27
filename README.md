@@ -19,7 +19,7 @@
 
 ### How to execute Demo?
 
-- First, make a copy, on your disk, of the  [Bitai.LDAPHelper.Demo/ldaphelper_demosetup.json](src\Bitai.LDAPHelper.Demo/ldaphelper_demosetup.json) file.
+- First, make a copy, on your disk, of the  [Bitai.LDAPHelper.Demo/ldaphelper_demosetup.json](src/Bitai.LDAPHelper.Demo/ldaphelper_demosetup.json) file.
 - Edit the copied file and set the parameters as needed.
 ```json
 {
