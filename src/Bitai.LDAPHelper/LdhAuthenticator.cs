@@ -20,7 +20,7 @@ namespace LDAPHelper
         /// </summary>
         /// <param name="credentials"><see cref="LdhCredentials"/> to connect and authenticate on the LDAP Server.</param>
         /// <returns>True or false, if authenticated or no.</returns>
-        public async Task<bool> Authenticate(LdhCredentials credentials)
+        public async Task<bool> AuthenticateAsync(LdhCredentials credentials)
         {
             using (var connection = await GetLdapConnection(this.ConnectionInfo, credentials, false))
             {

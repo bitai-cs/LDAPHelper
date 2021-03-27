@@ -9,7 +9,7 @@
     <Copyright></Copyright>
     <Version>2.3.0</Version>
     <AssemblyVersion>2.3.0.1</AssemblyVersion>
-    <PackageIcon>hierarchy-1.png</PackageIcon>
+    <PackageIcon>hierarchy_32.png</PackageIcon>
     <FileVersion>2.3.0.1</FileVersion>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>Bitai.LDAPHelper</PackageId>
@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\..\resources\hierarchy-1.png">
+    <None Include="..\..\resources\hierarchy_32.png">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
@@ -34,7 +34,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\LDAPHelper.DTO\Bitai.LDAPHelper.DTO.csproj" />
+    <ProjectReference Include="..\Bitai.LDAPHelper.DTO\Bitai.LDAPHelper.DTO.csproj" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">

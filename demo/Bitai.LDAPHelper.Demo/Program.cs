@@ -15,7 +15,7 @@ namespace LDAPHelper.Demo
     /// </summary>
     public partial class Program
     {
-        internal const string SetupDemoFilePath = "C:\\LDAPHelperLib_DemoSetup.json";
+        internal const string DemoSetup_FilePath = "C:\\LDAPHelperLib_DemoSetup.json";
 
 
         /// <summary>
@@ -57,10 +57,10 @@ namespace LDAPHelper.Demo
 
 
         #region Private Static Methods
-        private static void loadSetup()
+        private static void loadDemoSetup()
         {
             var _cb = new ConfigurationBuilder()
-                .AddJsonFile(Program.SetupDemoFilePath, false, false);
+                .AddJsonFile(Program.DemoSetup_FilePath, false, false);
             var _cr = _cb.Build();
 
             Program.DemoSetup = _cr.Get<DemoSetup>();
@@ -73,14 +73,14 @@ namespace LDAPHelper.Demo
             Program.Selected_BaseDN = Program.DemoSetup.BaseDNs[0].DN;
         }
 
-        private static void configLog()
+        private static void configDemoLogger()
         {
             Log.Logger = new LoggerConfiguration()
                 .WriteTo.Console()
                 .CreateLogger();
         }
 
-        private static void logTestTitle(string title)
+        private static void printDemoTitle(string title)
         {
             Console.WriteLine();
             Console.WriteLine("**********************************************");
@@ -174,15 +174,21 @@ namespace LDAPHelper.Demo
             Log.Information($"Will use port:{Program.Selected_LdapServerPort} to connect LDAP Server.");
         }
 
-        private static void requesAccounNamePassword()
+        private static string requesAccounPassword(string domainAccountName)
         {
             Console.WriteLine();
+
         REQUEST_PASSWORD:
-            Console.WriteLine($"ENTER PASSWORD FOR {Program.Selected_DomainAccountName}:");
-            var _password = readPassword('*');
-            if (string.IsNullOrEmpty(_password) || string.IsNullOrWhiteSpace(_password)) goto REQUEST_PASSWORD;
-            Program.Selected_AccountNamePassword = _password;
-            Log.Information($"Password entered. Thanks!");
+
+            Console.WriteLine($"ENTER PASSWORD FOR {domainAccountName}:");
+
+            var password = readPassword('*');
+
+            if (string.IsNullOrEmpty(password) || string.IsNullOrWhiteSpace(password)) goto REQUEST_PASSWORD;
+
+            Log.Information($"Password entered.");
+
+            return password;
         }
 
         private static void requestBaseDN()
@@ -246,7 +252,7 @@ namespace LDAPHelper.Demo
             return new string(_pass.Reverse().ToArray());
         }
 
-        private static bool requestYESoNO(string question)
+        private static bool requestYESorNO(string question)
         {
             Console.WriteLine();
             Console.WriteLine(question);
@@ -297,7 +303,7 @@ namespace LDAPHelper.Demo
         {
             try
             {
-                configLog();
+                configDemoLogger();
 
             EXECUTE_DEMO:
 
@@ -305,8 +311,12 @@ namespace LDAPHelper.Demo
                 Console.WriteLine();
 
                 Log.Information("Starting demo: " + DateTime.Now.ToString());
+                Console.WriteLine();
 
-                loadSetup();
+                Log.Warning($"Demo configuration file: {Program.DemoSetup_FilePath}");
+                Log.Warning("Verify that the demo configuration file exists. If you want to use a different one, assign the file path in the Program.DemoSetup_FilePath variable.");
+
+                loadDemoSetup();
 
                 requestLdapServer();
 
@@ -314,51 +324,42 @@ namespace LDAPHelper.Demo
 
                 requestBaseDN();
 
-                requesAccounNamePassword();
+                Program.Selected_AccountNamePassword = requesAccounPassword(Program.Selected_DomainAccountName);
 
-                #region Authenticate
-                //await Demo_AuthenticateUserAsync("DOMAIN\\usr_ext01", "565ttY89");
-                //await Demo_AuthenticateUserAsync("DOMAIN\\wsmith", "Rt6Y77y");
+                #region Authenticatio
+                await Demo_Authenticator_Authenticate(DemoSetup.Demo_Authenticator_Authenticate_DomainAccountName);
                 #endregion
 
-                #region Search User & Groups 1
-                await Demo_SearchUsersAndGroupsByAttributeAsync(LDAPHelper.DTO.EntryAttribute.sAMAccountName, "usr_ext01", LDAPHelper.DTO.RequiredEntryAttributes.AllWithMemberOf);
+                #region Search User & Groups
+                await Demo_Searcher_SearchUsersAndGroups(LDAPHelper.DTO.EntryAttribute.sAMAccountName, DemoSetup.Demo_Searcher_SearchUsersAndGroups_Filter_sAMAccountName, LDAPHelper.DTO.RequiredEntryAttributes.AllWithMemberOf);
 
-                //await Demo_SearchUsersAndGroupsByAttributeAsync(LDAPHelper.DTO.EntryAttribute.sAMAccountName, "3110494", LDAPHelper.DTO.RequiredEntryAttributes.AllWithMemberOf);
-
-                //await Demo_SearchUsersAndGroupsByAttributeAsync(LDAPHelper.DTO.EntryAttribute.sAMAccountName, "4439690", LDAPHelper.DTO.RequiredEntryAttributes.AllWithMemberOf);
-
-                //await Demo_SearchUsersAndGroupsByAttributeAsync(LDAPHelper.DTO.EntryAttribute.distinguishedName, "CN=USER_AQD_LP,OU=Aplicaciones,OU=Grupos,DC=cl,DC=company,DC=com", LDAPHelper.DTO.RequiredEntryAttributes.MinimunWithMemberOf);
-
-                //await Demo_SearchUsersAndGroupsByAttributeAsync(LDAPHelper.DTO.EntryAttribute.cn, "*bastidas*", LDAPHelper.DTO.RequiredEntryAttributes.All);
+                await Demo_Searcher_SearchUsersAndGroups(LDAPHelper.DTO.EntryAttribute.cn, DemoSetup.Demo_Searcher_SearchUsersAndGroups_Filter_cn, LDAPHelper.DTO.RequiredEntryAttributes.AllWithMemberOf);
                 #endregion
 
-                #region Search User & Groups 2
-                await Demo_SearchUsersAndGroupsBy2AttributesAsync(LDAPHelper.DTO.EntryAttribute.sAMAccountName, "usr_*", LDAPHelper.DTO.EntryAttribute.cn, "*brien*", false, DTO.RequiredEntryAttributes.All);
-
-                //await Demo_SearchUsersAndGroupsBy2AttributesAsync(LDAPHelper.DTO.EntryAttribute.sAMAccountName, "*administrator*", LDAPHelper.DTO.EntryAttribute.cn, "*administrator*", true, DTO.RequiredEntryAttributes.All);
+                #region Search User & Groups by 2 filters
+                await Demo_Searcher_SearchUsersAndGroupsByTwoFilters(LDAPHelper.DTO.EntryAttribute.sAMAccountName, DemoSetup.Demo_Searcher_SearchUsersAndGroupsByTwoFilters_Filter1_sAMAccountName, LDAPHelper.DTO.EntryAttribute.cn, DemoSetup.Demo_Searcher_SearchUsersAndGroupsByTwoFilters_Filter2_cn, false, DTO.RequiredEntryAttributes.All);
                 #endregion
 
-                #region Search Any kind of Entries 
-                //await Demo_GetEntriesByAttributeAsync(LDAPHelper.DTO.EntryAttribute.sAMAccountName, "usr*", DTO.RequiredEntryAttributes.All);
+                #region Search any kind of entries 
+                await Demo_Searcher_SearchEntries(LDAPHelper.DTO.EntryAttribute.cn, DemoSetup.Demo_Searcher_SearchEntries_Filter_cn, DTO.RequiredEntryAttributes.All);
 
-                //await Demo_GetEntriesByAttributeAsync(LDAPHelper.DTO.EntryAttribute.objectSid, "S-1-5-21-638406840-1180129177-883519231-179439", DTO.RequiredEntryAttributes.All);             
+                await Demo_Searcher_SearchEntries(LDAPHelper.DTO.EntryAttribute.objectSid, DemoSetup.Demo_Searcher_SearchEntries_Filter_objectSid, DTO.RequiredEntryAttributes.All);
                 #endregion
 
-                #region Search parent entries
-                await Demo_SearchParentEntriesAsync(DTO.EntryAttribute.sAMAccountName, "usr_ext01", DTO.RequiredEntryAttributes.All);
-
-                //await Demo_SearchParentEntriesAsync(true, LDAPHelper.DTO.KeyEntryAttribute.sAMAccountName, "4303259", BaseDNEnum.com);
-
-                //await Demo_SearchParentEntriesAsync(true, LDAPHelper.DTO.KeyEntryAttribute.distinguishedName, "CN=Administrator,CN=Users,DC=us,DC=company,DC=com", true, BaseDNEnum.cl_com);              
+                #region Search any kind of entries by 2 filters
+                await Demo_Searcher_SearchEntriesByTwoFilters(LDAPHelper.DTO.EntryAttribute.cn, DemoSetup.Demo_Searcher_SearchEntriesByTwoFilters_Filter1_cn, LDAPHelper.DTO.EntryAttribute.cn, DemoSetup.Demo_Searcher_SearchEntriesByTwoFilters_Filter2_cn, false, DTO.RequiredEntryAttributes.All);
                 #endregion
 
-                #region Check Group membership 
-                await Demo_CheckGroupMembershipAsync("usr_ext01", "SIMON_Worker");
+                #region Search parent entries of an entry
+                await Demo_Searcher_SearchParentEntries(DTO.EntryAttribute.sAMAccountName, DemoSetup.Demo_Searcher_SearchParentEntries_Filter_sAMAccountName, DTO.RequiredEntryAttributes.All);
+                #endregion
+
+                #region Check group membership 
+                await Demo_GroupMembershipValidator_CheckGroupMembership(DemoSetup.Demo_GroupMembershipValidator_CheckGroupmembership_sAMAccountName, DemoSetup.Demo_GroupMembershipValidator_CheckGroupmembership_Check_GroupName);
                 #endregion 
 
-                var _yes = requestYESoNO("Dou you want to execute DEMO again?");
-                if (_yes)
+                var executeAgain = requestYESorNO("Dou you want to execute DEMO again?");
+                if (executeAgain)
                     goto EXECUTE_DEMO;
 
                 Console.WriteLine();
@@ -368,7 +369,7 @@ namespace LDAPHelper.Demo
             catch (Exception ex)
             {
                 Log.Error("***************************************************");
-                Log.Error("Error in DEMO! See below details.");
+                Log.Error("Error in DEMO! See details below.");
                 Log.Error(ex.Message);
                 Log.Error(ex.StackTrace);
                 Log.Error("***************************************************");
@@ -379,16 +380,20 @@ namespace LDAPHelper.Demo
             }
         }
 
-        public static async Task Demo_AuthenticateUserAsync(string domainAccountName, string accountPassword)
+        public static async Task Demo_Authenticator_Authenticate(string domainAccountName)
         {
             try
             {
-                logTestTitle("Demo_AuthenticateUserAsync");
+                printDemoTitle("Demo_Authenticator_Authenticate");
+
+                Log.Information($"To authenticate {domainAccountName} you need to enter a password (it's not necessary the real password).");
+
+                var accountPassword = requesAccounPassword(domainAccountName);
 
                 var authenticator = new LDAPHelper.LdhAuthenticator(getConnectionInfo());
 
                 Log.Information("Authenticating account name...");
-                var authenticated = await authenticator.Authenticate(new LDAPHelper.LdhCredentials(domainAccountName, accountPassword));
+                var authenticated = await authenticator.AuthenticateAsync(new LDAPHelper.LdhCredentials(domainAccountName, accountPassword));
                 if (authenticated)
                     Log.Information("Account name authenticated.");
                 else
@@ -403,11 +408,11 @@ namespace LDAPHelper.Demo
             }
         }
 
-        public static async Task Demo_SearchUsersAndGroupsByAttributeAsync(LDAPHelper.DTO.EntryAttribute filterAttribute, string filterValue, LDAPHelper.DTO.RequiredEntryAttributes requiredResults)
+        public static async Task Demo_Searcher_SearchUsersAndGroups(LDAPHelper.DTO.EntryAttribute filterAttribute, string filterValue, LDAPHelper.DTO.RequiredEntryAttributes requiredEntryAttributes)
         {
             try
             {
-                logTestTitle("Demo_SearchUsersAndGroupsByAttributeAsync");
+                printDemoTitle("Demo_Searcher_SearchUsersAndGroups");
 
                 var searcher = new LDAPHelper.LdhSearcher(getClientConfiguration());
 
@@ -415,7 +420,7 @@ namespace LDAPHelper.Demo
                 Log.Information($"Searching by {filterAttribute}: {filterValue}");
                 Console.WriteLine();
 
-                var searchResult = await searcher.SearchUsersAndGroupsAsync(filterAttribute, filterValue, requiredResults, Program.Tag);
+                var searchResult = await searcher.SearchUsersAndGroupsAsync(filterAttribute, filterValue, requiredEntryAttributes, Program.Tag);
 
                 if (searchResult.Entries.Count() == 0)
                 {
@@ -456,11 +461,11 @@ namespace LDAPHelper.Demo
             }
         }
 
-        public static async Task Demo_SearchUsersAndGroupsBy2AttributesAsync(LDAPHelper.DTO.EntryAttribute filterAttribute, string filterValue, LDAPHelper.DTO.EntryAttribute secondFilterAttribute, string secondFilterValue, bool conjunctiveFilters, LDAPHelper.DTO.RequiredEntryAttributes requiredResults)
+        public static async Task Demo_Searcher_SearchUsersAndGroupsByTwoFilters(LDAPHelper.DTO.EntryAttribute filterAttribute, string filterValue, LDAPHelper.DTO.EntryAttribute secondFilterAttribute, string secondFilterValue, bool conjunctiveFilters, LDAPHelper.DTO.RequiredEntryAttributes requiredEntryAttributes)
         {
             try
             {
-                logTestTitle("Demo_SearchUsersAndGroupsBy2AttributesAsync");
+                printDemoTitle("Demo_Searcher_SearchUsersAndGroupsByTwoFilters");
 
                 var searcher = new LDAPHelper.LdhSearcher(getClientConfiguration());
 
@@ -468,7 +473,7 @@ namespace LDAPHelper.Demo
                 Log.Information($"Searching by {filterAttribute}={filterValue} {(conjunctiveFilters ? " And " : " Or ")} { secondFilterAttribute}={secondFilterValue}");
                 Console.WriteLine();
 
-                var searchResult = await searcher.SearchUsersAndGroupsAsync(filterAttribute, filterValue, secondFilterAttribute, secondFilterValue, conjunctiveFilters, requiredResults, Program.Tag);
+                var searchResult = await searcher.SearchUsersAndGroupsAsync(filterAttribute, filterValue, secondFilterAttribute, secondFilterValue, conjunctiveFilters, requiredEntryAttributes, Program.Tag);
                 if (searchResult.Entries.Count().Equals(0))
                 {
                     if (searchResult.HasErrorInfo)
@@ -503,19 +508,19 @@ namespace LDAPHelper.Demo
             }
         }
 
-        public static async Task Demo_GetEntriesByAttributeAsync(LDAPHelper.DTO.EntryAttribute attribute, string attributeFilter, LDAPHelper.DTO.RequiredEntryAttributes requiredResults)
+        public static async Task Demo_Searcher_SearchEntries(LDAPHelper.DTO.EntryAttribute filterAttribute, string filterValue, LDAPHelper.DTO.RequiredEntryAttributes requiredEntryAttributes)
         {
             try
             {
-                logTestTitle("Demo_GetEntriesByAttributeAsync");
+                printDemoTitle("Demo_Searcher_SearchEntries");
 
                 var searcher = new LDAPHelper.LdhSearcher(getClientConfiguration());
 
                 Log.Information($"Base DN: {searcher.SearchLimits.BaseDN}");
-                Log.Information($"Searching by {attribute}: {attributeFilter}");
+                Log.Information($"Searching by {filterAttribute}: {filterValue}");
                 Console.WriteLine();
 
-                var searchResult = await searcher.SearchEntriesAsync(attribute, attributeFilter, requiredResults, Program.Tag);
+                var searchResult = await searcher.SearchEntriesAsync(filterAttribute, filterValue, requiredEntryAttributes, Program.Tag);
                 if (searchResult.Entries.Count().Equals(0))
                 {
                     if (searchResult.HasErrorInfo)
@@ -550,16 +555,63 @@ namespace LDAPHelper.Demo
             }
         }
 
-        public static async Task Demo_SearchParentEntriesAsync(LDAPHelper.DTO.EntryAttribute filterAttribute, string filterValue, LDAPHelper.DTO.RequiredEntryAttributes requiredEntryAttributes)
+        public static async Task Demo_Searcher_SearchEntriesByTwoFilters(LDAPHelper.DTO.EntryAttribute filterAttribute, string filterValue, LDAPHelper.DTO.EntryAttribute secondFilterAttribute, string secondFilterValue, bool conjunctiveFilters, LDAPHelper.DTO.RequiredEntryAttributes requiredEntryAttributes)
         {
             try
             {
-                logTestTitle("Demo_SearchParentEntriesAsync");
+                printDemoTitle("Demo_Searcher_SearchEntriesByTwoFilters");
 
                 var searcher = new LDAPHelper.LdhSearcher(getClientConfiguration());
 
                 Log.Information($"Base DN: {searcher.SearchLimits.BaseDN}");
-                Log.Information($"Searching parent entris for {filterAttribute}: {filterValue}");
+                Log.Information($"Searching by {filterAttribute}={filterValue} {(conjunctiveFilters ? " And " : " Or ")} { secondFilterAttribute}={secondFilterValue}");
+                Console.WriteLine();
+
+                var searchResult = await searcher.SearchEntriesAsync(filterAttribute, filterValue, secondFilterAttribute, secondFilterValue, conjunctiveFilters, requiredEntryAttributes, Program.Tag);
+                if (searchResult.Entries.Count().Equals(0))
+                {
+                    if (searchResult.HasErrorInfo)
+                        throw searchResult.ErrorObject;
+                    else
+                        Log.Warning(Program.Message_LdapEntriesNotFound);
+                }
+                else
+                {
+                    foreach (var entry in searchResult.Entries)
+                    {
+                        Log.Information(entry.company);
+                        Log.Information(entry.co);
+                        Log.Information(entry.samAccountName);
+                        Log.Information(entry.cn);
+                        Log.Information(entry.displayName);
+                        Log.Information(entry.distinguishedName);
+                        Log.Information(entry.objectSid);
+
+                        Console.WriteLine();
+                    }
+
+                    Log.Information($"{searchResult.Entries.Count()} entrie(s) found.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine();
+
+                Log.Error(ex.Message);
+                Log.Error(ex.StackTrace);
+            }
+        }
+
+        public static async Task Demo_Searcher_SearchParentEntries(LDAPHelper.DTO.EntryAttribute filterAttribute, string filterValue, LDAPHelper.DTO.RequiredEntryAttributes requiredEntryAttributes)
+        {
+            try
+            {
+                printDemoTitle("Demo_Searcher_SearchParentEntries");
+
+                var searcher = new LDAPHelper.LdhSearcher(getClientConfiguration());
+
+                Log.Information($"Base DN: {searcher.SearchLimits.BaseDN}");
+                Log.Information($"Searching parent entries for {filterAttribute}: {filterValue}");
                 Console.WriteLine();
 
                 var searchResult = await searcher.SearchParentEntriesAsync(filterAttribute, filterValue, requiredEntryAttributes, Program.Tag);
@@ -597,11 +649,11 @@ namespace LDAPHelper.Demo
             }
         }
 
-        public static async Task Demo_CheckGroupMembershipAsync(string sAMAccountName, string groupName)
+        public static async Task Demo_GroupMembershipValidator_CheckGroupMembership(string sAMAccountName, string groupName)
         {
             try
             {
-                logTestTitle("Demo_CheckGroupMembershipAsync");
+                printDemoTitle("Demo_GroupMembershipValidator_CheckGroupMembership");
 
                 var validator = new LDAPHelper.LdhGroupMembershipValidator(getClientConfiguration());
 

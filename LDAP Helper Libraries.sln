@@ -7,7 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bitai.LDAPHelper.DTO", "src
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bitai.LDAPHelper", "src\Bitai.LDAPHelper\Bitai.LDAPHelper.csproj", "{87B1AB51-6C42-4EC0-9ECB-189370A724C2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bitai.LDAPHelper.Demo", "src\Bitai.LDAPHelper.Demo\Bitai.LDAPHelper.Demo.csproj", "{694F8CFE-3DA4-4167-BB6F-A82677BD55DE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bitai.LDAPHelper.Demo", "demo\Bitai.LDAPHelper.Demo\Bitai.LDAPHelper.Demo.csproj", "{EF0E7C00-6116-46A7-BC21-6B30DE8361DD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "demo", "demo", "{D026C7BE-09AB-4BFD-B78E-1DF35734EBFD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,13 +25,16 @@ Global
 		{87B1AB51-6C42-4EC0-9ECB-189370A724C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{87B1AB51-6C42-4EC0-9ECB-189370A724C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{87B1AB51-6C42-4EC0-9ECB-189370A724C2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{694F8CFE-3DA4-4167-BB6F-A82677BD55DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{694F8CFE-3DA4-4167-BB6F-A82677BD55DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{694F8CFE-3DA4-4167-BB6F-A82677BD55DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{694F8CFE-3DA4-4167-BB6F-A82677BD55DE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF0E7C00-6116-46A7-BC21-6B30DE8361DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF0E7C00-6116-46A7-BC21-6B30DE8361DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF0E7C00-6116-46A7-BC21-6B30DE8361DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF0E7C00-6116-46A7-BC21-6B30DE8361DD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{EF0E7C00-6116-46A7-BC21-6B30DE8361DD} = {D026C7BE-09AB-4BFD-B78E-1DF35734EBFD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DB0C2252-0846-4C49-970A-C7C68C82A4F3}
