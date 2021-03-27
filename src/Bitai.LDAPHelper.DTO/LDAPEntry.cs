@@ -13,7 +13,7 @@ namespace LDAPHelper.DTO
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="customTag">Optional label to tag this object.</param>
+        /// <param name="customTag">Optional tag to label this object.</param>
         public LDAPEntry(string customTag = null)
         {
             this.CustomTag = customTag;

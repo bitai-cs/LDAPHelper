@@ -8,12 +8,17 @@
     <Description>Library to wrap  Novell.Directory.Ldap.NETStandard functionality to make LDAP common queries to search accounts and objects in a Directory Service.</Description>
     <Copyright></Copyright>
     <Version>2.3.0</Version>
-    <AssemblyVersion>2.3.0.1</AssemblyVersion>
+    <AssemblyVersion>2.3.1.7</AssemblyVersion>
     <PackageIcon>hierarchy_32.png</PackageIcon>
-    <FileVersion>2.3.0.1</FileVersion>
+    <FileVersion>2.3.1.7</FileVersion>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>Bitai.LDAPHelper</PackageId>
     <AssemblyName>LDAPHelper</AssemblyName>
+    <PackageProjectUrl>https://github.com/bitai-cs/LDAPHelper</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/bitai-cs/LDAPHelper.git</RepositoryUrl>
+    <RepositoryType>GitHub</RepositoryType>
+    <PackageTags>ldap, authentication, directory, helper</PackageTags>
+    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,6 +28,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="..\..\LICENSE.md">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
     <None Include="..\..\resources\hierarchy_32.png">
       <Pack>True</Pack>
       <PackagePath></PackagePath>

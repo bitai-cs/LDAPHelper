@@ -8,9 +8,9 @@ namespace LDAPHelper.DTO
 	public class LDAPSearchResult
 	{
 		/// <summary>
-		/// Custom tag to identify this object.
+		/// Constructor
 		/// </summary>
-		/// <param name="customTag">Optional custom tag.</param>
+		/// <param name="customTag">Optional tag to label this object.</param>
 		public LDAPSearchResult(string customTag = null)
 		{
 			CustomTag = customTag;
@@ -23,7 +23,7 @@ namespace LDAPHelper.DTO
 		public IEnumerable<LDAPHelper.DTO.LDAPEntry> Entries { get; set; }
 
 		/// <summary>
-		/// Error trapped while searching for LDAP entries.
+		/// Intercepted error while searching for LDAP entries.
 		/// This property must not be serialized.
 		/// </summary>
 		[IgnoreDataMember]
