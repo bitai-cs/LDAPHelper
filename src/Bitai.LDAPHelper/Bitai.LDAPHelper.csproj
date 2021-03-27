@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Authors>Viko Bastidas</Authors>
-    <Company>Bitai</Company>
+    <Authors>Viko Bastidas (BITAI)</Authors>
+    <Company>BITAI</Company>
     <Product>LDAP Services Wrappers</Product>
     <Description>Library to wrap  Novell.Directory.Ldap.NETStandard functionality to make LDAP common queries to search accounts and objects in a Directory Service.</Description>
     <Copyright></Copyright>

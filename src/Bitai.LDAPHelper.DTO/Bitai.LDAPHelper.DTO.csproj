@@ -7,8 +7,8 @@
     <Version>1.4.2</Version>
     <AssemblyName>LDAPHelper.DTO</AssemblyName>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Authors>Viko Bastidas</Authors>
-    <Company>Bitai</Company>
+    <Authors>Viko Bastidas (BITAI)</Authors>
+    <Company>BITAI</Company>
     <Product>LDAP Services Wrappers</Product>
     <Description>DTO classes to generate output data by Bitai.LDAPHelper and to be used in other applications.</Description>
     <Copyright></Copyright>
