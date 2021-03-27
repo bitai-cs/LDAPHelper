@@ -15,7 +15,7 @@ namespace LDAPHelper.Demo
     /// </summary>
     public partial class Program
     {
-        internal const string DemoSetup_FilePath = "C:\\LDAPHelperLib_DemoSetup.json";
+        internal static string DemoSetup_FilePath = $"{Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory)}/ldaphelper_demosetup.json";
 
 
         /// <summary>
@@ -293,13 +293,7 @@ namespace LDAPHelper.Demo
         }
         #endregion
 
-
-        public static void Main(string[] args)
-        {
-            Task.Run(() => MainAsync(args)).GetAwaiter().GetResult();
-        }
-
-        public static async Task MainAsync(string[] args)
+        public static async Task Main(string[] args)
         {
             try
             {
