@@ -1,147 +1,30 @@
-﻿using LDAPHelper.DTO;
+﻿using Bitai.LDAPHelper.DTO;
 using Novell.Directory.Ldap;
 using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LDAPHelper
+namespace Bitai.LDAPHelper
 {
-    public abstract class BaseHelper
+    public abstract partial class BaseHelper
     {
-        #region Protected fields
-        public static readonly IEnumerable<string> ObjectSidAndSAMAccountNameAttributeNames;
-        public static readonly IEnumerable<string> ObjectSidAttributeName;
-        public static readonly IEnumerable<string> CNAttributeName;
-        public static readonly IEnumerable<string> MemberAttributeName;
-        public static readonly IEnumerable<string> MemberOfAttributeName;
-        public static readonly IEnumerable<string> MemberAndMemberOfAttributeNames;
-
-        public static readonly IEnumerable<string> MinimunAttributeNames;
-        public static readonly IEnumerable<string> MinimunWithMemberAttributeNames;
-        public static readonly IEnumerable<string> MinimunWithMemberOfAttributeNames;
-        public static readonly IEnumerable<string> MinimunWithMemberAndMemberOfAttributeNames;
-
-        public static readonly IEnumerable<string> FewAttributeNames;
-        public static readonly IEnumerable<string> FewWithMemberAttributeNames;
-        public static readonly IEnumerable<string> FewWithMemberOfAttributeNames;
-        public static readonly IEnumerable<string> FewWithMemberAndMemberOfAttributeNames;
-
-        public static readonly IEnumerable<string> AllAttributeNames;
-        public static readonly IEnumerable<string> AllWithMemberAttributeNames;
-        public static readonly IEnumerable<string> AllWithMemberOfAttributeNames;
-        public static readonly IEnumerable<string> AllWithMemberAndMemberOfAttributeNames;
-        #endregion
-
-
-        #region Static methods
-        internal static IEnumerable<string> GetMinimunAttributeNames()
-        {
-            return new string[] { LDAPHelper.DTO.EntryAttribute.objectSid.ToString(), LDAPHelper.DTO.EntryAttribute.distinguishedName.ToString(), LDAPHelper.DTO.EntryAttribute.sAMAccountName.ToString(), LDAPHelper.DTO.EntryAttribute.cn.ToString(), LDAPHelper.DTO.EntryAttribute.displayName.ToString(), LDAPHelper.DTO.EntryAttribute.objectClass.ToString() };
-        }
-
-        internal static IEnumerable<string> GetMinimunWithMemberAttributeNames()
-        {
-            return GetMinimunAttributeNames().Concat(MemberAttributeName);
-        }
-
-        internal static IEnumerable<string> GetMinimunWithMemberOfAttributeNames()
-        {
-            return GetMinimunAttributeNames().Concat(MemberOfAttributeName);
-        }
-
-        internal static IEnumerable<string> GetMinimunWithMemberAndMemberOfAttributeNames()
-        {
-            return GetMinimunAttributeNames().Concat(MemberAndMemberOfAttributeNames);
-        }
-
-        internal static IEnumerable<string> GetFewAttributeNames()
-        {
-            return new string[] { LDAPHelper.DTO.EntryAttribute.objectSid.ToString(), LDAPHelper.DTO.EntryAttribute.objectGuid.ToString(), LDAPHelper.DTO.EntryAttribute.distinguishedName.ToString(), LDAPHelper.DTO.EntryAttribute.sAMAccountName.ToString(), LDAPHelper.DTO.EntryAttribute.cn.ToString(), LDAPHelper.DTO.EntryAttribute.name.ToString(), LDAPHelper.DTO.EntryAttribute.displayName.ToString(), LDAPHelper.DTO.EntryAttribute.objectClass.ToString(), LDAPHelper.DTO.EntryAttribute.objectCategory.ToString() };
-        }
-
-        internal static IEnumerable<string> GetFewWithMemberAttributeNames()
-        {
-            return GetFewAttributeNames().Concat(new string[1] { "member" });
-        }
-
-        internal static IEnumerable<string> GetFewWithMemberOfAttributeNames()
-        {
-            return GetFewAttributeNames().Concat(new string[1] { "memberOf" });
-        }
-
-        internal static IEnumerable<string> GetFewWithMemberAndMemberOfAttributeNames()
-        {
-            return GetFewAttributeNames().Concat(new string[2] { "member", "memberOf" });
-        }
-
-        internal static IEnumerable<string> GetAllAttributeNames()
-        {
-            return Enum.GetNames(typeof(EntryAttribute)).Except(MemberAndMemberOfAttributeNames);
-        }
-
-        internal static IEnumerable<string> GetAllWithMemberAttributeNames()
-        {
-            return GetAllAttributeNames().Concat(MemberAttributeName);
-        }
-
-        internal static IEnumerable<string> GetAllWithMemberOfAttributeNames()
-        {
-            return GetAllAttributeNames().Concat(MemberOfAttributeName);
-        }
-
-        internal static IEnumerable<string> GetAllWithMemberAndMemberOfAttributeNames()
-        {
-            return GetAllAttributeNames().Concat(MemberAndMemberOfAttributeNames);
-        }
-        #endregion
-
-
-        #region Static constructor
-        static BaseHelper()
-        {
-            ObjectSidAndSAMAccountNameAttributeNames = new string[3] { EntryAttribute.distinguishedName.ToString(), LDAPHelper.DTO.EntryAttribute.objectSid.ToString(), LDAPHelper.DTO.EntryAttribute.sAMAccountName.ToString() };
-            ObjectSidAttributeName = new string[2] { EntryAttribute.distinguishedName.ToString(), LDAPHelper.DTO.EntryAttribute.objectSid.ToString() };
-            CNAttributeName = new string[2] { EntryAttribute.distinguishedName.ToString(), LDAPHelper.DTO.EntryAttribute.cn.ToString() };
-            MemberAttributeName = new string[2] { EntryAttribute.distinguishedName.ToString(), LDAPHelper.DTO.EntryAttribute.member.ToString() };
-            MemberOfAttributeName = new string[2] { EntryAttribute.distinguishedName.ToString(), LDAPHelper.DTO.EntryAttribute.memberOf.ToString() };
-            MemberAndMemberOfAttributeNames = MemberAttributeName.Concat(MemberOfAttributeName);
-
-            MinimunAttributeNames = GetMinimunAttributeNames().ToArray();
-            MinimunWithMemberAttributeNames = GetMinimunWithMemberAttributeNames().ToArray();
-            MinimunWithMemberOfAttributeNames = GetMinimunWithMemberOfAttributeNames().ToArray();
-            MinimunWithMemberAndMemberOfAttributeNames = GetMinimunWithMemberAndMemberOfAttributeNames().ToArray();
-
-            FewAttributeNames = GetFewAttributeNames().ToArray();
-            FewWithMemberAttributeNames = GetFewWithMemberAttributeNames().ToArray();
-            FewWithMemberOfAttributeNames = GetFewWithMemberOfAttributeNames().ToArray();
-            FewWithMemberAndMemberOfAttributeNames = GetFewWithMemberAndMemberOfAttributeNames().ToArray();
-
-            AllAttributeNames = GetAllAttributeNames().ToArray();
-            AllWithMemberAttributeNames = GetAllWithMemberAttributeNames().ToArray();
-            AllWithMemberOfAttributeNames = GetAllWithMemberOfAttributeNames().ToArray();
-            AllWithMemberAndMemberOfAttributeNames = GetAllWithMemberAndMemberOfAttributeNames().ToArray();
-        }
-        #endregion
-
-
         #region Properties
-        public LdhConnectionInfo ConnectionInfo { get; set; }
-        public LdhCredentials UserCredentials { get; set; }
-        public LdhSearchLimits SearchLimits { get; set; }
+        public ConnectionInfo ConnectionInfo { get; set; }
+        public Credentials UserCredentials { get; set; }
+        public SearchLimits SearchLimits { get; set; }
         #endregion
 
 
         #region Constructor
-        protected BaseHelper(LdhClientConfiguration clientConfiguration)
+        protected BaseHelper(ClientConfiguration clientConfiguration)
         {
             ConnectionInfo = clientConfiguration.ServerSettings;
             UserCredentials = clientConfiguration.UserCredentials;
             SearchLimits = clientConfiguration.SearchLimits;
         }
 
-        protected BaseHelper(LdhConnectionInfo connectionInfo, LdhSearchLimits searchLimits, LdhCredentials userCredentials)
+        protected BaseHelper(ConnectionInfo connectionInfo, SearchLimits searchLimits, Credentials userCredentials)
         {
             ConnectionInfo = connectionInfo;
             SearchLimits = searchLimits;
@@ -149,10 +32,10 @@ namespace LDAPHelper
         }
 
         /// <summary>
-        /// Constructor used by <see cref="LdhAuthenticator"/>
+        /// Constructor used by <see cref="Authenticator"/>
         /// </summary>
-        /// <param name="connectionInfo"><see cref="LdhConnectionInfo"/></param>
-        protected BaseHelper(LdhConnectionInfo connectionInfo)
+        /// <param name="connectionInfo"><see cref="LDAPHelper.ConnectionInfo"/></param>
+        protected BaseHelper(ConnectionInfo connectionInfo)
         {
             ConnectionInfo = connectionInfo;
         }
@@ -192,11 +75,11 @@ namespace LDAPHelper
         /// <summary>
         /// Get <see cref="LdapConnection"/>
         /// </summary>
-        /// <param name="server"><see cref="LdhConnectionInfo"/> to connect to the LDAP Server</param>
-        /// <param name="credentials"><see cref="LdhCredentials"/>  to connect to the LDAP Server</param>
-        /// <param name="bindRequired">If <see cref="LdhCredentials"/> are required to be mandatorily authenticated on the LDAP Server</param>
+        /// <param name="server"><see cref="LDAPHelper.ConnectionInfo"/> to connect to the LDAP Server</param>
+        /// <param name="credentials"><see cref="Credentials"/>  to connect to the LDAP Server</param>
+        /// <param name="bindRequired">If <see cref="Credentials"/> are required to be mandatorily authenticated on the LDAP Server</param>
         /// <returns></returns>
-        protected async Task<LdapConnection> GetLdapConnection(LdhConnectionInfo server, LdhCredentials credentials, bool bindRequired = true)
+        protected async Task<LdapConnection> GetLdapConnection(ConnectionInfo server, Credentials credentials, bool bindRequired = true)
         {
             if (ConnectionInfo.UseSSL)
                 throw new NotImplementedException($"SSL connection is not implemented in this version of {this.GetType().Assembly.GetName().FullName}.");
@@ -228,7 +111,7 @@ namespace LDAPHelper
             return _connection;
         }
 
-        protected string ConvertByteToStringSid(Byte[] sidBytes)
+        protected string ConvertByteToStringSid(byte[] sidBytes)
         {
             short sSubAuthorityCount = 0;
             StringBuilder strSid = new StringBuilder();

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace LDAPHelper.Demo
+namespace Bitai.LDAPHelper.Demo
 {
     public class DemoSetup
     {
@@ -12,10 +12,10 @@ namespace LDAPHelper.Demo
         public short ConnectionTimeout { get; set; }
         public bool UseSSL { get; set; }
         public string Demo_Authenticator_Authenticate_DomainAccountName { get; set; }
-        public string Demo_Searcher_SearchUsersAndGroups_Filter_sAMAccountName { get; set; }
-        public string Demo_Searcher_SearchUsersAndGroups_Filter_cn { get; set; }
-        public string Demo_Searcher_SearchUsersAndGroupsByTwoFilters_Filter1_sAMAccountName { get; set; }
-        public string Demo_Searcher_SearchUsersAndGroupsByTwoFilters_Filter2_cn { get; set; }
+        public string Demo_Searcher_SearchUsers_Filter_sAMAccountName { get; set; }
+        public string Demo_Searcher_SearchUsers_Filter_cn { get; set; }
+        public string Demo_Searcher_SearchUsersByTwoFilters_Filter1_sAMAccountName { get; set; }
+        public string Demo_Searcher_SearchUsersByTwoFilters_Filter2_cn { get; set; }
         public string Demo_Searcher_SearchEntries_Filter_cn { get; set; }
         public string Demo_Searcher_SearchEntries_Filter_objectSid { get; set; }
         public string Demo_Searcher_SearchEntriesByTwoFilters_Filter1_cn { get; set; }

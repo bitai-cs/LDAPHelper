@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace LDAPHelper.Extensions
+namespace Bitai.LDAPHelper.Extensions
 {
     public static class IEnumerableLDAPEntryExtensions
     {

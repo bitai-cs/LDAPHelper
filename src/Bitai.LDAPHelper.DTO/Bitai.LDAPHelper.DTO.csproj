@@ -2,10 +2,10 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyVersion>1.4.1.1</AssemblyVersion>
-    <FileVersion>1.4.1.1</FileVersion>
-    <Version>1.4.2</Version>
-    <AssemblyName>LDAPHelper.DTO</AssemblyName>
+    <AssemblyVersion>1.5.1.1</AssemblyVersion>
+    <FileVersion>1.5.1.1</FileVersion>
+    <Version>1.5.1</Version>
+    <AssemblyName>Bitai.LDAPHelper.DTO</AssemblyName>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Viko Bastidas (BITAI)</Authors>
     <Company>BITAI</Company>
@@ -13,7 +13,7 @@
     <Description>DTO classes to generate output data by Bitai.LDAPHelper and to be used in other applications.</Description>
     <Copyright></Copyright>
     <PackageIcon>hierarchy_32.png</PackageIcon>
-    <RootNamespace>LDAPHelper.DTO</RootNamespace>
+    <RootNamespace>Bitai.LDAPHelper.DTO</RootNamespace>
     <PackageId>Bitai.LDAPHelper.DTO</PackageId>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <PackageProjectUrl>https://github.com/bitai-cs/LDAPHelper</PackageProjectUrl>

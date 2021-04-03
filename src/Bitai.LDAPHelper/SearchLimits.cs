@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace LDAPHelper
+namespace Bitai.LDAPHelper
 {
-	public class LdhSearchLimits
+	public class SearchLimits
 	{
 		/// <summary>
 		/// The base distinguished name (DN) to search from.
@@ -24,7 +24,7 @@ namespace LDAPHelper
 		/// </summary>
 		public int MaxSearchTimeout { get; set; } = 60;
 
-		public LdhSearchLimits(string baseDN) {
+		public SearchLimits(string baseDN) {
 			this.BaseDN = baseDN;
 		}
 	}

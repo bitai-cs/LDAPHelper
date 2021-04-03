@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace LDAPHelper
+namespace Bitai.LDAPHelper
 {
-	public class LdhConnectionInfo
+	public class ConnectionInfo
 	{
-		public LdhConnectionInfo(string server, int port, bool useSSL, short connectionTimeout)
+		public ConnectionInfo(string server, int port, bool useSSL, short connectionTimeout)
 		{
 			ServerName = server;
 			ServerPort = port;
