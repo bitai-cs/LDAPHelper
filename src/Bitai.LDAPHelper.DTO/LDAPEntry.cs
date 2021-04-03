@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace LDAPHelper.DTO
+namespace Bitai.LDAPHelper.DTO
 {
     /// <summary>
     /// This class represents an LDAP Entry.
@@ -13,16 +13,14 @@ namespace LDAPHelper.DTO
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="customTag">Optional tag to label this object.</param>
-        public LDAPEntry(string customTag = null)
+        /// <param name="requestTag">Optional tag to label this object.</param>
+        public LDAPEntry(string requestTag = null)
         {
-            this.CustomTag = customTag;
+            this.RequestTag = requestTag;
         }
         #endregion
 
-        public string CustomTag { get; set; }
-
-        public string DirectoryEntryPath { get; set; }
+        public string RequestTag { get; set; }
 
         /// <summary>
         /// Country name abbreviation.

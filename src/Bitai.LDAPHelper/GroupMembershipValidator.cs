@@ -3,20 +3,19 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using System.Linq;
-using LDAPHelper.DTO;
+using Bitai.LDAPHelper.DTO;
 
-namespace LDAPHelper
+namespace Bitai.LDAPHelper
 {
-    public class LdhGroupMembershipValidator : BaseHelper
+    public class GroupMembershipValidator : BaseHelper
     {
         #region Constructors
-        public LdhGroupMembershipValidator(LdhClientConfiguration clientConfiguration) : base(clientConfiguration)
+        public GroupMembershipValidator(ClientConfiguration clientConfiguration) : base(clientConfiguration)
         {
         }
 
-        public LdhGroupMembershipValidator(LdhConnectionInfo connectionInfo, LdhSearchLimits searchLimits, LdhCredentials userCredentials) : base(connectionInfo, searchLimits, userCredentials) { }
+        public GroupMembershipValidator(ConnectionInfo connectionInfo, SearchLimits searchLimits, Credentials userCredentials) : base(connectionInfo, searchLimits, userCredentials) { }
         #endregion
-
 
 
         /// <summary>
@@ -33,16 +32,18 @@ namespace LDAPHelper
             if (sAMAccountName.Contains("*"))
                 throw new ArgumentException($"{nameof(sAMAccountName)} cannot contain the character *.");
 
-            var searcher = new LdhSearcher(this.ConnectionInfo, this.SearchLimits, this.UserCredentials);
+            var attributeFilter = new QueryFilters.AttributeFilter(EntryAttribute.sAMAccountName, new QueryFilters.FilterValue(sAMAccountName));
 
-            var searchResult = await searcher.SearchParentEntriesAsync(EntryAttribute.sAMAccountName, sAMAccountName, RequiredEntryAttributes.OnlyCN, null);
+            var searcher = new Searcher(this.ConnectionInfo, this.SearchLimits, this.UserCredentials);
+
+            var searchResult = await searcher.SearchParentEntriesAsync(attributeFilter, RequiredEntryAttributes.OnlyCN, null);
 
             if (searchResult.Entries.Count().Equals(0))
             {
                 if (searchResult.HasErrorInfo)
                     throw searchResult.ErrorObject;
                 else
-                    throw new LDAPHelper.LdhEntryNotFoundException($"{sAMAccountName} not found.");
+                    throw new LDAPHelper.EntryNotFoundException($"{sAMAccountName} not found.");
             }
 
             return searchResult.Entries.Where(entry => entry.cn.Equals(parentGroupName, StringComparison.OrdinalIgnoreCase)).Any();

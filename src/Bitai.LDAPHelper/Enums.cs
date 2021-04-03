@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace LDAPHelper
+namespace Bitai.LDAPHelper
 {
 	public enum LdapServerDefaultPorts : int
 	{

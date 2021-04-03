@@ -3,12 +3,12 @@ using System;
 using System.Threading.Tasks;
 using System.Linq;
 
-namespace LDAPHelper
+namespace Bitai.LDAPHelper
 {
-    public class LdhAuthenticator : BaseHelper
+    public class Authenticator : BaseHelper
     {
         #region Constructors
-        public LdhAuthenticator(LdhConnectionInfo connectionInfo) : base(connectionInfo)
+        public Authenticator(ConnectionInfo connectionInfo) : base(connectionInfo)
         {
         }
         #endregion
@@ -16,11 +16,11 @@ namespace LDAPHelper
 
         #region Public methods
         /// <summary>
-        /// Authenticate <see cref="LdhCredentials"/> on the LDAP Server
+        /// Authenticate <see cref="Credentials"/> on the LDAP Server
         /// </summary>
-        /// <param name="credentials"><see cref="LdhCredentials"/> to connect and authenticate on the LDAP Server.</param>
+        /// <param name="credentials"><see cref="Credentials"/> to connect and authenticate on the LDAP Server.</param>
         /// <returns>True or false, if authenticated or no.</returns>
-        public async Task<bool> AuthenticateAsync(LdhCredentials credentials)
+        public async Task<bool> AuthenticateAsync(Credentials credentials)
         {
             using (var connection = await GetLdapConnection(this.ConnectionInfo, credentials, false))
             {

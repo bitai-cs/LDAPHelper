@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Security;
 using System.Text;
 
-namespace LDAPHelper
+namespace Bitai.LDAPHelper
 {
-	public class LdhCredentials
+	public class Credentials
 	{
-		public LdhCredentials(string domainAccountName, string accountPassword)
+		public Credentials(string domainAccountName, string accountPassword)
 		{
 			DomainAccountName = domainAccountName;
 			AccountPassword = accountPassword;
