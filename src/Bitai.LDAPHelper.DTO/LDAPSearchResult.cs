@@ -10,10 +10,10 @@ namespace Bitai.LDAPHelper.DTO
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="customTag">Optional tag to label this object.</param>
-        public LDAPSearchResult(string customTag = null)
+        /// <param name="requestTag">Optional tag to label this object.</param>
+        public LDAPSearchResult(string requestTag = null)
         {
-            CustomTag = customTag;
+            RequestTag = requestTag;
         }
 
 
@@ -47,7 +47,7 @@ namespace Bitai.LDAPHelper.DTO
         /// <summary>
         /// Custom label to tag tihs object.
         /// </summary>
-        public string CustomTag { get; private set; }
+        public string RequestTag { get; private set; }
 
 
         /// <summary>

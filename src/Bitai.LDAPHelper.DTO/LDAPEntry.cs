@@ -13,10 +13,10 @@ namespace Bitai.LDAPHelper.DTO
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="customTag">Optional tag to label this object.</param>
-        public LDAPEntry(string customTag = null)
+        /// <param name="requestTag">Optional tag to label this object.</param>
+        public LDAPEntry(string requestTag = null)
         {
-            this.RequestTag = customTag;
+            this.RequestTag = requestTag;
         }
         #endregion
 
