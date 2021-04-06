@@ -418,9 +418,9 @@ namespace Bitai.LDAPHelper.Demo
                 printDemoTitle("Demo_Searcher_SearchUsers");
 
                 //Create search filter
-                var onlyUsersFilterCombiner = QueryFilters.AtrributeFilterCombiner.CreateOnlyUsersFilterCombiner();
+                var onlyUsersFilterCombiner = QueryFilters.AttributeFilterCombiner.CreateOnlyUsersFilterCombiner();
                 var attributeFilter = new QueryFilters.AttributeFilter(filterAttribute, new QueryFilters.FilterValue(filterValue));
-                var searchFilterCombiner = new QueryFilters.AtrributeFilterCombiner(false, true, new List<QueryFilters.ICombinableFilter> { onlyUsersFilterCombiner, attributeFilter });
+                var searchFilterCombiner = new QueryFilters.AttributeFilterCombiner(false, true, new List<QueryFilters.ICombinableFilter> { onlyUsersFilterCombiner, attributeFilter });
 
                 var searcher = new LDAPHelper.Searcher(getClientConfiguration());
 
@@ -476,11 +476,11 @@ namespace Bitai.LDAPHelper.Demo
                 printDemoTitle("Demo_Searcher_SearchUsersByTwoFilters");
 
                 //Create search filter
-                var onlyUsersFilterCombiner = QueryFilters.AtrributeFilterCombiner.CreateOnlyUsersFilterCombiner();
+                var onlyUsersFilterCombiner = QueryFilters.AttributeFilterCombiner.CreateOnlyUsersFilterCombiner();
                 var attributeFilter1 = new QueryFilters.AttributeFilter(filterAttribute, new QueryFilters.FilterValue(filterValue));
                 var attributeFilter2 = new QueryFilters.AttributeFilter(secondFilterAttribute, new QueryFilters.FilterValue(secondFilterValue));
-                var filter1Filter2Combiner = new QueryFilters.AtrributeFilterCombiner(false, conjunctiveFilters, new List<QueryFilters.ICombinableFilter> { attributeFilter1, attributeFilter2 });
-                var searchFilterCombiner = new QueryFilters.AtrributeFilterCombiner(false, true, new List<QueryFilters.ICombinableFilter> { onlyUsersFilterCombiner, filter1Filter2Combiner });
+                var filter1Filter2Combiner = new QueryFilters.AttributeFilterCombiner(false, conjunctiveFilters, new List<QueryFilters.ICombinableFilter> { attributeFilter1, attributeFilter2 });
+                var searchFilterCombiner = new QueryFilters.AttributeFilterCombiner(false, true, new List<QueryFilters.ICombinableFilter> { onlyUsersFilterCombiner, filter1Filter2Combiner });
 
                 var searcher = new LDAPHelper.Searcher(getClientConfiguration());
 
@@ -582,7 +582,7 @@ namespace Bitai.LDAPHelper.Demo
                 //Create filters
                 var filter1 = new QueryFilters.AttributeFilter(false, filterAttribute, new QueryFilters.FilterValue(filterValue));
                 var filter2 = new QueryFilters.AttributeFilter(false, secondFilterAttribute, new QueryFilters.FilterValue(secondFilterValue));
-                var filterCombiner = new QueryFilters.AtrributeFilterCombiner(false, conjunctiveFilters, new List<QueryFilters.ICombinableFilter> { filter1, filter2 });
+                var filterCombiner = new QueryFilters.AttributeFilterCombiner(false, conjunctiveFilters, new List<QueryFilters.ICombinableFilter> { filter1, filter2 });
 
                 var searcher = new LDAPHelper.Searcher(getClientConfiguration());
 

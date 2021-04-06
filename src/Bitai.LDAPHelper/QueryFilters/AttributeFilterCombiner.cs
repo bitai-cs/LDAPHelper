@@ -5,10 +5,10 @@ using System.Text;
 
 namespace Bitai.LDAPHelper.QueryFilters
 {
-    public class AtrributeFilterCombiner : List<ICombinableFilter>, ICombinableFilter
+    public class AttributeFilterCombiner : List<ICombinableFilter>, ICombinableFilter
     {
         #region Static methods
-        public static AtrributeFilterCombiner CreateOnlyUsersFilterCombiner()
+        public static AttributeFilterCombiner CreateOnlyUsersFilterCombiner()
         {
             var noComputerFilter = new QueryFilters.AttributeFilter(true, EntryAttribute.objectClass, new QueryFilters.FilterValue("computer"));
 
@@ -16,10 +16,10 @@ namespace Bitai.LDAPHelper.QueryFilters
 
             var userFilter = new QueryFilters.AttributeFilter(false, EntryAttribute.objectClass, new QueryFilters.FilterValue("user"));
 
-            return new QueryFilters.AtrributeFilterCombiner(false, true, new List<QueryFilters.AttributeFilter> { noComputerFilter, noGroupFilter, userFilter });
+            return new QueryFilters.AttributeFilterCombiner(false, true, new List<QueryFilters.AttributeFilter> { noComputerFilter, noGroupFilter, userFilter });
         }
 
-        public static AtrributeFilterCombiner CreateOnlyGroupsFilterCombiner()  
+        public static AttributeFilterCombiner CreateOnlyGroupsFilterCombiner()  
         {
             var noComputerFilter = new QueryFilters.AttributeFilter(true, EntryAttribute.objectClass, new QueryFilters.FilterValue("computer"));
 
@@ -27,7 +27,7 @@ namespace Bitai.LDAPHelper.QueryFilters
 
             var userFilter = new QueryFilters.AttributeFilter(true, EntryAttribute.objectClass, new QueryFilters.FilterValue("user"));
 
-            return new QueryFilters.AtrributeFilterCombiner(false, true, new List<QueryFilters.AttributeFilter> { noComputerFilter, noGroupFilter, userFilter });
+            return new QueryFilters.AttributeFilterCombiner(false, true, new List<QueryFilters.AttributeFilter> { noComputerFilter, noGroupFilter, userFilter });
         }
         #endregion
 
@@ -40,19 +40,19 @@ namespace Bitai.LDAPHelper.QueryFilters
         public bool Generated { get; private set; }
 
 
-        public AtrributeFilterCombiner() : base()
+        public AttributeFilterCombiner() : base()
         {
             IsCombinerNegated = false;
             ConjunctiveFilters = true;
         }
 
-        public AtrributeFilterCombiner(bool isCombinerNegated, bool conjunctiveFilters) : this()
+        public AttributeFilterCombiner(bool isCombinerNegated, bool conjunctiveFilters) : this()
         {
             IsCombinerNegated = isCombinerNegated;
             ConjunctiveFilters = conjunctiveFilters;
         }
 
-        public AtrributeFilterCombiner(bool isCombinerNegated, bool conjunctiveFilters, IEnumerable<ICombinableFilter> filters) : this(isCombinerNegated, conjunctiveFilters)
+        public AttributeFilterCombiner(bool isCombinerNegated, bool conjunctiveFilters, IEnumerable<ICombinableFilter> filters) : this(isCombinerNegated, conjunctiveFilters)
         {
             AddRange(filters);
         }
