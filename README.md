@@ -1,21 +1,17 @@
 # LDAP Helper ![Logo](resources/hierarchy_32.png)
 
-**.NET Standard 2.0** library to wrap **Novell.Directory.Ldap.NETStandard** functionality to make **LDAP  queries** to search accounts and objects in a Directory Service.
+**.NET Standard 2.0** library which wraps  **Novell.Directory.Ldap.NETStandard** functionality to make LDAP searches and also authenticate users against a Directory Service.
 
-
+This libary is part of [Bitai.LDAPWebApi](https://github.com/bitai-cs/LDAPWebApi) solution 
 
 ### Requirements
 
 - **.NET Standard 2.0**
   - Have at least [.NET Core 2.0 SDK installed](https://dotnet.microsoft.com/download/dotnet/2.0) on your system.  
 
-
-
 ### How to use the library?
 
 - See the project **Bitai.LDAPHelper.Demo** to get a reference  
-
-
 
 ### How to execute Demo?
 
@@ -80,4 +76,8 @@
     "Demo_GroupMembershipValidator_CheckGroupmembership_Check_GroupName": "Software Administrators"
 }
 ```
-- After you have edited the parameter values in the configuration file, you can run the demo.
+- After you have edited the parameter values in the configuration file, you can run the demo. 
+
+### You may also be interested in:
+
+- [Bitai.IdentityServer4.Admin](https://github.com/bitai-cs/IdentityServer4.Admin) forked from [skoruba.IdentityServer4.Admin](https://github.com/skoruba/IdentityServer4.Admin). This forked repository proposes to implement user authentication on an LDAP server.
