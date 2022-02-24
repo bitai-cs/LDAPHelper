@@ -1,6 +1,6 @@
 # LDAP Helper ![Logo](resources/hierarchy_32.png)
 
-**.NET Standard 2.0** library which wraps  **Novell.Directory.Ldap.NETStandard** functionality to make LDAP searches and also authenticate users against a Directory Service.
+**.NET 5.0** library which wraps  **Novell.Directory.Ldap.NETStandard** functionality to make LDAP searches and also authenticate users against a Directory Service.
 
 This libary is part of [Bitai.LDAPWebApi](https://github.com/bitai-cs/LDAPWebApi) solution 
 
