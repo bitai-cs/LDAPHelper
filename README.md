@@ -4,18 +4,18 @@
 
 This libary is part of [Bitai.LDAPWebApi](https://github.com/bitai-cs/LDAPWebApi) solution 
 
-### Requirements
+## Requirements
 
-- **.NET Standard 2.0**
-  - Have at least [.NET Core 2.0 SDK installed](https://dotnet.microsoft.com/download/dotnet/2.0) on your system.  
+- **.NET 5.0**
+  - Have at least [.NET 5.0 SDK installed](https://dotnet.microsoft.com/en-us/download/dotnet/5.0) on your system.  
 
-### How to use the library?
+## How to use the library?
 
 - See the project **Bitai.LDAPHelper.Demo** to get a reference  
 
-### How to execute Demo?
+## How to execute Demo console application?
 
-- First, make a copy, on your disk, of the  [Bitai.LDAPHelper.Demo/ldaphelper_demosetup.json](src/Bitai.LDAPHelper.Demo/ldaphelper_demosetup.json) file.
+- First, make a copy on your desktop of the  [Bitai.LDAPHelper.Demo/ldaphelper_demosetup.json](src/Bitai.LDAPHelper.Demo/ldaphelper_demosetup.json) file.
 - Edit the copied file and set the parameters as needed.
 ```json
 {
@@ -78,6 +78,6 @@ This libary is part of [Bitai.LDAPWebApi](https://github.com/bitai-cs/LDAPWebApi
 ```
 - After you have edited the parameter values in the configuration file, you can run the demo. 
 
-### You may also be interested in:
+## You may also be interested in
 
 - [Bitai.IdentityServer4.Admin](https://github.com/bitai-cs/IdentityServer4.Admin) forked from [skoruba.IdentityServer4.Admin](https://github.com/skoruba/IdentityServer4.Admin). This forked repository proposes to implement user authentication on an LDAP server.
