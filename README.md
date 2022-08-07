@@ -1,13 +1,13 @@
 # LDAP Helper ![Logo](resources/hierarchy_32.png)
 
-**.NET 5.0** library which wraps  **Novell.Directory.Ldap.NETStandard** functionality to make LDAP searches and also authenticate users against a Directory Service.
+**.NET 6.0** library which wraps  **Novell.Directory.Ldap.NETStandard** functionality to make LDAP searches and also authenticate users against a Directory Service.
 
-This libary is part of [Bitai.LDAPWebApi](https://github.com/bitai-cs/LDAPWebApi) solution 
+This libary is part of [Bitai.LDAPWebApi](https://github.com/bitai-cs/LDAPWebApi) solution
 
 ## Requirements
 
-- **.NET 5.0**
-  - Have at least [.NET 5.0 SDK installed](https://dotnet.microsoft.com/en-us/download/dotnet/5.0) on your system.  
+- **.NET 6.0**
+  - Have at least [.NET 6.0 SDK installed](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) on your system.  
 
 ## How to use the library?
 
@@ -17,6 +17,7 @@ This libary is part of [Bitai.LDAPWebApi](https://github.com/bitai-cs/LDAPWebApi
 
 - First, make a copy on your desktop of the  [Bitai.LDAPHelper.Demo/ldaphelper_demosetup.json](src/Bitai.LDAPHelper.Demo/ldaphelper_demosetup.json) file.
 - Edit the copied file and set the parameters as needed.
+  
 ```json
 {
     "DomainAccountName": "DOMAIN\\AccountName",
@@ -76,7 +77,8 @@ This libary is part of [Bitai.LDAPWebApi](https://github.com/bitai-cs/LDAPWebApi
     "Demo_GroupMembershipValidator_CheckGroupmembership_Check_GroupName": "Software Administrators"
 }
 ```
-- After you have edited the parameter values in the configuration file, you can run the demo. 
+
+- After you have edited the parameter values in the configuration file, you can run the demo.
 
 ## You may also be interested in
 
