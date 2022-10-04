@@ -8,13 +8,13 @@ namespace Bitai.LDAPHelper
 	{
 		public ConnectionInfo(string server, int port, bool useSSL, short connectionTimeout)
 		{
-			ServerName = server;
+			Server = server;
 			ServerPort = port;
 			UseSSL = useSSL;
 			ConnectionTimeout = connectionTimeout;
 		}
 
-		public string ServerName { get; }
+		public string Server { get; }
 
 		public int ServerPort { get; }
 

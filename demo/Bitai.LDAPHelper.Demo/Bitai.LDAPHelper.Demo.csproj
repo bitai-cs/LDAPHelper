@@ -9,22 +9,22 @@
 		<Description>Demo of Bitai.Bitai.LDAPHelper usage.</Description>
 		<PackageId>Bitai.Bitai.LDAPHelper.Demo</PackageId>
 		<PackageIcon>hierarchy_32.png</PackageIcon>
-		<Version>6.0.0</Version>
-		<AssemblyVersion>6.0.0.0</AssemblyVersion>
+		<Version>6.1.0</Version>
+		<AssemblyVersion>6.1.0.0</AssemblyVersion>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="6.0.0"/>
-		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0"/>
-		<PackageReference Include="Serilog" Version="2.11.0"/>
-		<PackageReference Include="Serilog.Sinks.Console" Version="4.0.1"/>
+		<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="6.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
+		<PackageReference Include="Serilog" Version="2.11.0" />
+		<PackageReference Include="Serilog.Sinks.Console" Version="4.0.1" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="..\..\resources\hierarchy_32.png">
 			<Pack>True</Pack>
-			<PackagePath/>
+			<PackagePath />
 		</None>
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\..\src\Bitai.LDAPHelper\Bitai.LDAPHelper.csproj"/>
+		<ProjectReference Include="..\..\src\Bitai.LDAPHelper\Bitai.LDAPHelper.csproj" />
 	</ItemGroup>
 </Project>
