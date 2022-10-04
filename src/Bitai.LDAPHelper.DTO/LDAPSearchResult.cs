@@ -5,60 +5,23 @@ using System.Text;
 
 namespace Bitai.LDAPHelper.DTO
 {
-    public class LDAPSearchResult
-    {
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="requestTag">Optional tag to label this object.</param>
-        public LDAPSearchResult(string requestTag = null)
-        {
-            RequestTag = requestTag;
-        }
+	public class LDAPSearchResult : LDAPOperationResult
+	{
+		public LDAPSearchResult(IEnumerable<LDAPHelper.DTO.LDAPEntry> entries, string requestTag = null, string operationMessage = "OK", bool isSuccessfulOperation = true) : base(requestTag, isSuccessfulOperation)
+		{
+			Entries = entries;
+			OperationMessage = operationMessage;
+		}
+
+		public LDAPSearchResult(Exception exception, string requestTag = null) : base(exception, requestTag)
+		{
+		}
 
 
-        /// <summary>
-        /// LDAP entries found in search.
-        /// </summary>
-        public IEnumerable<LDAPHelper.DTO.LDAPEntry> Entries { get; set; }
 
-        /// <summary>
-        /// Intercepted error while searching for LDAP entries.
-        /// This property must not be serialized.
-        /// </summary>
-        [IgnoreDataMember]
-        public Exception ErrorObject { get; private set; }
-
-        /// <summary>
-        /// Type name of <see cref="ErrorObject"/>.
-        /// </summary>
-        public string ErrorType { get; private set; }
-
-        /// <summary>
-        /// Error message of <see cref="ErrorObject"/>
-        /// </summary>
-        public string ErrorMessage { get; private set; }
-
-        /// <summary>
-        /// Whether or not we have information on an intercepted error.
-        /// </summary>
-        public bool HasErrorInfo { get => ErrorObject != null; }
-
-        /// <summary>
-        /// Custom label to tag tihs object.
-        /// </summary>
-        public string RequestTag { get; private set; }
-
-
-        /// <summary>
-        /// Store Error information.
-        /// </summary>
-        /// <param name="exception"></param>
-        public void SetError(Exception exception)
-        {
-            ErrorObject = exception;
-            ErrorType = exception.GetType().FullName;
-            ErrorMessage = exception.Message;
-        }
-    }
+		/// <summary>
+		/// LDAP entries found in search.
+		/// </summary>
+		public IEnumerable<LDAPHelper.DTO.LDAPEntry> Entries { get; private set; }
+	}
 }

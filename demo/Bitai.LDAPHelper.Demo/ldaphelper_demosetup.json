@@ -41,7 +41,7 @@
         }
     ],
     "ConnectionTimeout": 15,
-    "UseSSL": false,
+    "Demo_AccountManager_SetAccountPassword_DistinguishedName": "cn=prueba01 prueba ad,ou=user_test,OU=Alumnos,DC=certus,DC=edu,DC=pe",
     "Demo_Authenticator_Authenticate_DomainAccountName": "DOMAIN\\AccountName",
     "Demo_Searcher_SearchUsers_Filter_sAMAccountName": "usr_ext01",
     "Demo_Searcher_SearchUsers_Filter_cn": "*Bastidas*",

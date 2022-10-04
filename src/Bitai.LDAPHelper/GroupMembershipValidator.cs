@@ -14,7 +14,7 @@ namespace Bitai.LDAPHelper
         {
         }
 
-        public GroupMembershipValidator(ConnectionInfo connectionInfo, SearchLimits searchLimits, Credentials userCredentials) : base(connectionInfo, searchLimits, userCredentials) { }
+        public GroupMembershipValidator(ConnectionInfo connectionInfo, SearchLimits searchLimits, DomainAccountCredential domainAccountCredential) : base(connectionInfo, searchLimits, domainAccountCredential) { }
         #endregion
 
 
@@ -34,13 +34,13 @@ namespace Bitai.LDAPHelper
 
             var attributeFilter = new QueryFilters.AttributeFilter(EntryAttribute.sAMAccountName, new QueryFilters.FilterValue(sAMAccountName));
 
-            var searcher = new Searcher(this.ConnectionInfo, this.SearchLimits, this.UserCredentials);
+            var searcher = new Searcher(this.ConnectionInfo, this.SearchLimits, this.DomainAccountCredential);
 
             var searchResult = await searcher.SearchParentEntriesAsync(attributeFilter, RequiredEntryAttributes.OnlyCN, null);
 
             if (searchResult.Entries.Count().Equals(0))
             {
-                if (searchResult.HasErrorInfo)
+                if (searchResult.HasErrorObject)
                     throw searchResult.ErrorObject;
                 else
                     throw new LDAPHelper.EntryNotFoundException($"{sAMAccountName} not found.");

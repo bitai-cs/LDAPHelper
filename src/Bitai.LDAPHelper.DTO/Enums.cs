@@ -32,6 +32,8 @@ namespace Bitai.LDAPHelper.DTO
         sn,
         telephoneNumber,
         title,
+        userPassword,
+		unicodePwd,
         userPrincipalName,
         whenCreated,
         objectGuid,
