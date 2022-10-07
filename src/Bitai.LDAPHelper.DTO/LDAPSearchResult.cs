@@ -7,13 +7,17 @@ namespace Bitai.LDAPHelper.DTO
 {
 	public class LDAPSearchResult : LDAPOperationResult
 	{
-		public LDAPSearchResult(IEnumerable<LDAPHelper.DTO.LDAPEntry> entries, string requestTag = null, string operationMessage = "OK", bool isSuccessfulOperation = true) : base(requestTag, isSuccessfulOperation)
+		public LDAPSearchResult(string requestTag = null, IEnumerable<LDAPHelper.DTO.LDAPEntry> entries = null, string operationMessage = "OK", bool isSuccessfulOperation = true) : base(requestTag, isSuccessfulOperation)
 		{
-			Entries = entries;
+			if (entries != null)
+				Entries = entries;
+			else
+				Entries = new List<LDAPEntry>(); 
+
 			OperationMessage = operationMessage;
 		}
 
-		public LDAPSearchResult(Exception exception, string requestTag = null) : base(exception, requestTag)
+		public LDAPSearchResult(string operationMessage, Exception exception, string requestTag = null) : base(operationMessage, exception, requestTag)
 		{
 		}
 

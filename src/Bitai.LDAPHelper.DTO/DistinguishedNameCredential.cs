@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Bitai.LDAPHelper
+namespace Bitai.LDAPHelper.DTO
 {
 	public class DistinguishedNameCredential
 	{

@@ -1,11 +1,11 @@
-﻿using Novell.Directory.Ldap;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using System.Linq;
 using Bitai.LDAPHelper.Extensions;
 using System.Reflection.Metadata.Ecma335;
+using Bitai.LDAPHelper.DTO;
 
 namespace Bitai.LDAPHelper
 {
@@ -24,11 +24,11 @@ namespace Bitai.LDAPHelper
 
 
 		#region Private methods
-		private async Task<DTO.LDAPEntry> getEntryFromAttributeSet(LdapAttributeSet attributeSet, DTO.RequiredEntryAttributes requiredEntryAttributes, string requestTag)
+		private async Task<DTO.LDAPEntry> getEntryFromAttributeSet(Novell.Directory.Ldap.LdapAttributeSet attributeSet, DTO.RequiredEntryAttributes requiredEntryAttributes, string requestTag)
 		{
 			var ldapEntry = new DTO.LDAPEntry(requestTag);
 
-			LdapAttribute attribute;
+			Novell.Directory.Ldap.LdapAttribute attribute;
 			byte[] bytes;
 			string tempValue;
 
@@ -149,23 +149,23 @@ namespace Bitai.LDAPHelper
 
 		private async Task<DTO.LDAPSearchResult> getSearchResultAsync(DTO.RequiredEntryAttributes requiredEntryAttributes, string searchFilter, string requestTag)
 		{
-			DTO.LDAPSearchResult searchResult = null;
+			DTO.LDAPSearchResult searchResult;
 
-			var attributesToLoad = this.GetRequiredAttributeNames(requiredEntryAttributes);
-			var entries = new List<DTO.LDAPEntry>();
-			using (var connection = await GetLdapConnection(this.ConnectionInfo, this.DomainAccountCredential))
+			try
 			{
-				var searchConstraints = new LdapSearchConstraints
+				var attributesToLoad = this.GetRequiredAttributeNames(requiredEntryAttributes);
+				var entries = new List<DTO.LDAPEntry>();
+				using (var connection = await GetLdapConnection(this.ConnectionInfo, this.DomainAccountCredential))
 				{
-					ServerTimeLimit = this.SearchLimits.MaxSearchTimeout,
-					MaxResults = this.SearchLimits.MaxSearchResults,
-				};
+					var searchConstraints = new Novell.Directory.Ldap.LdapSearchConstraints
+					{
+						ServerTimeLimit = this.SearchLimits.MaxSearchTimeout,
+						MaxResults = this.SearchLimits.MaxSearchResults,
+					};
 
-				LdapSearchQueue searchQueue = connection.Search(this.SearchLimits.BaseDN, LdapConnection.ScopeSub, searchFilter, attributesToLoad.ToArray(), false, (LdapSearchQueue)null, searchConstraints);
+					Novell.Directory.Ldap.LdapSearchQueue searchQueue = connection.Search(this.SearchLimits.BaseDN, Novell.Directory.Ldap.LdapConnection.ScopeSub, searchFilter, attributesToLoad.ToArray(), false, (Novell.Directory.Ldap.LdapSearchQueue)null, searchConstraints);
 
-				LdapMessage responseMessage = null;
-				try
-				{
+					Novell.Directory.Ldap.LdapMessage responseMessage = null;
 					while ((responseMessage = searchQueue.GetResponse()) != null)
 					{
 						if (responseMessage is Novell.Directory.Ldap.LdapSearchResult)
@@ -178,15 +178,17 @@ namespace Bitai.LDAPHelper
 
 					connection.Disconnect();
 				}
-				catch (Exception ex)
-				{
-					searchResult = new DTO.LDAPSearchResult(ex, requestTag);
-				}
+
+				searchResult = new DTO.LDAPSearchResult(requestTag, entries, $"The search returned {entries.Count} entrie(s).");
+
+				return searchResult;
 			}
+			catch(Exception ex)
+			{
+				searchResult = new LDAPSearchResult("Unexpected error performing search.", ex, requestTag);
 
-			searchResult = new DTO.LDAPSearchResult(entries, requestTag, $"The search returned {entries.Count} entrie(s).");
-
-			return searchResult;
+				return searchResult;
+			}
 		}
 		#endregion
 
@@ -200,32 +202,62 @@ namespace Bitai.LDAPHelper
 
 		public async Task<DTO.LDAPSearchResult> SearchParentEntriesAsync(QueryFilters.ICombinableFilter searchFilter, DTO.RequiredEntryAttributes requiredEntryAttributes, string requestTag)
 		{
-			var partialSearchResult = await this.SearchEntriesAsync(searchFilter, DTO.RequiredEntryAttributes.OnlyMemberOf, requestTag);
-
-			if (partialSearchResult.Entries.Count().Equals(0))
+			LDAPSearchResult addTopExceptionToResult(LDAPSearchResult partialSearchResult)
 			{
-				if (partialSearchResult.IsSuccessfulOperation)
-					return new DTO.LDAPSearchResult(null, requestTag, "No entry was found according to the search filter.", false);
-				else
-					return partialSearchResult;
+				return new DTO.LDAPSearchResult("Error looking up parent LDAP entries.", new Exception(partialSearchResult.OperationMessage, partialSearchResult.ErrorObject), requestTag);
 			}
 
-			var collectedEntries = partialSearchResult.Entries.SelectAllMemberOfEntriesRecursively();
-
-			var resultEntries = new List<DTO.LDAPEntry>();
-			foreach (var entry in collectedEntries)
+			LDAPSearchResult addTopMessageToResult(LDAPSearchResult partialSearchResult)
 			{
-				var distinguishedNameFilter = new QueryFilters.AttributeFilter(DTO.EntryAttribute.distinguishedName, new QueryFilters.FilterValue(entry.distinguishedName.ReplaceSpecialCharsToScapedChars()));
+				partialSearchResult.SetUnsuccessfullOperation($"Error looking up parent LDAP entries. {partialSearchResult.OperationMessage}");
 
-				partialSearchResult = await SearchEntriesAsync(distinguishedNameFilter, requiredEntryAttributes, requestTag);
+				return partialSearchResult;
+			}
+
+			try
+			{
+				var partialSearchResult = await this.SearchEntriesAsync(searchFilter, DTO.RequiredEntryAttributes.OnlyMemberOf, requestTag);
 
 				if (!partialSearchResult.IsSuccessfulOperation)
+				{
+					if (partialSearchResult.HasErrorObject)
+						return addTopExceptionToResult(partialSearchResult);
+					else
+						return addTopMessageToResult(partialSearchResult);
+				}
+				else if (partialSearchResult.Entries.Count() == 0)
+				{
+					partialSearchResult.SetUnsuccessfullOperation("No entry was found according to the search filter.");
+
 					return partialSearchResult;
+				}
 
-				resultEntries.AddRange(partialSearchResult.Entries);
+				var collectedEntries = partialSearchResult.Entries.SelectAllMemberOfEntriesRecursively();
+
+				var resultEntries = new List<DTO.LDAPEntry>();
+				foreach (var entry in collectedEntries)
+				{
+					var distinguishedNameFilter = new QueryFilters.AttributeFilter(DTO.EntryAttribute.distinguishedName, new QueryFilters.FilterValue(entry.distinguishedName.ReplaceSpecialCharsToScapedChars()));
+
+					partialSearchResult = await SearchEntriesAsync(distinguishedNameFilter, requiredEntryAttributes, requestTag);
+
+					if (!partialSearchResult.IsSuccessfulOperation)
+					{
+						if (partialSearchResult.HasErrorObject)
+							return addTopExceptionToResult(partialSearchResult);
+						else
+							return addTopMessageToResult(partialSearchResult);
+					}
+
+					resultEntries.AddRange(partialSearchResult.Entries);
+				}
+
+				return new DTO.LDAPSearchResult(requestTag, resultEntries);
 			}
-
-			return new DTO.LDAPSearchResult(resultEntries, requestTag);
+			catch(Exception ex)
+			{
+				return new DTO.LDAPSearchResult("Unexpected error when searching for parent entries.", ex, requestTag);
+			}
 		}
 		#endregion
 	}

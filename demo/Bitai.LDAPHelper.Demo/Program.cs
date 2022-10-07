@@ -93,11 +93,11 @@ namespace Bitai.LDAPHelper.Demo
 			return new LDAPHelper.ConnectionInfo(Program.Selected_LdapServer, Program.Selected_LdapServerPort, Program.Selected_UseSsl, Program.Selected_ConnectionTimeout);
 		}
 
-		private static LDAPHelper.DomainAccountCredential getDomainAccountCredential()
+		private static DTO.DomainAccountCredential getDomainAccountCredential()
 		{
 			var domainAccountCredentialParts = Program.Selected_DomainAccountName.Split(new char[] { '\\' });
 
-			return new LDAPHelper.DomainAccountCredential(domainAccountCredentialParts[0], domainAccountCredentialParts[1], Program.Selected_DomainAccountPassword);
+			return new DTO.DomainAccountCredential(domainAccountCredentialParts[0], domainAccountCredentialParts[1], Program.Selected_DomainAccountPassword);
 		}
 
 		public static LDAPHelper.SearchLimits getSearchLimits()
@@ -399,7 +399,7 @@ namespace Bitai.LDAPHelper.Demo
 				Log.Information($"Enter new password for {distinguishedName}");
 
 				var password = requestAccountPassword(distinguishedName);
-				var credential = new LDAPHelper.DistinguishedNameCredential(distinguishedName, password);
+				var credential = new DTO.DistinguishedNameCredential(distinguishedName, password);
 				var accountManager = new LDAPHelper.AccountManager(getClientConfiguration());
 
 				Log.Information("Setting account password...");

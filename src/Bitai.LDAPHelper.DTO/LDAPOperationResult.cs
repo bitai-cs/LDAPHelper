@@ -27,14 +27,14 @@ namespace Bitai.LDAPHelper.DTO
         /// </summary>
         /// <param name="exception"></param>
         /// <param name="requestTag"></param>
-        public LDAPOperationResult(Exception exception, string requestTag = null)
+        public LDAPOperationResult(string operationMessage, Exception exception, string requestTag = null)
         {
             if (exception == null)
                 throw new ArgumentNullException(nameof(exception));
 
             RequestTag = requestTag;
 
-            SetUnsuccessfullOperation(exception);
+            SetUnsuccessfullOperation(operationMessage, exception);
         }
 		#endregion
 
@@ -88,14 +88,14 @@ namespace Bitai.LDAPHelper.DTO
 		/// Store Error information.
 		/// </summary>
 		/// <param name="exception"></param>
-		public void SetUnsuccessfullOperation(Exception exception)
+		public void SetUnsuccessfullOperation(string operationMessage, Exception exception)
         {
             IsSuccessfulOperation = false;
 
             ErrorObject = exception;
             ErrorType = exception.GetType().FullName;
 
-            OperationMessage = exception.Message;
+            OperationMessage = operationMessage;
         }
 
         public void SetUnsuccessfullOperation(string operationMessage)
