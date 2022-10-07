@@ -29,36 +29,36 @@ namespace Bitai.LDAPHelper
 
 		public async Task<LDAPPasswordUpdateResult> SetAccountPassword(DistinguishedNameCredential credential, string requestTag = null, bool postUpdateTestAuthentication = true)
 		{
-			if (string.IsNullOrEmpty(credential.Password))
-				throw new InvalidOperationException($"The password to be assigned to the {credential.DistinguishedName} account is required.");
-
-			////Create search filter
-			//var onlyUsersFilterCombiner = QueryFilters.AttributeFilterCombiner.CreateOnlyUsersFilterCombiner();
-			//var attributeFilter = new QueryFilters.AttributeFilter(DTO.EntryAttribute.sAMAccountName, new QueryFilters.FilterValue(credential.DistinguishedName));
-			//var searchFilterCombiner = new QueryFilters.AttributeFilterCombiner(false, true, new List<QueryFilters.ICombinableFilter> { onlyUsersFilterCombiner, attributeFilter });
-
-			//var searcher = new Searcher(ConnectionInfo, SearchLimits, DomainAccountCredential);
-			//var searchResult = await searcher.SearchEntriesAsync(searchFilterCombiner, DTO.RequiredEntryAttributes.Minimun, null);
-			////Validate search result
-			//if (searchResult.HasErrorInfo)
-			//	throw searchResult.ErrorObject;
-			//else if (searchResult.Entries.Count() == 0)
-			//	throw new EntryNotFoundException($"{credential.DistinguishedName} not found.");
-			//else if (searchResult.Entries.Count() > 1)
-			//	throw new DuplicateNameException($"Multiple entries found for account identifier {credential.DistinguishedName}");
-			////Get the only one entry
-			//var ldapEntry = searchResult.Entries.Single();
-
-			//Create password modification request
-			string newPassword = $"\"{credential.Password}\"";
-			byte[] encodedNewPasswordBytes = Encoding.Unicode.GetBytes(newPassword);
-			string newPasswordEncodedString = Convert.ToBase64String(encodedNewPasswordBytes);
-			var pwdAttribute = new LdapAttribute(DTO.EntryAttribute.unicodePwd.ToString(), encodedNewPasswordBytes);
-			var pwdModification = new LdapModification(LdapModification.Replace, pwdAttribute);
-
-			using (var ldapConnection = await GetLdapConnection(this.ConnectionInfo, this.DomainAccountCredential))
+			try
 			{
-				try
+				if (string.IsNullOrEmpty(credential.Password))
+					throw new InvalidOperationException($"The password to be assigned to the {credential.DistinguishedName} account is required.");
+
+				////Create search filter
+				//var onlyUsersFilterCombiner = QueryFilters.AttributeFilterCombiner.CreateOnlyUsersFilterCombiner();
+				//var attributeFilter = new QueryFilters.AttributeFilter(DTO.EntryAttribute.sAMAccountName, new QueryFilters.FilterValue(credential.DistinguishedName));
+				//var searchFilterCombiner = new QueryFilters.AttributeFilterCombiner(false, true, new List<QueryFilters.ICombinableFilter> { onlyUsersFilterCombiner, attributeFilter });
+
+				//var searcher = new Searcher(ConnectionInfo, SearchLimits, DomainAccountCredential);
+				//var searchResult = await searcher.SearchEntriesAsync(searchFilterCombiner, DTO.RequiredEntryAttributes.Minimun, null);
+				////Validate search result
+				//if (searchResult.HasErrorInfo)
+				//	throw searchResult.ErrorObject;
+				//else if (searchResult.Entries.Count() == 0)
+				//	throw new EntryNotFoundException($"{credential.DistinguishedName} not found.");
+				//else if (searchResult.Entries.Count() > 1)
+				//	throw new DuplicateNameException($"Multiple entries found for account identifier {credential.DistinguishedName}");
+				////Get the only one entry
+				//var ldapEntry = searchResult.Entries.Single();
+
+				//Create password modification request
+				string newPassword = $"\"{credential.Password}\"";
+				byte[] encodedNewPasswordBytes = Encoding.Unicode.GetBytes(newPassword);
+				string newPasswordEncodedString = Convert.ToBase64String(encodedNewPasswordBytes);
+				var pwdAttribute = new LdapAttribute(DTO.EntryAttribute.unicodePwd.ToString(), encodedNewPasswordBytes);
+				var pwdModification = new LdapModification(LdapModification.Replace, pwdAttribute);
+
+				using (var ldapConnection = await GetLdapConnection(this.ConnectionInfo, this.DomainAccountCredential))
 				{
 					ldapConnection.Modify(credential.DistinguishedName, pwdModification);
 
@@ -71,13 +71,13 @@ namespace Bitai.LDAPHelper
 							return new LDAPPasswordUpdateResult(requestTag, $"Could not set password for {credential.DistinguishedName} distinguished name.", false);
 					}
 				}
-				catch (Exception ex)
-				{
-					return new LDAPPasswordUpdateResult(ex, requestTag);
-				}
-			}
 
-			return new LDAPPasswordUpdateResult(requestTag, $"Password set successfully for {credential.DistinguishedName}");
+				return new LDAPPasswordUpdateResult(requestTag, $"Password set successfully for {credential.DistinguishedName}");
+			}
+			catch(Exception ex)
+			{
+				return new LDAPPasswordUpdateResult("Unexpected error trying to replace password.", ex, requestTag);
+			}
 		}
 	}
 }

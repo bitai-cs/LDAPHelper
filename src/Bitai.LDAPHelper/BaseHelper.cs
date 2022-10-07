@@ -94,49 +94,43 @@ namespace Bitai.LDAPHelper
 			short sSubAuthorityCount = 0;
 			StringBuilder strSid = new StringBuilder();
 			strSid.Append("S-");
-			try
+
+			// Add SID revision.
+			strSid.Append(sidBytes[0].ToString());
+
+			sSubAuthorityCount = Convert.ToInt16(sidBytes[1]);
+
+			// Next six bytes are SID authority value.
+			if (sidBytes[2] != 0 || sidBytes[3] != 0)
 			{
-				// Add SID revision.
-				strSid.Append(sidBytes[0].ToString());
-
-				sSubAuthorityCount = Convert.ToInt16(sidBytes[1]);
-
-				// Next six bytes are SID authority value.
-				if (sidBytes[2] != 0 || sidBytes[3] != 0)
-				{
-					string strAuth = String.Format("0x{0:2x}{1:2x}{2:2x}{3:2x}{4:2x}{5:2x}",
-										(Int16)sidBytes[2],
-										(Int16)sidBytes[3],
-										(Int16)sidBytes[4],
-										(Int16)sidBytes[5],
-										(Int16)sidBytes[6],
-										(Int16)sidBytes[7]);
-					strSid.Append("-");
-					strSid.Append(strAuth);
-				}
-				else
-				{
-					Int64 iVal = sidBytes[7] +
-						  (sidBytes[6] << 8) +
-						  (sidBytes[5] << 16) +
-						  (sidBytes[4] << 24);
-					strSid.Append("-");
-					strSid.Append(iVal.ToString());
-				}
-
-				// Get sub authority count...
-				int idxAuth = 0;
-				for (int i = 0; i < sSubAuthorityCount; i++)
-				{
-					idxAuth = 8 + i * 4;
-					UInt32 iSubAuth = BitConverter.ToUInt32(sidBytes, idxAuth);
-					strSid.Append("-");
-					strSid.Append(iSubAuth.ToString());
-				}
+				string strAuth = String.Format("0x{0:2x}{1:2x}{2:2x}{3:2x}{4:2x}{5:2x}",
+									(Int16)sidBytes[2],
+									(Int16)sidBytes[3],
+									(Int16)sidBytes[4],
+									(Int16)sidBytes[5],
+									(Int16)sidBytes[6],
+									(Int16)sidBytes[7]);
+				strSid.Append("-");
+				strSid.Append(strAuth);
 			}
-			catch (Exception ex)
+			else
 			{
-				throw ex;
+				Int64 iVal = sidBytes[7] +
+					  (sidBytes[6] << 8) +
+					  (sidBytes[5] << 16) +
+					  (sidBytes[4] << 24);
+				strSid.Append("-");
+				strSid.Append(iVal.ToString());
+			}
+
+			// Get sub authority count...
+			int idxAuth = 0;
+			for (int i = 0; i < sSubAuthorityCount; i++)
+			{
+				idxAuth = 8 + i * 4;
+				UInt32 iSubAuth = BitConverter.ToUInt32(sidBytes, idxAuth);
+				strSid.Append("-");
+				strSid.Append(iSubAuth.ToString());
 			}
 
 			return strSid.ToString();

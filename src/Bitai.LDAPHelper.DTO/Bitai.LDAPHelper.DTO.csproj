@@ -2,9 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <AssemblyVersion>6.1.0.0</AssemblyVersion>
-    <FileVersion>6.1.0.0</FileVersion>
-    <Version>6.1.0</Version>
+    <AssemblyVersion>6.1.1.1</AssemblyVersion>
+    <FileVersion>6.1.1.1</FileVersion>
+    <Version>6.1.1</Version>
     <AssemblyName>Bitai.LDAPHelper.DTO</AssemblyName>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Viko Bastidas (BITAI)</Authors>
