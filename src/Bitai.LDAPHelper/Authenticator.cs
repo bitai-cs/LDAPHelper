@@ -20,7 +20,7 @@ namespace Bitai.LDAPHelper
 		/// </summary>
 		/// <param name="domainAccountCredential"><see cref="Credentials"/> to connect and authenticate on the LDAP Server.</param>
 		/// <returns>True or false, if authenticated or no.</returns>
-		public async Task<bool> AuthenticateAsync(DTO.DomainAccountCredential domainAccountCredential)
+		public async Task<bool> AuthenticateAsync(DTO.LDAPDomainAccountCredential domainAccountCredential)
 		{
 			using (var connection = await GetLdapConnection(this.ConnectionInfo, domainAccountCredential, false))
 			{

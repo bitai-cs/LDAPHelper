@@ -11,7 +11,7 @@ namespace Bitai.LDAPHelper
 	{
 		#region Properties
 		public ConnectionInfo ConnectionInfo { get; set; }
-		public DomainAccountCredential DomainAccountCredential { get; set; }
+		public LDAPDomainAccountCredential DomainAccountCredential { get; set; }
 		public SearchLimits SearchLimits { get; set; }
 		#endregion
 
@@ -24,7 +24,7 @@ namespace Bitai.LDAPHelper
 			SearchLimits = clientConfiguration.SearchLimits;
 		}
 
-		protected BaseHelper(ConnectionInfo connectionInfo, SearchLimits searchLimits, DomainAccountCredential domainAccountCredential)
+		protected BaseHelper(ConnectionInfo connectionInfo, SearchLimits searchLimits, LDAPDomainAccountCredential domainAccountCredential)
 		{
 			ConnectionInfo = connectionInfo;
 			SearchLimits = searchLimits;
@@ -79,7 +79,7 @@ namespace Bitai.LDAPHelper
 		/// <param name="credential"><see cref="DomainAccountCredential"/>  to connect to the LDAP Server</param>
 		/// <param name="bindRequired">If <see cref="DomainAccountCredential"/> are required to be mandatorily authenticated on the LDAP Server</param>
 		/// <returns>Task of <see cref="LdapConnection"/></returns>
-		protected Task<LdapConnection> GetLdapConnection(ConnectionInfo connectionInfo, DomainAccountCredential credential, bool bindRequired = true)
+		protected Task<LdapConnection> GetLdapConnection(ConnectionInfo connectionInfo, LDAPDomainAccountCredential credential, bool bindRequired = true)
 		{
 			return getLdapConnection(connectionInfo, credential.DomainAccountName, credential.DomainAccountPassword, bindRequired);
 		}

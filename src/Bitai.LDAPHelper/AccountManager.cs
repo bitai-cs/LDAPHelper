@@ -20,14 +20,14 @@ namespace Bitai.LDAPHelper
 		{
 		}
 
-		public AccountManager(ConnectionInfo connectionInfo, SearchLimits searchLimits, DomainAccountCredential domainAccountCredential) : base(connectionInfo, searchLimits, domainAccountCredential)
+		public AccountManager(ConnectionInfo connectionInfo, SearchLimits searchLimits, LDAPDomainAccountCredential domainAccountCredential) : base(connectionInfo, searchLimits, domainAccountCredential)
 		{
 		}
 		#endregion
 
 
 
-		public async Task<LDAPPasswordUpdateResult> SetAccountPassword(DistinguishedNameCredential credential, string requestTag = null, bool postUpdateTestAuthentication = true)
+		public async Task<LDAPPasswordUpdateResult> SetAccountPassword(LDAPDistinguishedNameCredential credential, string requestTag = null, bool postUpdateTestAuthentication = true)
 		{
 			try
 			{

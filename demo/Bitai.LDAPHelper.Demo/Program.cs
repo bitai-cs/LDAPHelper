@@ -93,11 +93,11 @@ namespace Bitai.LDAPHelper.Demo
 			return new LDAPHelper.ConnectionInfo(Program.Selected_LdapServer, Program.Selected_LdapServerPort, Program.Selected_UseSsl, Program.Selected_ConnectionTimeout);
 		}
 
-		private static DTO.DomainAccountCredential getDomainAccountCredential()
+		private static DTO.LDAPDomainAccountCredential getDomainAccountCredential()
 		{
 			var domainAccountCredentialParts = Program.Selected_DomainAccountName.Split(new char[] { '\\' });
 
-			return new DTO.DomainAccountCredential(domainAccountCredentialParts[0], domainAccountCredentialParts[1], Program.Selected_DomainAccountPassword);
+			return new DTO.LDAPDomainAccountCredential(domainAccountCredentialParts[0], domainAccountCredentialParts[1], Program.Selected_DomainAccountPassword);
 		}
 
 		public static LDAPHelper.SearchLimits getSearchLimits()
@@ -399,7 +399,7 @@ namespace Bitai.LDAPHelper.Demo
 				Log.Information($"Enter new password for {distinguishedName}");
 
 				var password = requestAccountPassword(distinguishedName);
-				var credential = new DTO.DistinguishedNameCredential(distinguishedName, password);
+				var credential = new DTO.LDAPDistinguishedNameCredential(distinguishedName, password);
 				var accountManager = new LDAPHelper.AccountManager(getClientConfiguration());
 
 				Log.Information("Setting account password...");
@@ -443,7 +443,7 @@ namespace Bitai.LDAPHelper.Demo
 				var domainAccountCredentialParts = domainAccountCredential.Split(new char[] { '\\' });
 
 				Log.Information("Authenticating account name...");
-				var authenticated = await authenticator.AuthenticateAsync(new DomainAccountCredential(domainAccountCredentialParts[0], domainAccountCredentialParts[1], accountPassword));
+				var authenticated = await authenticator.AuthenticateAsync(new LDAPDomainAccountCredential(domainAccountCredentialParts[0], domainAccountCredentialParts[1], accountPassword));
 				if (authenticated)
 					Log.Information("Account name authenticated.");
 				else
