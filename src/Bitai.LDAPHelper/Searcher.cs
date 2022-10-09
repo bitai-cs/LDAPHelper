@@ -16,7 +16,7 @@ namespace Bitai.LDAPHelper
 		{
 		}
 
-		public Searcher(ConnectionInfo connectionInfo, SearchLimits searchLimits, DomainAccountCredential domainAccountCredential) : base(connectionInfo, searchLimits, domainAccountCredential)
+		public Searcher(ConnectionInfo connectionInfo, SearchLimits searchLimits, LDAPDomainAccountCredential domainAccountCredential) : base(connectionInfo, searchLimits, domainAccountCredential)
 		{
 		}
 		#endregion

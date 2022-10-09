@@ -14,7 +14,7 @@ namespace Bitai.LDAPHelper
         {
         }
 
-        public GroupMembershipValidator(ConnectionInfo connectionInfo, SearchLimits searchLimits, DomainAccountCredential domainAccountCredential) : base(connectionInfo, searchLimits, domainAccountCredential) { }
+        public GroupMembershipValidator(ConnectionInfo connectionInfo, SearchLimits searchLimits, LDAPDomainAccountCredential domainAccountCredential) : base(connectionInfo, searchLimits, domainAccountCredential) { }
         #endregion
 
 

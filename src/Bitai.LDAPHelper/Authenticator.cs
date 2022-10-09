@@ -2,6 +2,8 @@
 using System;
 using System.Threading.Tasks;
 using System.Linq;
+using Bitai.LDAPHelper.DTO;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Bitai.LDAPHelper
 {
@@ -20,25 +22,45 @@ namespace Bitai.LDAPHelper
 		/// </summary>
 		/// <param name="domainAccountCredential"><see cref="Credentials"/> to connect and authenticate on the LDAP Server.</param>
 		/// <returns>True or false, if authenticated or no.</returns>
-		public async Task<bool> AuthenticateAsync(DTO.DomainAccountCredential domainAccountCredential)
+		public async Task<LDAPDomainAccountAuthenticationResult> AuthenticateAsync(DTO.LDAPDomainAccountCredential domainAccountCredential, string requestTag = null)
 		{
-			using (var connection = await GetLdapConnection(this.ConnectionInfo, domainAccountCredential, false))
+			try
 			{
-				if (connection.Bound)
-					return true;
-				else
-					return false;
+				bool? authenticated;
+				using (var connection = await GetLdapConnection(this.ConnectionInfo, domainAccountCredential, false))
+				{
+					if (connection.Bound)
+						authenticated = true;
+					else
+						authenticated = false;
+				}
+
+				return new LDAPDomainAccountAuthenticationResult(domainAccountCredential, authenticated.Value, requestTag);
+			}
+			catch (Exception ex)
+			{
+				return new LDAPDomainAccountAuthenticationResult(domainAccountCredential.Clone(), $"Failed to authenticate {domainAccountCredential.DomainAccountName}" ,ex, requestTag);
 			}
 		}
 
-		public async Task<bool> AuthenticateAsync(string distinguishedName, string password)
+		public async Task<LDAPDistinguishedNameAuthenticationResult> AuthenticateAsync(DTO.LDAPDistinguishedNameCredential distinguishedNameCredential, string requestTag = null)
 		{
-			using (var connection = await GetLdapConnection(this.ConnectionInfo, distinguishedName, password, false))
+			try
 			{
-				if (connection.Bound)
-					return true;
-				else
-					return false;
+				bool? authenticated;
+				using (var connection = await GetLdapConnection(this.ConnectionInfo, distinguishedNameCredential, false))
+				{
+					if (connection.Bound)
+						authenticated = true;
+					else
+						authenticated = false;
+				}
+
+				return new LDAPDistinguishedNameAuthenticationResult(distinguishedNameCredential, authenticated.Value, requestTag);
+			}
+			catch(Exception ex)
+			{
+				return new LDAPDistinguishedNameAuthenticationResult(distinguishedNameCredential.Clone(), $"Failed to authenticate {distinguishedNameCredential.DistinguishedName}", ex, requestTag);
 			}
 		}
 		#endregion

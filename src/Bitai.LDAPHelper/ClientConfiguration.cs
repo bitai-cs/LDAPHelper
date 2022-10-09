@@ -15,7 +15,7 @@ namespace Bitai.LDAPHelper
 		/// <summary>
 		/// <see cref="Credentials"/>
 		/// </summary>
-		public DTO.DomainAccountCredential DomainAccountCredential { get; set; }
+		public DTO.LDAPDomainAccountCredential DomainAccountCredential { get; set; }
 
         /// <summary>
         /// <see cref="LDAPHelper.SearchLimits"/>
@@ -28,7 +28,7 @@ namespace Bitai.LDAPHelper
         /// <param name="serverSettings"><see cref="ConnectionInfo"/></param>
         /// <param name="domainAccountCredentials"><see cref="DomainAccountCredential"/></param>
         /// <param name="searchLimits"><see cref="LDAPHelper.SearchLimits"/></param>
-        public ClientConfiguration(LDAPHelper.ConnectionInfo serverSettings, DTO.DomainAccountCredential domainAccountCredentials, LDAPHelper.SearchLimits searchLimits)
+        public ClientConfiguration(LDAPHelper.ConnectionInfo serverSettings, DTO.LDAPDomainAccountCredential domainAccountCredentials, LDAPHelper.SearchLimits searchLimits)
 		{
 			this.ServerSettings = serverSettings;
 			this.DomainAccountCredential = domainAccountCredentials;
