@@ -443,11 +443,20 @@ namespace Bitai.LDAPHelper.Demo
 				var domainAccountCredentialParts = domainAccountCredential.Split(new char[] { '\\' });
 
 				Log.Information("Authenticating account name...");
-				var authenticated = await authenticator.AuthenticateAsync(new LDAPDomainAccountCredential(domainAccountCredentialParts[0], domainAccountCredentialParts[1], accountPassword));
-				if (authenticated)
-					Log.Information("Account name authenticated.");
-				else
-					Log.Warning("Account name NOt authenticated.");
+				var authenticationResult = await authenticator.AuthenticateAsync(new LDAPDomainAccountCredential(domainAccountCredentialParts[0], domainAccountCredentialParts[1], accountPassword));
+				if (authenticationResult.IsSuccessfulOperation)
+				{
+					if (authenticationResult.IsAuthenticated)
+						Log.Information("Account name authenticated.");
+					else
+						Log.Warning("Account name NOt authenticated.");
+				}
+				else {
+					if (authenticationResult.HasErrorObject)
+						throw new Exception(authenticationResult.OperationMessage, authenticationResult.ErrorObject);
+					else
+						throw new Exception(authenticationResult.OperationMessage);
+				}
 			}
 			catch (Exception ex)
 			{
