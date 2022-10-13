@@ -35,11 +35,11 @@ namespace Bitai.LDAPHelper
 						authenticated = false;
 				}
 
-				return new LDAPDomainAccountAuthenticationResult(domainAccountCredential, authenticated.Value, requestTag);
+				return new LDAPDomainAccountAuthenticationResult(domainAccountCredential.SecureClone(), authenticated.Value, requestTag);
 			}
 			catch (Exception ex)
 			{
-				return new LDAPDomainAccountAuthenticationResult(domainAccountCredential.Clone(), $"Failed to authenticate {domainAccountCredential.DomainAccountName}" ,ex, requestTag);
+				return new LDAPDomainAccountAuthenticationResult(domainAccountCredential.SecureClone(), $"Failed to authenticate {domainAccountCredential.DomainAccountName}" ,ex, requestTag);
 			}
 		}
 
@@ -56,11 +56,11 @@ namespace Bitai.LDAPHelper
 						authenticated = false;
 				}
 
-				return new LDAPDistinguishedNameAuthenticationResult(distinguishedNameCredential, authenticated.Value, requestTag);
+				return new LDAPDistinguishedNameAuthenticationResult(distinguishedNameCredential.SecureClone(), authenticated.Value, requestTag);
 			}
 			catch(Exception ex)
 			{
-				return new LDAPDistinguishedNameAuthenticationResult(distinguishedNameCredential.Clone(), $"Failed to authenticate {distinguishedNameCredential.DistinguishedName}", ex, requestTag);
+				return new LDAPDistinguishedNameAuthenticationResult(distinguishedNameCredential.SecureClone(), $"Failed to authenticate {distinguishedNameCredential.DistinguishedName}", ex, requestTag);
 			}
 		}
 		#endregion
