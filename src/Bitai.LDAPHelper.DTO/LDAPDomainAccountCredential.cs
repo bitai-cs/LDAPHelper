@@ -36,7 +36,7 @@ namespace Bitai.LDAPHelper.DTO
 		public string DomainAccountPassword { get; }
 
 
-		public LDAPDomainAccountCredential Clone()
+		public LDAPDomainAccountCredential SecureClone()
 		{
 			return new LDAPDomainAccountCredential(this.DomainName, this.AccountName, null);
 		}

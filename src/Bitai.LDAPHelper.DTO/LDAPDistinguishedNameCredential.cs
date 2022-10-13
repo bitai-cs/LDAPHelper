@@ -28,7 +28,7 @@ namespace Bitai.LDAPHelper.DTO
 		public string Password { get; }
 
 
-		public LDAPDistinguishedNameCredential Clone()
+		public LDAPDistinguishedNameCredential SecureClone()
 		{
 			return new LDAPDistinguishedNameCredential(this.DistinguishedName, null);
 		}
