@@ -6,7 +6,7 @@ namespace Bitai.LDAPHelper.Demo
 {
     public class DemoSetup
     {
-        public string DomainAccountName { get; set; }
+        public string DomainUserAccount { get; set; }
         public Ldapserver[] LdapServers { get; set; }
         public Basedn[] BaseDNs { get; set; }
         public short ConnectionTimeout { get; set; }

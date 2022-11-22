@@ -16,7 +16,7 @@ namespace Bitai.LDAPHelper.Demo
 	/// </summary>
 	public partial class Program
 	{
-		internal static string DemoSetup_FilePath = $"{Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory)}/ldaphelper_demosetup.json";
+		internal static string DemoSetup_FilePath = $"{Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory)}/ldaphelper_demo_setup.json";
 
 		internal const string Message_LdapEntriesNotFound = "LDAP entries not found with the provided filters.";
 
@@ -69,7 +69,7 @@ namespace Bitai.LDAPHelper.Demo
 			Program.Selected_LdapServer = Program.DemoSetup.LdapServers[0].Address;
 			Program.Selected_LdapServerPort = (int)LdapServerDefaultPorts.DefaultPort;
 			Program.Selected_ConnectionTimeout = Program.DemoSetup.ConnectionTimeout;
-			Program.Selected_DomainAccountName = Program.DemoSetup.DomainAccountName;
+			Program.Selected_DomainAccountName = Program.DemoSetup.DomainUserAccount;
 			Program.Selected_BaseDN = Program.DemoSetup.BaseDNs[0].DN;
 		}
 

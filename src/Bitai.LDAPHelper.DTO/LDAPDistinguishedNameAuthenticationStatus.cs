@@ -9,6 +9,25 @@ namespace Bitai.LDAPHelper.DTO;
 /// </summary>
 public class LDAPDistinguishedNameAuthenticationResult: LDAPOperationResult
 {
+	public LDAPDistinguishedNameCredential Credential { get; set; }
+
+	/// <summary>
+	/// Value indicating whether the account was able to authenticate 
+	/// to the LDAP server.
+	/// </summary>
+	public bool IsAuthenticated { get; set; }
+
+
+
+
+	/// <summary>
+	/// Default constructor.
+	/// </summary>
+	public LDAPDistinguishedNameAuthenticationResult()
+	{
+		//Do not remove this constructor, it is required to deserialize data.
+	}
+
 	public LDAPDistinguishedNameAuthenticationResult(LDAPDistinguishedNameCredential credential, bool isAuthenticated = true, string requestTag = null, bool isSuccessfulOperation = true) : base(requestTag, isSuccessfulOperation)
 	{
 		Credential = credential;
@@ -20,14 +39,4 @@ public class LDAPDistinguishedNameAuthenticationResult: LDAPOperationResult
 		Credential = credential;
 		IsAuthenticated = false;
 	}
-
-
-
-	public LDAPDistinguishedNameCredential Credential { get; }
-
-	/// <summary>
-	/// Value indicating whether the account was able to authenticate 
-	/// to the LDAP server.
-	/// </summary>
-	public bool IsAuthenticated { get; set; }
 }

@@ -6,8 +6,23 @@ using System.Threading.Tasks;
 
 namespace Bitai.LDAPHelper.DTO
 {
-	public class LDAPDistinguishedNameCredential
+	public class LDAPDistinguishedNameCredential : ISecureCloningCredential<LDAPDistinguishedNameCredential>
 	{
+		public string DistinguishedName { get; set; }
+
+		public string Password { get; set; }
+
+
+
+
+		/// <summary>
+		/// Default constructor. 
+		/// </summary>
+		public LDAPDistinguishedNameCredential()
+		{
+			//Do not remove this constructor, it is required to deserialize data.
+		}
+
 		/// <summary>
 		/// Constructor
 		/// </summary>
@@ -24,13 +39,17 @@ namespace Bitai.LDAPHelper.DTO
 		}
 
 
-		public string DistinguishedName { get; }
-		public string Password { get; }
 
 
 		public LDAPDistinguishedNameCredential SecureClone()
 		{
-			return new LDAPDistinguishedNameCredential(this.DistinguishedName, null);
+			var clone = new LDAPDistinguishedNameCredential
+			{
+				DistinguishedName = this.DistinguishedName,
+				Password = null
+			};
+
+			return clone;
 		}
 	}
 }

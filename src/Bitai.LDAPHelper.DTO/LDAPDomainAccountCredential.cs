@@ -1,13 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Bitai.LDAPHelper.DTO
 {
-	public class LDAPDomainAccountCredential
+	public class LDAPDomainAccountCredential : ISecureCloningCredential<LDAPDomainAccountCredential>
 	{
+		public string DomainName { get; set; }
+		public string AccountName { get; set; }
+		[IgnoreDataMember]
+		public string DomainAccountName { get => $"{DomainName}\\{AccountName}"; }
+		public string DomainAccountPassword { get; set; }
+
+
+
+		/// <summary>
+		/// Default constructor
+		/// </summary>
+		public LDAPDomainAccountCredential()
+		{
+			//Do not remove this constructor, it is required to deserialize data.
+		}
+
 		/// <summary>
 		/// Constructor
 		/// </summary>
@@ -30,15 +47,14 @@ namespace Bitai.LDAPHelper.DTO
 		}
 
 
-		public string DomainName { get; }
-		public string AccountName { get; }
-		public string DomainAccountName { get => $"{DomainName}\\{AccountName}"; }
-		public string DomainAccountPassword { get; }
-
 
 		public LDAPDomainAccountCredential SecureClone()
 		{
-			return new LDAPDomainAccountCredential(this.DomainName, this.AccountName, null);
+			return new LDAPDomainAccountCredential {
+				DomainName = this.DomainName, 
+				AccountName = this.AccountName,
+				DomainAccountPassword =  null
+			};
 		}
 	}
 }
