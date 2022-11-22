@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Bitai.LDAPHelper
+﻿namespace Bitai.LDAPHelper
 {
 	public class ClientConfiguration
 	{
@@ -28,7 +23,7 @@ namespace Bitai.LDAPHelper
         /// <param name="serverSettings"><see cref="ConnectionInfo"/></param>
         /// <param name="domainAccountCredentials"><see cref="DomainAccountCredential"/></param>
         /// <param name="searchLimits"><see cref="LDAPHelper.SearchLimits"/></param>
-        public ClientConfiguration(LDAPHelper.ConnectionInfo serverSettings, DTO.LDAPDomainAccountCredential domainAccountCredentials, LDAPHelper.SearchLimits searchLimits)
+        public ClientConfiguration(ConnectionInfo serverSettings, DTO.LDAPDomainAccountCredential domainAccountCredentials, SearchLimits searchLimits)
 		{
 			this.ServerSettings = serverSettings;
 			this.DomainAccountCredential = domainAccountCredentials;

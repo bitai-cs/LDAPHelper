@@ -1,5 +1,4 @@
-﻿using Bitai.LDAPHelper.DTO;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -34,20 +33,20 @@ namespace Bitai.LDAPHelper
         #region Static constructor
         static BaseHelper()
         {
-            ObjectSidAndSAMAccountNameAttributeNames = new string[3] { EntryAttribute.objectSid.ToString(), EntryAttribute.sAMAccountName.ToString(),
-            EntryAttribute.distinguishedName.ToString()};
+            ObjectSidAndSAMAccountNameAttributeNames = new string[3] { DTO.EntryAttribute.objectSid.ToString(), DTO.EntryAttribute.sAMAccountName.ToString(),
+            DTO.EntryAttribute.distinguishedName.ToString()};
 
-            ObjectSidAttributeName = new string[2] { EntryAttribute.objectSid.ToString(),
-            EntryAttribute.distinguishedName.ToString() };
+            ObjectSidAttributeName = new string[2] { DTO.EntryAttribute.objectSid.ToString(),
+            DTO.EntryAttribute.distinguishedName.ToString() };
 
-            CNAttributeName = new string[2] { EntryAttribute.cn.ToString(),
-            EntryAttribute.distinguishedName.ToString() };
+            CNAttributeName = new string[2] { DTO.EntryAttribute.cn.ToString(),
+            DTO.EntryAttribute.distinguishedName.ToString() };
 
-            MemberAttributeName = new string[2] { EntryAttribute.member.ToString() ,
-            EntryAttribute.distinguishedName.ToString()};
+            MemberAttributeName = new string[2] { DTO.EntryAttribute.member.ToString() ,
+            DTO.EntryAttribute.distinguishedName.ToString()};
 
-            MemberOfAttributeName = new string[2] { EntryAttribute.memberOf.ToString() ,
-            EntryAttribute.distinguishedName.ToString()};
+            MemberOfAttributeName = new string[2] { DTO.EntryAttribute.memberOf.ToString() ,
+            DTO.EntryAttribute.distinguishedName.ToString()};
 
             MemberAndMemberOfAttributeNames = MemberAttributeName.Concat(MemberOfAttributeName).Distinct();
 
@@ -71,7 +70,7 @@ namespace Bitai.LDAPHelper
         #region Private static methods
         private static IEnumerable<string> GetMinimunAttributeNames()
         {
-            return new string[] { LDAPHelper.DTO.EntryAttribute.objectSid.ToString(), LDAPHelper.DTO.EntryAttribute.distinguishedName.ToString(), LDAPHelper.DTO.EntryAttribute.sAMAccountName.ToString(), LDAPHelper.DTO.EntryAttribute.cn.ToString(), LDAPHelper.DTO.EntryAttribute.displayName.ToString(), LDAPHelper.DTO.EntryAttribute.objectClass.ToString() };
+            return new string[] { DTO.EntryAttribute.objectSid.ToString(), DTO.EntryAttribute.distinguishedName.ToString(), DTO.EntryAttribute.sAMAccountName.ToString(), DTO.EntryAttribute.cn.ToString(), DTO.EntryAttribute.displayName.ToString(), DTO.EntryAttribute.objectClass.ToString() };
         }
 
         private static IEnumerable<string> GetMinimunWithMemberAttributeNames()
@@ -91,7 +90,7 @@ namespace Bitai.LDAPHelper
 
         private static IEnumerable<string> GetFewAttributeNames()
         {
-            return new string[] { LDAPHelper.DTO.EntryAttribute.objectSid.ToString(), LDAPHelper.DTO.EntryAttribute.objectGuid.ToString(), LDAPHelper.DTO.EntryAttribute.distinguishedName.ToString(), LDAPHelper.DTO.EntryAttribute.sAMAccountName.ToString(), LDAPHelper.DTO.EntryAttribute.cn.ToString(), LDAPHelper.DTO.EntryAttribute.name.ToString(), LDAPHelper.DTO.EntryAttribute.displayName.ToString(), LDAPHelper.DTO.EntryAttribute.objectClass.ToString(), LDAPHelper.DTO.EntryAttribute.objectCategory.ToString() };
+            return new string[] { DTO.EntryAttribute.objectSid.ToString(), DTO.EntryAttribute.objectGuid.ToString(), DTO.EntryAttribute.distinguishedName.ToString(), DTO.EntryAttribute.sAMAccountName.ToString(), DTO.EntryAttribute.cn.ToString(), DTO.EntryAttribute.name.ToString(), DTO.EntryAttribute.displayName.ToString(), DTO.EntryAttribute.objectClass.ToString(), DTO.EntryAttribute.objectCategory.ToString() };
         }
 
         private static IEnumerable<string> GetFewWithMemberAttributeNames()
@@ -111,7 +110,7 @@ namespace Bitai.LDAPHelper
 
         private static IEnumerable<string> GetAllAttributeNames()
         {
-            return Enum.GetNames(typeof(EntryAttribute)).Except(new string[] { EntryAttribute.member.ToString(), EntryAttribute.memberOf.ToString() });
+            return Enum.GetNames(typeof(DTO.EntryAttribute)).Except(new string[] { DTO.EntryAttribute.member.ToString(), DTO.EntryAttribute.memberOf.ToString() });
         }
 
         private static IEnumerable<string> GetAllWithMemberAttributeNames()

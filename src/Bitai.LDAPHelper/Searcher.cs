@@ -1,11 +1,8 @@
-﻿using System;
+﻿using Bitai.LDAPHelper.Extensions;
+using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
 using System.Linq;
-using Bitai.LDAPHelper.Extensions;
-using System.Reflection.Metadata.Ecma335;
-using Bitai.LDAPHelper.DTO;
+using System.Threading.Tasks;
 
 namespace Bitai.LDAPHelper
 {
@@ -16,7 +13,7 @@ namespace Bitai.LDAPHelper
 		{
 		}
 
-		public Searcher(ConnectionInfo connectionInfo, SearchLimits searchLimits, LDAPDomainAccountCredential domainAccountCredential) : base(connectionInfo, searchLimits, domainAccountCredential)
+		public Searcher(ConnectionInfo connectionInfo, SearchLimits searchLimits, DTO.LDAPDomainAccountCredential domainAccountCredential) : base(connectionInfo, searchLimits, domainAccountCredential)
 		{
 		}
 		#endregion
@@ -24,9 +21,9 @@ namespace Bitai.LDAPHelper
 
 
 		#region Private methods
-		private async Task<DTO.LDAPEntry> getEntryFromAttributeSet(Novell.Directory.Ldap.LdapAttributeSet attributeSet, DTO.RequiredEntryAttributes requiredEntryAttributes, string requestTag)
+		private async Task<DTO.LDAPEntry> getEntryFromAttributeSet(Novell.Directory.Ldap.LdapAttributeSet attributeSet, DTO.RequiredEntryAttributes requiredEntryAttributes, string requestLabel)
 		{
-			var ldapEntry = new DTO.LDAPEntry(requestTag);
+			var ldapEntry = new DTO.LDAPEntry(requestLabel);
 
 			Novell.Directory.Ldap.LdapAttribute attribute;
 			byte[] bytes;
@@ -134,7 +131,7 @@ namespace Bitai.LDAPHelper
 
 					var filter = new QueryFilters.AttributeFilter(DTO.EntryAttribute.distinguishedName, new QueryFilters.FilterValue(parentDN.ReplaceSpecialCharsToScapedChars()));
 
-					var searchResult = await this.SearchEntriesAsync(filter, requiredEntryAttributes, requestTag);
+					var searchResult = await this.SearchEntriesAsync(filter, requiredEntryAttributes, requestLabel);
 
 					//Parent DN could be out of Base DN
 					if (searchResult.Entries.Count() > 0)
@@ -147,7 +144,7 @@ namespace Bitai.LDAPHelper
 			return ldapEntry;
 		}
 
-		private async Task<DTO.LDAPSearchResult> getSearchResultAsync(DTO.RequiredEntryAttributes requiredEntryAttributes, string searchFilter, string requestTag)
+		private async Task<DTO.LDAPSearchResult> getSearchResultAsync(DTO.RequiredEntryAttributes requiredEntryAttributes, string searchFilter, string requestLabel)
 		{
 			DTO.LDAPSearchResult searchResult;
 
@@ -170,7 +167,7 @@ namespace Bitai.LDAPHelper
 					{
 						if (responseMessage is Novell.Directory.Ldap.LdapSearchResult)
 						{
-							var _ldapEntry = await getEntryFromAttributeSet(((Novell.Directory.Ldap.LdapSearchResult)responseMessage).Entry.GetAttributeSet(), requiredEntryAttributes, requestTag);
+							var _ldapEntry = await getEntryFromAttributeSet(((Novell.Directory.Ldap.LdapSearchResult)responseMessage).Entry.GetAttributeSet(), requiredEntryAttributes, requestLabel);
 
 							entries.Add(_ldapEntry);
 						}
@@ -179,13 +176,13 @@ namespace Bitai.LDAPHelper
 					connection.Disconnect();
 				}
 
-				searchResult = new DTO.LDAPSearchResult(requestTag, entries, $"The search returned {entries.Count} entrie(s).");
+				searchResult = new DTO.LDAPSearchResult(requestLabel, entries, $"The search returned {entries.Count} entrie(s).");
 
 				return searchResult;
 			}
 			catch(Exception ex)
 			{
-				searchResult = new LDAPSearchResult("Unexpected error performing search.", ex, requestTag);
+				searchResult = new DTO.LDAPSearchResult("Unexpected error performing search.", ex, requestLabel);
 
 				return searchResult;
 			}
@@ -195,19 +192,19 @@ namespace Bitai.LDAPHelper
 
 
 		#region Public methods
-		public Task<DTO.LDAPSearchResult> SearchEntriesAsync(QueryFilters.ICombinableFilter searchFilter, DTO.RequiredEntryAttributes requiredEntryAttributes, string requestTag)
+		public Task<DTO.LDAPSearchResult> SearchEntriesAsync(QueryFilters.ICombinableFilter searchFilter, DTO.RequiredEntryAttributes requiredEntryAttributes, string requestLabel)
 		{
-			return getSearchResultAsync(requiredEntryAttributes, searchFilter.ToString(), requestTag);
+			return getSearchResultAsync(requiredEntryAttributes, searchFilter.ToString(), requestLabel);
 		}
 
-		public async Task<DTO.LDAPSearchResult> SearchParentEntriesAsync(QueryFilters.ICombinableFilter searchFilter, DTO.RequiredEntryAttributes requiredEntryAttributes, string requestTag)
+		public async Task<DTO.LDAPSearchResult> SearchParentEntriesAsync(QueryFilters.ICombinableFilter searchFilter, DTO.RequiredEntryAttributes requiredEntryAttributes, string requestLabel)
 		{
-			LDAPSearchResult addTopExceptionToResult(LDAPSearchResult partialSearchResult)
+			DTO.LDAPSearchResult addTopExceptionToResult(DTO.LDAPSearchResult partialSearchResult)
 			{
-				return new DTO.LDAPSearchResult("Error looking up parent LDAP entries.", new Exception(partialSearchResult.OperationMessage, partialSearchResult.ErrorObject), requestTag);
+				return new DTO.LDAPSearchResult("Error looking up parent LDAP entries.", new Exception(partialSearchResult.OperationMessage, partialSearchResult.ErrorObject), requestLabel);
 			}
 
-			LDAPSearchResult addTopMessageToResult(LDAPSearchResult partialSearchResult)
+			DTO.LDAPSearchResult addTopMessageToResult(DTO.LDAPSearchResult partialSearchResult)
 			{
 				partialSearchResult.SetUnsuccessfullOperation($"Error looking up parent LDAP entries. {partialSearchResult.OperationMessage}");
 
@@ -216,7 +213,7 @@ namespace Bitai.LDAPHelper
 
 			try
 			{
-				var partialSearchResult = await this.SearchEntriesAsync(searchFilter, DTO.RequiredEntryAttributes.OnlyMemberOf, requestTag);
+				var partialSearchResult = await this.SearchEntriesAsync(searchFilter, DTO.RequiredEntryAttributes.OnlyMemberOf, requestLabel);
 
 				if (!partialSearchResult.IsSuccessfulOperation)
 				{
@@ -239,7 +236,7 @@ namespace Bitai.LDAPHelper
 				{
 					var distinguishedNameFilter = new QueryFilters.AttributeFilter(DTO.EntryAttribute.distinguishedName, new QueryFilters.FilterValue(entry.distinguishedName.ReplaceSpecialCharsToScapedChars()));
 
-					partialSearchResult = await SearchEntriesAsync(distinguishedNameFilter, requiredEntryAttributes, requestTag);
+					partialSearchResult = await SearchEntriesAsync(distinguishedNameFilter, requiredEntryAttributes, requestLabel);
 
 					if (!partialSearchResult.IsSuccessfulOperation)
 					{
@@ -252,11 +249,11 @@ namespace Bitai.LDAPHelper
 					resultEntries.AddRange(partialSearchResult.Entries);
 				}
 
-				return new DTO.LDAPSearchResult(requestTag, resultEntries);
+				return new DTO.LDAPSearchResult(requestLabel, resultEntries);
 			}
 			catch(Exception ex)
 			{
-				return new DTO.LDAPSearchResult("Unexpected error when searching for parent entries.", ex, requestTag);
+				return new DTO.LDAPSearchResult("Unexpected error when searching for parent entries.", ex, requestLabel);
 			}
 		}
 		#endregion

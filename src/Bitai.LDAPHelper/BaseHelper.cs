@@ -1,5 +1,4 @@
-﻿using Bitai.LDAPHelper.DTO;
-using Novell.Directory.Ldap;
+﻿using Novell.Directory.Ldap;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,7 +10,7 @@ namespace Bitai.LDAPHelper
 	{
 		#region Properties
 		public ConnectionInfo ConnectionInfo { get; set; }
-		public LDAPDomainAccountCredential DomainAccountCredential { get; set; }
+		public DTO.LDAPDomainAccountCredential DomainAccountCredential { get; set; }
 		public SearchLimits SearchLimits { get; set; }
 		#endregion
 
@@ -24,7 +23,7 @@ namespace Bitai.LDAPHelper
 			SearchLimits = clientConfiguration.SearchLimits;
 		}
 
-		protected BaseHelper(ConnectionInfo connectionInfo, SearchLimits searchLimits, LDAPDomainAccountCredential domainAccountCredential)
+		protected BaseHelper(ConnectionInfo connectionInfo, SearchLimits searchLimits, DTO.LDAPDomainAccountCredential domainAccountCredential)
 		{
 			ConnectionInfo = connectionInfo;
 			SearchLimits = searchLimits;
@@ -79,12 +78,12 @@ namespace Bitai.LDAPHelper
 		/// <param name="credential"><see cref="DomainAccountCredential"/>  to connect to the LDAP Server</param>
 		/// <param name="bindRequired">If <see cref="DomainAccountCredential"/> are required to be mandatorily authenticated on the LDAP Server</param>
 		/// <returns>Task of <see cref="LdapConnection"/></returns>
-		protected Task<LdapConnection> GetLdapConnection(ConnectionInfo connectionInfo, LDAPDomainAccountCredential credential, bool bindRequired = true)
+		protected Task<LdapConnection> GetLdapConnection(ConnectionInfo connectionInfo, DTO.LDAPDomainAccountCredential credential, bool bindRequired = true)
 		{
 			return getLdapConnection(connectionInfo, credential.DomainAccountName, credential.DomainAccountPassword, bindRequired);
 		}
 
-		protected Task<LdapConnection> GetLdapConnection(ConnectionInfo connectionInfo, LDAPDistinguishedNameCredential credential, bool bindRequired = true)
+		protected Task<LdapConnection> GetLdapConnection(ConnectionInfo connectionInfo, DTO.LDAPDistinguishedNameCredential credential, bool bindRequired = true)
 		{
 			return getLdapConnection(connectionInfo, credential.DistinguishedName, credential.Password, bindRequired);
 		}
@@ -136,45 +135,45 @@ namespace Bitai.LDAPHelper
 			return strSid.ToString();
 		}
 
-		protected IEnumerable<string> GetRequiredAttributeNames(RequiredEntryAttributes requiredEntryAttributes)
+		protected IEnumerable<string> GetRequiredAttributeNames(DTO.RequiredEntryAttributes requiredEntryAttributes)
 		{
 			switch (requiredEntryAttributes)
 			{
-				case RequiredEntryAttributes.Minimun:
+				case DTO.RequiredEntryAttributes.Minimun:
 					return BaseHelper.MinimunAttributeNames;
-				case RequiredEntryAttributes.MinimunWithMember:
+				case DTO.RequiredEntryAttributes.MinimunWithMember:
 					return BaseHelper.MinimunWithMemberAttributeNames;
-				case RequiredEntryAttributes.MinimunWithMemberOf:
+				case DTO.RequiredEntryAttributes.MinimunWithMemberOf:
 					return BaseHelper.MinimunWithMemberOfAttributeNames;
-				case RequiredEntryAttributes.MinimunWithMemberAndMemberOf:
+				case DTO.RequiredEntryAttributes.MinimunWithMemberAndMemberOf:
 					return BaseHelper.MinimunWithMemberAndMemberOfAttributeNames;
-				case RequiredEntryAttributes.Few:
+				case DTO.RequiredEntryAttributes.Few:
 					return BaseHelper.FewAttributeNames;
-				case RequiredEntryAttributes.FewWithMember:
+				case DTO.RequiredEntryAttributes.FewWithMember:
 					return BaseHelper.FewWithMemberAttributeNames;
-				case RequiredEntryAttributes.FewWithMemberOf:
+				case DTO.RequiredEntryAttributes.FewWithMemberOf:
 					return BaseHelper.FewWithMemberOfAttributeNames;
-				case RequiredEntryAttributes.FewWithMemberAndMemberOf:
+				case DTO.RequiredEntryAttributes.FewWithMemberAndMemberOf:
 					return BaseHelper.FewWithMemberAndMemberOfAttributeNames;
-				case RequiredEntryAttributes.All:
+				case DTO.RequiredEntryAttributes.All:
 					return BaseHelper.AllAttributeNames;
-				case RequiredEntryAttributes.AllWithMember:
+				case DTO.RequiredEntryAttributes.AllWithMember:
 					return BaseHelper.AllWithMemberAttributeNames;
-				case RequiredEntryAttributes.AllWithMemberOf:
+				case DTO.RequiredEntryAttributes.AllWithMemberOf:
 					return BaseHelper.AllWithMemberOfAttributeNames;
-				case RequiredEntryAttributes.AllWithMemberAndMemberOf:
+				case DTO.RequiredEntryAttributes.AllWithMemberAndMemberOf:
 					return BaseHelper.AllWithMemberAndMemberOfAttributeNames;
-				case RequiredEntryAttributes.OnlyMember:
+				case DTO.RequiredEntryAttributes.OnlyMember:
 					return BaseHelper.MemberAttributeName;
-				case RequiredEntryAttributes.OnlyMemberOf:
+				case DTO.RequiredEntryAttributes.OnlyMemberOf:
 					return BaseHelper.MemberOfAttributeName;
-				case RequiredEntryAttributes.MemberAndMemberOf:
+				case DTO.RequiredEntryAttributes.MemberAndMemberOf:
 					return BaseHelper.MemberAndMemberOfAttributeNames;
-				case RequiredEntryAttributes.OnlyCN:
+				case DTO.RequiredEntryAttributes.OnlyCN:
 					return BaseHelper.CNAttributeName;
-				case RequiredEntryAttributes.OnlyObjectSid:
+				case DTO.RequiredEntryAttributes.OnlyObjectSid:
 					return BaseHelper.ObjectSidAttributeName;
-				case RequiredEntryAttributes.ObjectSidAndSAMAccountName:
+				case DTO.RequiredEntryAttributes.ObjectSidAndSAMAccountName:
 					return BaseHelper.ObjectSidAndSAMAccountNameAttributeNames;
 				default:
 					throw new ArgumentOutOfRangeException("requiredEntryAttributes");

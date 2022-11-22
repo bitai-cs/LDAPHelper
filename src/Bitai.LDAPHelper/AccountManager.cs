@@ -1,13 +1,5 @@
-﻿using Bitai.LDAPHelper.DTO;
-using Bitai.LDAPHelper.QueryFilters;
-using Microsoft.VisualBasic;
-using Novell.Directory.Ldap;
+﻿using Novell.Directory.Ldap;
 using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Diagnostics;
-using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -20,14 +12,14 @@ namespace Bitai.LDAPHelper
 		{
 		}
 
-		public AccountManager(ConnectionInfo connectionInfo, SearchLimits searchLimits, LDAPDomainAccountCredential domainAccountCredential) : base(connectionInfo, searchLimits, domainAccountCredential)
+		public AccountManager(ConnectionInfo connectionInfo, SearchLimits searchLimits, DTO.LDAPDomainAccountCredential domainAccountCredential) : base(connectionInfo, searchLimits, domainAccountCredential)
 		{
 		}
 		#endregion
 
 
 
-		public async Task<LDAPPasswordUpdateResult> SetAccountPassword(LDAPDistinguishedNameCredential credential, string requestTag = null, bool postUpdateTestAuthentication = true)
+		public async Task<DTO.LDAPPasswordUpdateResult> SetAccountPassword(DTO.LDAPDistinguishedNameCredential credential, string requestLabel = null, bool postUpdateTestAuthentication = true)
 		{
 			try
 			{
@@ -48,14 +40,14 @@ namespace Bitai.LDAPHelper
 					if (postUpdateTestAuthentication)
 					{
 						var authenticator = new Authenticator(ConnectionInfo);
-						var authenticationResult = await authenticator.AuthenticateAsync(credential, requestTag);
+						var authenticationResult = await authenticator.AuthenticateAsync(credential, requestLabel);
 
 						if (authenticationResult.IsSuccessfulOperation)
 						{
 							if (authenticationResult.IsAuthenticated)
-								return new LDAPPasswordUpdateResult(requestTag, $"Password set successfully for {credential.DistinguishedName}");
+								return new DTO.LDAPPasswordUpdateResult(requestLabel, $"Password set successfully for {credential.DistinguishedName}");
 							else
-								return new LDAPPasswordUpdateResult(requestTag, $"Could not set password for {credential.DistinguishedName} distinguished name.", false);
+								return new DTO.LDAPPasswordUpdateResult(requestLabel, $"Could not set password for {credential.DistinguishedName} distinguished name.", false);
 						}
 						else {
 							if (authenticationResult.HasErrorObject)
@@ -65,12 +57,12 @@ namespace Bitai.LDAPHelper
 						}
 					}
 					else
-						return new LDAPPasswordUpdateResult(requestTag, $"Password set successfully for {credential.DistinguishedName}");
+						return new DTO.LDAPPasswordUpdateResult(requestLabel, $"Password set successfully for {credential.DistinguishedName}");
 				}
 			}
 			catch (Exception ex)
 			{
-				return new LDAPPasswordUpdateResult("Unexpected error trying to replace password.", ex, requestTag);
+				return new DTO.LDAPPasswordUpdateResult("Unexpected error trying to replace password.", ex, requestLabel);
 			}
 		}
 	}

@@ -13,14 +13,14 @@ namespace Bitai.LDAPHelper.DTO
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="requestTag">Optional tag to label this object.</param>
-        public LDAPEntry(string requestTag = null)
+        /// <param name="requestLabel">Optional tag to label this object.</param>
+        public LDAPEntry(string requestLabel = null)
         {
-            this.RequestTag = requestTag;
+            this.RequestLabel = requestLabel;
         }
         #endregion
 
-        public string RequestTag { get; set; }
+        public string RequestLabel { get; set; }
 
         /// <summary>
         /// Country name abbreviation.

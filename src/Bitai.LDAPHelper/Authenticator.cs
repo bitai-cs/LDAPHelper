@@ -1,9 +1,5 @@
-﻿using Novell.Directory.Ldap;
-using System;
+﻿using System;
 using System.Threading.Tasks;
-using System.Linq;
-using Bitai.LDAPHelper.DTO;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Bitai.LDAPHelper
 {
@@ -22,7 +18,7 @@ namespace Bitai.LDAPHelper
 		/// </summary>
 		/// <param name="domainAccountCredential"><see cref="Credentials"/> to connect and authenticate on the LDAP Server.</param>
 		/// <returns>True or false, if authenticated or no.</returns>
-		public async Task<LDAPDomainAccountAuthenticationResult> AuthenticateAsync(DTO.LDAPDomainAccountCredential domainAccountCredential, string requestTag = null)
+		public async Task<DTO.LDAPDomainAccountAuthenticationResult> AuthenticateAsync(DTO.LDAPDomainAccountCredential domainAccountCredential, string requestLabel = null)
 		{
 			try
 			{
@@ -35,15 +31,15 @@ namespace Bitai.LDAPHelper
 						authenticated = false;
 				}
 
-				return new LDAPDomainAccountAuthenticationResult(domainAccountCredential.SecureClone(), authenticated.Value, requestTag);
+				return new DTO.LDAPDomainAccountAuthenticationResult(domainAccountCredential.SecureClone(), authenticated.Value, requestLabel);
 			}
 			catch (Exception ex)
 			{
-				return new LDAPDomainAccountAuthenticationResult(domainAccountCredential.SecureClone(), $"Failed to authenticate {domainAccountCredential.DomainAccountName}" ,ex, requestTag);
+				return new DTO.LDAPDomainAccountAuthenticationResult(domainAccountCredential.SecureClone(), $"Failed to authenticate {domainAccountCredential.DomainAccountName}", ex, requestLabel);
 			}
 		}
 
-		public async Task<LDAPDistinguishedNameAuthenticationResult> AuthenticateAsync(DTO.LDAPDistinguishedNameCredential distinguishedNameCredential, string requestTag = null)
+		public async Task<DTO.LDAPDistinguishedNameAuthenticationResult> AuthenticateAsync(DTO.LDAPDistinguishedNameCredential distinguishedNameCredential, string requestLabel = null)
 		{
 			try
 			{
@@ -56,11 +52,11 @@ namespace Bitai.LDAPHelper
 						authenticated = false;
 				}
 
-				return new LDAPDistinguishedNameAuthenticationResult(distinguishedNameCredential.SecureClone(), authenticated.Value, requestTag);
+				return new DTO.LDAPDistinguishedNameAuthenticationResult(distinguishedNameCredential.SecureClone(), authenticated.Value, requestLabel);
 			}
-			catch(Exception ex)
+			catch (Exception ex)
 			{
-				return new LDAPDistinguishedNameAuthenticationResult(distinguishedNameCredential.SecureClone(), $"Failed to authenticate {distinguishedNameCredential.DistinguishedName}", ex, requestTag);
+				return new DTO.LDAPDistinguishedNameAuthenticationResult(distinguishedNameCredential.SecureClone(), $"Failed to authenticate {distinguishedNameCredential.DistinguishedName}", ex, requestLabel);
 			}
 		}
 		#endregion

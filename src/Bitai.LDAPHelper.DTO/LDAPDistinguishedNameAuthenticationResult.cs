@@ -28,13 +28,13 @@ public class LDAPDistinguishedNameAuthenticationResult: LDAPOperationResult
 		//Do not remove this constructor, it is required to deserialize data.
 	}
 
-	public LDAPDistinguishedNameAuthenticationResult(LDAPDistinguishedNameCredential credential, bool isAuthenticated = true, string requestTag = null, bool isSuccessfulOperation = true) : base(requestTag, isSuccessfulOperation)
+	public LDAPDistinguishedNameAuthenticationResult(LDAPDistinguishedNameCredential credential, bool isAuthenticated = true, string requestLabel = null, bool isSuccessfulOperation = true) : base(requestLabel, isSuccessfulOperation)
 	{
 		Credential = credential;
 		IsAuthenticated = isAuthenticated;
 	}
 
-	public LDAPDistinguishedNameAuthenticationResult(LDAPDistinguishedNameCredential credential, string operationMessage, Exception exception, string requestTag = null) : base(operationMessage, exception, requestTag)
+	public LDAPDistinguishedNameAuthenticationResult(LDAPDistinguishedNameCredential credential, string operationMessage, Exception exception, string requestLabel = null) : base(operationMessage, exception, requestLabel)
 	{
 		Credential = credential;
 		IsAuthenticated = false;

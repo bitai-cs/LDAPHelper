@@ -35,7 +35,7 @@ namespace Bitai.LDAPHelper.DTO
 		/// <summary>
 		/// Custom label to tag tihs object.
 		/// </summary>
-		public string RequestTag { get; set; }
+		public string RequestLabel { get; set; }
 		#endregion
 
 
@@ -45,10 +45,10 @@ namespace Bitai.LDAPHelper.DTO
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="requestTag">Optional tag to label this object.</param>
-		public LDAPOperationResult(string requestTag = null, bool isSuccessfulOperation = true)
+		/// <param name="requestLabel">Optional tag to label this object.</param>
+		public LDAPOperationResult(string requestLabel = null, bool isSuccessfulOperation = true)
         {
-			RequestTag = requestTag;
+			RequestLabel = requestLabel;
 
 			if (isSuccessfulOperation)
                 SetSuccessfullOperation("OK");
@@ -60,13 +60,13 @@ namespace Bitai.LDAPHelper.DTO
         /// 
         /// </summary>
         /// <param name="exception"></param>
-        /// <param name="requestTag"></param>
-        public LDAPOperationResult(string operationMessage, Exception exception, string requestTag = null)
+        /// <param name="requestLabel"></param>
+        public LDAPOperationResult(string operationMessage, Exception exception, string requestLabel = null)
         {
             if (exception == null)
                 throw new ArgumentNullException(nameof(exception));
 
-            RequestTag = requestTag;
+            RequestLabel = requestLabel;
 
             SetUnsuccessfullOperation(operationMessage, exception);
         }
