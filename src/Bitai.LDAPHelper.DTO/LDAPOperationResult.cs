@@ -5,8 +5,42 @@ using System.Text;
 
 namespace Bitai.LDAPHelper.DTO
 {
-    public class LDAPOperationResult
+    public abstract class LDAPOperationResult
     {
+		#region Properties
+		public bool IsSuccessfulOperation { get; set; }
+
+		/// <summary>
+		/// Error message of <see cref="ErrorObject"/>
+		/// </summary>
+		public string OperationMessage { get; set; }
+
+		/// <summary>
+		/// Intercepted error while searching for LDAP entries.
+		/// This property must not be serialized.
+		/// </summary>
+		[IgnoreDataMember]
+		public Exception ErrorObject { get; protected set; }
+
+		/// <summary>
+		/// Type name of <see cref="ErrorObject"/>.
+		/// </summary>
+		public string ErrorType { get; set; }
+
+		/// <summary>
+		/// Whether or not we have information on an intercepted error.
+		/// </summary>
+		public bool HasErrorObject { get => ErrorObject != null; }
+
+		/// <summary>
+		/// Custom label to tag tihs object.
+		/// </summary>
+		public string RequestTag { get; set; }
+		#endregion
+
+
+
+
 		#region Constructors
 		/// <summary>
 		/// Constructor
@@ -38,38 +72,6 @@ namespace Bitai.LDAPHelper.DTO
         }
 		#endregion
 
-
-
-		#region Properties
-		public bool IsSuccessfulOperation { get; protected set; }
-
-		/// <summary>
-		/// Error message of <see cref="ErrorObject"/>
-		/// </summary>
-		public string OperationMessage { get; protected set; }
-
-		/// <summary>
-		/// Intercepted error while searching for LDAP entries.
-		/// This property must not be serialized.
-		/// </summary>
-		[IgnoreDataMember]
-        public Exception ErrorObject { get; protected set; }
-
-        /// <summary>
-        /// Type name of <see cref="ErrorObject"/>.
-        /// </summary>
-        public string ErrorType { get; protected set; }
-
-        /// <summary>
-        /// Whether or not we have information on an intercepted error.
-        /// </summary>
-        public bool HasErrorObject { get => ErrorObject != null; }
-
-        /// <summary>
-        /// Custom label to tag tihs object.
-        /// </summary>
-        public string RequestTag { get; protected set; }
-		#endregion
 
 
 
