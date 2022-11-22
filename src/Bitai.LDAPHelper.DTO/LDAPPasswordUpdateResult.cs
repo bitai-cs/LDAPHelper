@@ -20,7 +20,7 @@ namespace Bitai.LDAPHelper.DTO
 			OperationMessage = operationMessage;
 		}
 
-		public LDAPPasswordUpdateResult(string operationMessage, Exception ex, string requestTag = null) : base(operationMessage, ex, requestTag)
+		public LDAPPasswordUpdateResult(string operationMessage, Exception ex, string requestLabel = null) : base(operationMessage, ex, requestLabel)
 		{
 		}
 	}

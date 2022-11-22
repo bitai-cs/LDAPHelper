@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
 using System.Linq;
-using Bitai.LDAPHelper.DTO;
+using System.Threading.Tasks;
 
 namespace Bitai.LDAPHelper
 {
@@ -14,7 +11,7 @@ namespace Bitai.LDAPHelper
         {
         }
 
-        public GroupMembershipValidator(ConnectionInfo connectionInfo, SearchLimits searchLimits, LDAPDomainAccountCredential domainAccountCredential) : base(connectionInfo, searchLimits, domainAccountCredential) { }
+        public GroupMembershipValidator(ConnectionInfo connectionInfo, SearchLimits searchLimits,  DTO.LDAPDomainAccountCredential domainAccountCredential) : base(connectionInfo, searchLimits, domainAccountCredential) { }
         #endregion
 
 
@@ -32,18 +29,18 @@ namespace Bitai.LDAPHelper
             if (sAMAccountName.Contains("*"))
                 throw new ArgumentException($"{nameof(sAMAccountName)} cannot contain the character *.");
 
-            var attributeFilter = new QueryFilters.AttributeFilter(EntryAttribute.sAMAccountName, new QueryFilters.FilterValue(sAMAccountName));
+            var attributeFilter = new QueryFilters.AttributeFilter(DTO.EntryAttribute.sAMAccountName, new QueryFilters.FilterValue(sAMAccountName));
 
             var searcher = new Searcher(this.ConnectionInfo, this.SearchLimits, this.DomainAccountCredential);
 
-            var searchResult = await searcher.SearchParentEntriesAsync(attributeFilter, RequiredEntryAttributes.OnlyCN, null);
+            var searchResult = await searcher.SearchParentEntriesAsync(attributeFilter, DTO.RequiredEntryAttributes.OnlyCN, null);
 
             if (searchResult.Entries.Count().Equals(0))
             {
                 if (searchResult.HasErrorObject)
                     throw searchResult.ErrorObject;
                 else
-                    throw new LDAPHelper.EntryNotFoundException($"{sAMAccountName} not found.");
+                    throw new EntryNotFoundException($"{sAMAccountName} not found.");
             }
 
             return searchResult.Entries.Where(entry => entry.cn.Equals(parentGroupName, StringComparison.OrdinalIgnoreCase)).Any();
