@@ -27,7 +27,7 @@ namespace Bitai.LDAPHelper.Demo
 		/// <summary>
 		/// Custom (optional) tag value to label request. Can be null. 
 		/// </summary>
-		internal static string RequestTag = "My Demo";
+		internal static string RequestLabel = "My Demo";
 		/// <summary>
 		/// LDAP Server IP or DNS name
 		/// </summary>
@@ -443,15 +443,18 @@ namespace Bitai.LDAPHelper.Demo
 				var domainAccountCredentialParts = domainAccountCredential.Split(new char[] { '\\' });
 
 				Log.Information("Authenticating account name...");
-				var authenticationResult = await authenticator.AuthenticateAsync(new LDAPDomainAccountCredential(domainAccountCredentialParts[0], domainAccountCredentialParts[1], accountPassword));
+				var authenticationResult = await authenticator.AuthenticateAsync(new LDAPDomainAccountCredential(domainAccountCredentialParts[0], domainAccountCredentialParts[1], accountPassword), getSearchLimits(), getDomainAccountCredential(), RequestLabel);
 				if (authenticationResult.IsSuccessfulOperation)
 				{
+					Log.Information("{@model}", authenticationResult);
+
 					if (authenticationResult.IsAuthenticated)
 						Log.Information("Account name authenticated.");
 					else
 						Log.Warning("Account name NOt authenticated.");
 				}
-				else {
+				else
+				{
 					if (authenticationResult.HasErrorObject)
 						throw new Exception(authenticationResult.OperationMessage, authenticationResult.ErrorObject);
 					else
@@ -485,7 +488,7 @@ namespace Bitai.LDAPHelper.Demo
 				Log.Information($"Searching by {searchFilterCombiner}");
 				Console.WriteLine();
 
-				var searchResult = await searcher.SearchEntriesAsync(searchFilterCombiner, requiredEntryAttributes, Program.RequestTag);
+				var searchResult = await searcher.SearchEntriesAsync(searchFilterCombiner, requiredEntryAttributes, Program.RequestLabel);
 
 				if (searchResult.Entries.Count() == 0)
 				{
@@ -545,7 +548,7 @@ namespace Bitai.LDAPHelper.Demo
 				Log.Information($"Searching by {searchFilterCombiner}");
 				Console.WriteLine();
 
-				var searchResult = await searcher.SearchEntriesAsync(searchFilterCombiner, requiredEntryAttributes, Program.RequestTag);
+				var searchResult = await searcher.SearchEntriesAsync(searchFilterCombiner, requiredEntryAttributes, Program.RequestLabel);
 				if (searchResult.Entries.Count().Equals(0))
 				{
 					if (searchResult.HasErrorObject)
@@ -595,7 +598,7 @@ namespace Bitai.LDAPHelper.Demo
 				Log.Information($"Searching by {filter}");
 				Console.WriteLine();
 
-				var searchResult = await searcher.SearchEntriesAsync(filter, requiredEntryAttributes, Program.RequestTag);
+				var searchResult = await searcher.SearchEntriesAsync(filter, requiredEntryAttributes, Program.RequestLabel);
 				if (searchResult.Entries.Count().Equals(0))
 				{
 					if (searchResult.HasErrorObject)
@@ -647,7 +650,7 @@ namespace Bitai.LDAPHelper.Demo
 				Log.Information($"Searching by {filterCombiner}");
 				Console.WriteLine();
 
-				var searchResult = await searcher.SearchEntriesAsync(filterCombiner, requiredEntryAttributes, Program.RequestTag);
+				var searchResult = await searcher.SearchEntriesAsync(filterCombiner, requiredEntryAttributes, Program.RequestLabel);
 				if (searchResult.Entries.Count().Equals(0))
 				{
 					if (searchResult.HasErrorObject)
@@ -697,7 +700,7 @@ namespace Bitai.LDAPHelper.Demo
 				Log.Information($"Searching parent entries for {filterAttribute}: {filterValue}");
 				Console.WriteLine();
 
-				var searchResult = await searcher.SearchParentEntriesAsync(attributeFilter, requiredEntryAttributes, Program.RequestTag);
+				var searchResult = await searcher.SearchParentEntriesAsync(attributeFilter, requiredEntryAttributes, Program.RequestLabel);
 				if (searchResult.Entries.Count().Equals(0))
 				{
 					if (searchResult.HasErrorObject)
