@@ -337,7 +337,9 @@ namespace Bitai.LDAPHelper.Demo
 				#endregion
 
 				#region Authentication
-				await Demo_Authenticator_Authenticate(DemoSetup.Demo_Authenticator_Authenticate_DomainAccountName);
+				await Demo_Authenticator_Authenticate_Simple(DemoSetup.Demo_Authenticator_Authenticate_DomainAccountName);
+
+				await Demo_Authenticator_Authenticate_WithAccountValidation(DemoSetup.Demo_Authenticator_Authenticate_DomainAccountName);
 				#endregion
 
 				#region Search Users
@@ -428,11 +430,11 @@ namespace Bitai.LDAPHelper.Demo
 			}
 		}
 
-		public static async Task Demo_Authenticator_Authenticate(string domainAccountCredential)
+		public static async Task Demo_Authenticator_Authenticate_WithAccountValidation(string domainAccountCredential)
 		{
 			try
 			{
-				printDemoTitle("Demo_Authenticator_Authenticate");
+				printDemoTitle(nameof(Demo_Authenticator_Authenticate_WithAccountValidation));
 
 				Log.Information($"To authenticate {domainAccountCredential} you need to enter a password (it's not necessary the real password).");
 
@@ -444,6 +446,49 @@ namespace Bitai.LDAPHelper.Demo
 
 				Log.Information("Authenticating account name...");
 				var authenticationResult = await authenticator.AuthenticateAsync(new LDAPDomainAccountCredential(domainAccountCredentialParts[0], domainAccountCredentialParts[1], accountPassword), getSearchLimits(), getDomainAccountCredential(), RequestLabel);
+				if (authenticationResult.IsSuccessfulOperation)
+				{
+					Log.Information("{@model}", authenticationResult);
+
+					if (authenticationResult.IsAuthenticated)
+						Log.Information("Account name authenticated.");
+					else
+						Log.Warning("Account name NOt authenticated.");
+				}
+				else
+				{
+					if (authenticationResult.HasErrorObject)
+						throw new Exception(authenticationResult.OperationMessage, authenticationResult.ErrorObject);
+					else
+						throw new Exception(authenticationResult.OperationMessage);
+				}
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine();
+
+				Log.Error($"{domainAccountCredential} failed to authenticate!");
+				Log.Error(ex.Message);
+				Log.Error(ex.StackTrace);
+			}
+		}
+
+		public static async Task Demo_Authenticator_Authenticate_Simple(string domainAccountCredential)
+		{
+			try
+			{
+				printDemoTitle(nameof(Demo_Authenticator_Authenticate_Simple));
+
+				Log.Information($"To authenticate {domainAccountCredential} you need to enter a password (it's not necessary the real password).");
+
+				var accountPassword = requestAccountPassword(domainAccountCredential);
+
+				var authenticator = new Authenticator(getConnectionInfo());
+
+				var domainAccountCredentialParts = domainAccountCredential.Split(new char[] { '\\' });
+
+				Log.Information("Authenticating account name...");
+				var authenticationResult = await authenticator.AuthenticateAsync(new LDAPDomainAccountCredential(domainAccountCredentialParts[0], domainAccountCredentialParts[1], accountPassword), RequestLabel);
 				if (authenticationResult.IsSuccessfulOperation)
 				{
 					Log.Information("{@model}", authenticationResult);

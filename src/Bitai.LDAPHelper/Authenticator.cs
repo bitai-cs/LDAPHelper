@@ -104,7 +104,14 @@ namespace Bitai.LDAPHelper
 						authenticated = false;
 				}
 
-				return new DTO.LDAPDomainAccountAuthenticationResult(credential.SecureClone(), authenticated.Value, requestLabel);
+				var result = new DTO.LDAPDomainAccountAuthenticationResult(credential.SecureClone(), authenticated.Value, requestLabel);
+
+				if (authenticated.Value)
+					result.SetSuccessfullOperation($"The domain user account {credential.DomainAccountName} has been successfully authenticated.");
+				else
+					result.SetSuccessfullOperation("Wrong user account and/or password.");
+
+				return result;
 			}
 			catch (Exception ex)
 			{
@@ -194,7 +201,14 @@ namespace Bitai.LDAPHelper
 						authenticated = false;
 				}
 
-				return new DTO.LDAPDistinguishedNameAuthenticationResult(credential.SecureClone(), authenticated.Value, requestLabel);
+				var result = new DTO.LDAPDistinguishedNameAuthenticationResult(credential.SecureClone(), authenticated.Value, requestLabel);
+
+				if (authenticated.Value)
+					result.SetSuccessfullOperation($"The account {credential.DistinguishedName} has been successfully authenticated.");
+				else
+					result.SetSuccessfullOperation("Wrong account and/or password.");
+
+				return result;
 			}
 			catch (Exception ex)
 			{
