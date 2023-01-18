@@ -1,5 +1,4 @@
 {
-    "DomainAccountName": "DOMAIN\\AccountName",
     "LdapServers": [
         {
             "Address": "10.113.58.132"
@@ -41,17 +40,34 @@
         }
     ],
     "ConnectionTimeout": 15,
+    "DomainUserAccountForRunTests": "DOMAIN\\AccountName",
+    "Demo_AccountManager_CreateUserAccount_RunTest": true,
+    "Demo_AccountManager_CreateUserAccount_UserAccountName": "vbastidas01",
+    "Demo_AccountManager_CreateUserAccount_Password": "rpa2023@@",
+    "Demo_AccountManager_CreateUserAccount_ContainerDN": "OU=ADM,DC=empresa,DC=com,DC=pe",
+    "Demo_AccountManager_CreateUserAccount_Name": "Victor",
+    "Demo_AccountManager_CreateUserAccount_Surname": "Bastidas",
+    "Demo_AccountManager_CreateUserAccount_DNSDomainName": "dominio.com.pe",
+    "Demo_AccountManager_CreateUserAccount_MemberOf": null,
+    "Demo_AccountManager_CreateUserAccount_ObjectClasses": "user,top,person,organizationalPerson",
+    "Demo_AccountManager_CreateUserAccount_UserAccountControlFlags": "NORMAL_ACCOUNT,DONT_EXPIRE_PASSWORD",
+    "Demo_AccountManager_SetAccountPassword_RunTest": false,
     "Demo_AccountManager_SetAccountPassword_DistinguishedName": "cn=prueba01 prueba ad,ou=user_test,OU=Alumnos,DC=certus,DC=edu,DC=pe",
+    "Demo_Authenticator_Authenticate_RunTest": false,
     "Demo_Authenticator_Authenticate_DomainAccountName": "DOMAIN\\AccountName",
+    "Demo_Searcher_SearchUsers_RunTest": false,
     "Demo_Searcher_SearchUsers_Filter_sAMAccountName": "usr_ext01",
     "Demo_Searcher_SearchUsers_Filter_cn": "*Bastidas*",
     "Demo_Searcher_SearchUsersByTwoFilters_Filter1_sAMAccountName": "*smith",
     "Demo_Searcher_SearchUsersByTwoFilters_Filter2_cn": "*Smith*",
+    "Demo_Searcher_SearchEntries_RunTest": false,
     "Demo_Searcher_SearchEntries_Filter_cn": "DB Server",
     "Demo_Searcher_SearchEntries_Filter_objectSid": "S-1-5-21-638406840-1180129177-883519231-179439",
     "Demo_Searcher_SearchEntriesByTwoFilters_Filter1_cn": "*server*",
     "Demo_Searcher_SearchEntriesByTwoFilters_Filter2_cn": "*database*",
+    "Demo_Searcher_SearchParentEntries_RunTest": false,
     "Demo_Searcher_SearchParentEntries_Filter_sAMAccountName": "usr_ext01",
+    "Demo_GroupMembershipValidator_RunTest": false,
     "Demo_GroupMembershipValidator_CheckGroupmembership_sAMAccountName": "Administrator",
     "Demo_GroupMembershipValidator_CheckGroupmembership_Check_GroupName": "Administrators"
 }

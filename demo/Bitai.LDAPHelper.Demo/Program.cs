@@ -16,7 +16,7 @@ namespace Bitai.LDAPHelper.Demo
 	/// </summary>
 	public partial class Program
 	{
-		internal static string DemoSetup_FilePath = $"{Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory)}/ldaphelper_demo_setup.json";
+		internal static string DemoSetup_FilePath = $"{Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory).Replace('\\', '/')}/ldaphelper_demo_setup.json";
 
 		internal const string Message_LdapEntriesNotFound = "LDAP entries not found with the provided filters.";
 
@@ -69,7 +69,7 @@ namespace Bitai.LDAPHelper.Demo
 			Program.Selected_LdapServer = Program.DemoSetup.LdapServers[0].Address;
 			Program.Selected_LdapServerPort = (int)LdapServerDefaultPorts.DefaultPort;
 			Program.Selected_ConnectionTimeout = Program.DemoSetup.ConnectionTimeout;
-			Program.Selected_DomainAccountName = Program.DemoSetup.DomainUserAccount;
+			Program.Selected_DomainAccountName = Program.DemoSetup.DomainUserAccountForRunTests;
 			Program.Selected_BaseDN = Program.DemoSetup.BaseDNs[0].DN;
 		}
 
@@ -313,7 +313,7 @@ namespace Bitai.LDAPHelper.Demo
 
 			EXECUTE_DEMO:
 
-				Log.Information("Bitai.LDAPHelper Test (.NET Core Console)");
+				Log.Information($"{nameof(Bitai.LDAPHelper)} Test (.NET Core Console)");
 				Console.WriteLine();
 
 				Log.Information("Starting demo: " + DateTime.Now.ToString());
@@ -332,42 +332,98 @@ namespace Bitai.LDAPHelper.Demo
 
 				requestPasswordToConnectLDAPServer();
 
+				#region Create User account
+				if (DemoSetup.Demo_AccountManager_CreateUserAccount_RunTest)
+				{
+					string[] memberOf = null;
+					if (!string.IsNullOrEmpty(DemoSetup.Demo_AccountManager_CreateUserAccount_MemberOf))
+					{
+						memberOf = DemoSetup.Demo_AccountManager_CreateUserAccount_MemberOf.Split(',');
+					}
+
+					string[] objectClasses = null;
+					if (!string.IsNullOrEmpty(DemoSetup.Demo_AccountManager_CreateUserAccount_ObjectClasses))
+					{
+						objectClasses = DemoSetup.Demo_AccountManager_CreateUserAccount_ObjectClasses.Split(',');
+					}
+
+					UserAccountControlFlagsForMsAD? userAccountControlFlags = null;
+					if (!string.IsNullOrEmpty(DemoSetup.Demo_AccountManager_CreateUserAccount_UserAccountControlFlags))
+					{
+						var flagNames = DemoSetup.Demo_AccountManager_CreateUserAccount_UserAccountControlFlags.Split(',');
+						int totalFlagValue = 0;
+						foreach (var flagName in flagNames)
+						{
+							totalFlagValue += (int)Enum.Parse<UserAccountControlFlagsForMsAD>(flagName);
+						}
+
+						userAccountControlFlags = (UserAccountControlFlagsForMsAD)Enum.ToObject(typeof(UserAccountControlFlagsForMsAD), totalFlagValue);
+					}
+
+					await Demo_AccountManager_CreateUserAccount(DemoSetup.Demo_AccountManager_CreateUserAccount_UserAccountName, DemoSetup.Demo_AccountManager_CreateUserAccount_Password, DemoSetup.Demo_AccountManager_CreateUserAccount_ContainerDN, DemoSetup.Demo_AccountManager_CreateUserAccount_Name, DemoSetup.Demo_AccountManager_CreateUserAccount_Surname, DemoSetup.Demo_AccountManager_CreateUserAccount_DNSDomainName, memberOf, objectClasses, userAccountControlFlags.Value);
+				}
+				#endregion
+
 				#region Password assignment
-				await Demo_AccountManager_SetPassword(DemoSetup.Demo_AccountManager_SetAccountPassword_DistinguishedName);
+				if (DemoSetup.Demo_AccountManager_SetAccountPassword_RunTest)
+				{
+					await Demo_AccountManager_SetPassword(DemoSetup.Demo_AccountManager_SetAccountPassword_DistinguishedName);
+				}
 				#endregion
 
 				#region Authentication
-				await Demo_Authenticator_Authenticate_Simple(DemoSetup.Demo_Authenticator_Authenticate_DomainAccountName);
+				if (DemoSetup.Demo_Authenticator_Authenticate_RunTest)
+				{
+					await Demo_Authenticator_Authenticate_Simple(DemoSetup.Demo_Authenticator_Authenticate_DomainAccountName);
 
-				await Demo_Authenticator_Authenticate_WithAccountValidation(DemoSetup.Demo_Authenticator_Authenticate_DomainAccountName);
+					await Demo_Authenticator_Authenticate_WithAccountValidation(DemoSetup.Demo_Authenticator_Authenticate_DomainAccountName);
+				}
 				#endregion
 
 				#region Search Users
-				await Demo_Searcher_SearchUsers(EntryAttribute.sAMAccountName, DemoSetup.Demo_Searcher_SearchUsers_Filter_sAMAccountName, RequiredEntryAttributes.All);
+				if (DemoSetup.Demo_Searcher_SearchUsers_RunTest)
+				{
+					await Demo_Searcher_SearchUsers(EntryAttribute.sAMAccountName, DemoSetup.Demo_Searcher_SearchUsers_Filter_sAMAccountName, RequiredEntryAttributes.All);
 
-				await Demo_Searcher_SearchUsers(EntryAttribute.cn, DemoSetup.Demo_Searcher_SearchUsers_Filter_cn, RequiredEntryAttributes.All);
+					await Demo_Searcher_SearchUsers(EntryAttribute.cn, DemoSetup.Demo_Searcher_SearchUsers_Filter_cn, RequiredEntryAttributes.All);
+				}
 				#endregion
 
 				#region Search Users by 2 filters
-				await Demo_Searcher_SearchUsersByTwoFilters(EntryAttribute.sAMAccountName, DemoSetup.Demo_Searcher_SearchUsersByTwoFilters_Filter1_sAMAccountName, EntryAttribute.cn, DemoSetup.Demo_Searcher_SearchUsersByTwoFilters_Filter2_cn, false, RequiredEntryAttributes.All);
+				if (DemoSetup.Demo_Searcher_SearchUsers_RunTest)
+				{
+					await Demo_Searcher_SearchUsersByTwoFilters(EntryAttribute.sAMAccountName, DemoSetup.Demo_Searcher_SearchUsersByTwoFilters_Filter1_sAMAccountName, EntryAttribute.cn, DemoSetup.Demo_Searcher_SearchUsersByTwoFilters_Filter2_cn, false, RequiredEntryAttributes.All);
+				}
 				#endregion
 
 				#region Search any kind of entries 
-				await Demo_Searcher_SearchEntries(EntryAttribute.cn, DemoSetup.Demo_Searcher_SearchEntries_Filter_cn, false, RequiredEntryAttributes.All);
+				if (DemoSetup.Demo_Searcher_SearchEntries_RunTest)
+				{
+					await Demo_Searcher_SearchEntries(EntryAttribute.cn, DemoSetup.Demo_Searcher_SearchEntries_Filter_cn, false, RequiredEntryAttributes.All);
 
-				await Demo_Searcher_SearchEntries(EntryAttribute.objectSid, DemoSetup.Demo_Searcher_SearchEntries_Filter_objectSid, false, RequiredEntryAttributes.All);
+					await Demo_Searcher_SearchEntries(EntryAttribute.objectSid, DemoSetup.Demo_Searcher_SearchEntries_Filter_objectSid, false, RequiredEntryAttributes.All);
+				}
 				#endregion
 
 				#region Search any kind of entries by 2 filters
-				await Demo_Searcher_SearchEntriesByTwoFilters(EntryAttribute.cn, DemoSetup.Demo_Searcher_SearchEntriesByTwoFilters_Filter1_cn, EntryAttribute.cn, DemoSetup.Demo_Searcher_SearchEntriesByTwoFilters_Filter2_cn, false, RequiredEntryAttributes.All);
+				if (DemoSetup.Demo_Searcher_SearchEntries_RunTest)
+				{
+					await Demo_Searcher_SearchEntriesByTwoFilters(EntryAttribute.cn, DemoSetup.Demo_Searcher_SearchEntriesByTwoFilters_Filter1_cn, EntryAttribute.cn, DemoSetup.Demo_Searcher_SearchEntriesByTwoFilters_Filter2_cn, false, RequiredEntryAttributes.All);
+				}
 				#endregion
 
 				#region Search parent entries of an entry
-				await Demo_Searcher_SearchParentEntries(EntryAttribute.sAMAccountName, DemoSetup.Demo_Searcher_SearchParentEntries_Filter_sAMAccountName, RequiredEntryAttributes.All);
+				if (DemoSetup.Demo_Searcher_SearchParentEntries_RunTest)
+				{
+					await Demo_Searcher_SearchParentEntries(EntryAttribute.sAMAccountName, DemoSetup.Demo_Searcher_SearchParentEntries_Filter_sAMAccountName, RequiredEntryAttributes.All);
+				}
 				#endregion
 
 				#region Check group membership 
-				await Demo_GroupMembershipValidator_CheckGroupMembership(DemoSetup.Demo_GroupMembershipValidator_CheckGroupmembership_sAMAccountName, DemoSetup.Demo_GroupMembershipValidator_CheckGroupmembership_Check_GroupName);
+				if (DemoSetup.Demo_GroupMembershipValidator_RunTest)
+				{
+					await Demo_GroupMembershipValidator_CheckGroupMembership(DemoSetup.Demo_GroupMembershipValidator_CheckGroupmembership_sAMAccountName, DemoSetup.Demo_GroupMembershipValidator_CheckGroupmembership_Check_GroupName);
+				}
 				#endregion
 
 				var executeAgain = requestYESorNO("Dou you want to execute DEMO again?");
@@ -389,6 +445,58 @@ namespace Bitai.LDAPHelper.Demo
 			finally
 			{
 				Console.ReadLine();
+			}
+		}
+
+		public static async Task Demo_AccountManager_CreateUserAccount(string userAccountName, string password, string containerDN, string name, string surName, string dnsDomainName, string[] memberOf, string[] objectClasses, UserAccountControlFlagsForMsAD userAccountControlFlags)
+		{
+			try
+			{
+				printDemoTitle(nameof(Demo_AccountManager_CreateUserAccount));
+
+				string fullName = $"{name} {surName}";
+				var newUserAccount = new LDAPMsADUserAccount
+				{
+					GivenName = name,
+					Sn = surName,
+					Cn = fullName,
+					Name = fullName,
+					DisplayName = fullName,
+					MemberOf = memberOf,
+					ObjectClass = objectClasses,
+					Password = password,
+					SAMAccountName = userAccountName,
+					UserAccountControl = userAccountControlFlags,
+					UserPrincipalName = $"{userAccountName}@{dnsDomainName}"
+				};
+				Log.Information($"New user account data:");
+				Log.Information("{@newUserAccount}", newUserAccount);
+
+				var accountManager = new LDAPHelper.AccountManager(getClientConfiguration());
+
+				Log.Information("Creating new user account...");
+				var result = await accountManager.CreateUserAccountForMsAD(newUserAccount, containerDN, RequestLabel);
+
+				if (result.IsSuccessfulOperation)
+				{
+					Log.Information(result.OperationMessage);
+				}
+				else
+				{
+					Log.Error(result.OperationMessage);
+					if (result.HasErrorObject)
+					{
+						Log.Error(result.ErrorObject.Message);
+						Log.Error(result.ErrorObject.StackTrace);
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine();
+
+				Log.Error(ex.Message);
+				Log.Error(ex.StackTrace);
 			}
 		}
 
