@@ -23,7 +23,7 @@ namespace Bitai.LDAPHelper.DTO
 			//Do not remove this constructor, it is required to deserialize data.
 		}
 
-		public LDAPSearchResult(string requestLabel = null, IEnumerable<LDAPHelper.DTO.LDAPEntry> entries = null, string operationMessage = "OK", bool isSuccessfulOperation = true) : base(requestLabel, isSuccessfulOperation)
+		public LDAPSearchResult(string requestLabel = null, IEnumerable<LDAPHelper.DTO.LDAPEntry> entries = null, string operationMessage = "Operation completed.", bool isSuccessfulOperation = true) : base(requestLabel, isSuccessfulOperation)
 		{
 			if (entries != null)
 				Entries = entries;

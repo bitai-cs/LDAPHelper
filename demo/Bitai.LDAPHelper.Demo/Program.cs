@@ -448,14 +448,14 @@ namespace Bitai.LDAPHelper.Demo
 			}
 		}
 
-		public static async Task Demo_AccountManager_CreateUserAccount(string userAccountName, string password, string containerDN, string name, string surName, string dnsDomainName, string[] memberOf, string[] objectClasses, UserAccountControlFlagsForMsAD userAccountControlFlags)
+		public static async Task Demo_AccountManager_CreateUserAccount(string userAccountName, string password, string distinguishedNameOfContainer, string name, string surName, string dnsDomainName, string[] memberOf, string[] objectClasses, UserAccountControlFlagsForMsAD userAccountControlFlags)
 		{
 			try
 			{
 				printDemoTitle(nameof(Demo_AccountManager_CreateUserAccount));
 
 				string fullName = $"{name} {surName}";
-				var newUserAccount = new LDAPMsADUserAccount
+				var newUserAccount = new LDAPMsADUserAccount(distinguishedNameOfContainer)
 				{
 					GivenName = name,
 					Sn = surName,
@@ -475,20 +475,17 @@ namespace Bitai.LDAPHelper.Demo
 				var accountManager = new LDAPHelper.AccountManager(getClientConfiguration());
 
 				Log.Information("Creating new user account...");
-				var result = await accountManager.CreateUserAccountForMsAD(newUserAccount, containerDN, RequestLabel);
+				var result = await accountManager.CreateUserAccountForMsAD(newUserAccount, RequestLabel);
 
 				if (result.IsSuccessfulOperation)
 				{
-					Log.Information(result.OperationMessage);
+					Log.Information("Operation completed.");
+					Log.Information("{@result}", result);
 				}
 				else
 				{
-					Log.Error(result.OperationMessage);
-					if (result.HasErrorObject)
-					{
-						Log.Error(result.ErrorObject.Message);
-						Log.Error(result.ErrorObject.StackTrace);
-					}
+					Log.Error("Unsuccessful operation!");
+					Log.Error("{@result}", result);
 				}
 			}
 			catch (Exception ex)
