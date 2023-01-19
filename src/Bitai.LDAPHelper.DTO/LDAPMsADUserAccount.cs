@@ -12,8 +12,9 @@ namespace Bitai.LDAPHelper.DTO
 	/// Resources of interest:
 	/// - https://www.rlmueller.net/Name_Attributes.htm
 	/// </summary>
-	public class LDAPMsADUserAccount
+	public class LDAPMsADUserAccount : ISecureCloningCredential<LDAPMsADUserAccount>
 	{
+		private string distinguishedNameOfContainer;
 		private string givenName;
 		private string sn;
 		private string cn;
@@ -38,12 +39,24 @@ namespace Bitai.LDAPHelper.DTO
 		/// </summary>
 		public LDAPMsADUserAccount()
 		{
-			userAccountControl = UserAccountControlFlagsForMsAD.NORMAL_ACCOUNT | UserAccountControlFlagsForMsAD.DONT_EXPIRE_PASSWORD;
+			UserAccountControl = UserAccountControlFlagsForMsAD.NORMAL_ACCOUNT | UserAccountControlFlagsForMsAD.DONT_EXPIRE_PASSWORD;
+		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="distinguishedNmaeOfContainer">Container distinguished name of user account.</param>
+		public LDAPMsADUserAccount(string distinguishedNmaeOfContainer) : this()
+		{
+			if (string.IsNullOrEmpty(distinguishedNmaeOfContainer))
+				throw new ArgumentNullException(nameof(distinguishedNmaeOfContainer));
+
+			DistinguishedNameOfContainer = distinguishedNmaeOfContainer;
 		}
 
 
 
-
+		public string DistinguishedNameOfContainer { get => distinguishedNameOfContainer; set => distinguishedNameOfContainer = value; }
 		public string GivenName { get => givenName; set => givenName = value; }
 		public string Sn { get => sn; set => sn = value; }
 		public string Cn { get => cn; set => cn = value; }
@@ -60,5 +73,28 @@ namespace Bitai.LDAPHelper.DTO
 		public string TelephoneNumber { get => telephoneNumber; set => telephoneNumber = value; }
 		public string Mail { get => mail; set => mail = value; }
 		public string Password { get => password; set => password = value; }
+
+
+
+
+		public LDAPMsADUserAccount SecureClone()
+		{
+			return new LDAPMsADUserAccount
+			{
+				Cn = Cn,
+				Department = Department,
+				Description = Description,
+				DisplayName = DisplayName,
+				DistinguishedName = DistinguishedName,
+				DistinguishedNameOfContainer = DistinguishedNameOfContainer,
+				GivenName = GivenName,
+				Mail = Mail,
+				MemberOf = (string[])MemberOf?.Clone(),
+				Name = Name,
+				ObjectClass = (string[])ObjectClass?.Clone(),
+				Password = "*****",
+				SAMAccountName = SAMAccountName
+			};
+		}
 	}
 }
