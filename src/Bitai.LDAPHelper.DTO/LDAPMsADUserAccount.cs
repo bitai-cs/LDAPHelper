@@ -26,7 +26,8 @@ namespace Bitai.LDAPHelper.DTO
 		private string[] objectClass;
 		private string samAccountName;
 		private string userPrincipalName;
-		private UserAccountControlFlagsForMsAD userAccountControl;
+		private string userAccountControl;
+		private UserAccountControlFlagsForMsAD? userAccountControlFlags;
 		private string department;
 		private string telephoneNumber;
 		private string mail;
@@ -39,7 +40,7 @@ namespace Bitai.LDAPHelper.DTO
 		/// </summary>
 		public LDAPMsADUserAccount()
 		{
-			UserAccountControl = UserAccountControlFlagsForMsAD.NORMAL_ACCOUNT | UserAccountControlFlagsForMsAD.DONT_EXPIRE_PASSWORD;
+			UserAccountControl = $"{UserAccountControlFlagsForMsAD.NORMAL_ACCOUNT.ToString()},{UserAccountControlFlagsForMsAD.DONT_EXPIRE_PASSWORD}";
 		}
 
 		/// <summary>
@@ -68,12 +69,42 @@ namespace Bitai.LDAPHelper.DTO
 		public string[] ObjectClass { get => objectClass; set => objectClass = value; }
 		public string SAMAccountName { get => samAccountName; set => samAccountName = value; }
 		public string UserPrincipalName { get => userPrincipalName; set => userPrincipalName = value; }
-		public UserAccountControlFlagsForMsAD UserAccountControl { get => userAccountControl; set => userAccountControl = value; }
+		public string UserAccountControl
+		{
+			get => userAccountControl;
+			set
+			{
+				var tempValue = value;
+
+				if (!string.IsNullOrEmpty(tempValue))
+				{
+					var flagNames = tempValue.Split(',');
+					int totalFlagValue = 0;
+					foreach (var flagName in flagNames)
+					{
+						UserAccountControlFlagsForMsAD parsedFlag;
+						if (!Enum.TryParse(flagName, out parsedFlag))
+							throw new InvalidCastException($"Unable to assign property {nameof(UserAccountControl)}. Can not parse {flagName} to {nameof(UserAccountControlFlagsForMsAD)}");
+
+						totalFlagValue += (int)parsedFlag;
+					}
+
+					userAccountControlFlags = (UserAccountControlFlagsForMsAD)Enum.ToObject(typeof(UserAccountControlFlagsForMsAD), totalFlagValue);
+
+					userAccountControl = tempValue;
+				}
+				else
+				{
+					userAccountControlFlags = null;
+					userAccountControl = value;
+				}
+			}
+		}
 		public string Department { get => department; set => department = value; }
 		public string TelephoneNumber { get => telephoneNumber; set => telephoneNumber = value; }
 		public string Mail { get => mail; set => mail = value; }
 		public string Password { get => password; set => password = value; }
-
+		public UserAccountControlFlagsForMsAD? UserAccountControlFlags { get => userAccountControlFlags; }
 
 
 
@@ -93,7 +124,10 @@ namespace Bitai.LDAPHelper.DTO
 				Name = Name,
 				ObjectClass = (string[])ObjectClass?.Clone(),
 				Password = "*****",
-				SAMAccountName = SAMAccountName
+				SAMAccountName = SAMAccountName,
+				TelephoneNumber = TelephoneNumber,
+				UserAccountControl = UserAccountControl,
+				UserPrincipalName = UserPrincipalName
 			};
 		}
 	}

@@ -347,20 +347,7 @@ namespace Bitai.LDAPHelper.Demo
 						objectClasses = DemoSetup.Demo_AccountManager_CreateUserAccount_ObjectClasses.Split(',');
 					}
 
-					UserAccountControlFlagsForMsAD? userAccountControlFlags = null;
-					if (!string.IsNullOrEmpty(DemoSetup.Demo_AccountManager_CreateUserAccount_UserAccountControlFlags))
-					{
-						var flagNames = DemoSetup.Demo_AccountManager_CreateUserAccount_UserAccountControlFlags.Split(',');
-						int totalFlagValue = 0;
-						foreach (var flagName in flagNames)
-						{
-							totalFlagValue += (int)Enum.Parse<UserAccountControlFlagsForMsAD>(flagName);
-						}
-
-						userAccountControlFlags = (UserAccountControlFlagsForMsAD)Enum.ToObject(typeof(UserAccountControlFlagsForMsAD), totalFlagValue);
-					}
-
-					await Demo_AccountManager_CreateUserAccount(DemoSetup.Demo_AccountManager_CreateUserAccount_UserAccountName, DemoSetup.Demo_AccountManager_CreateUserAccount_Password, DemoSetup.Demo_AccountManager_CreateUserAccount_ContainerDN, DemoSetup.Demo_AccountManager_CreateUserAccount_Name, DemoSetup.Demo_AccountManager_CreateUserAccount_Surname, DemoSetup.Demo_AccountManager_CreateUserAccount_DNSDomainName, memberOf, objectClasses, userAccountControlFlags.Value);
+					await Demo_AccountManager_CreateUserAccount(DemoSetup.Demo_AccountManager_CreateUserAccount_UserAccountName, DemoSetup.Demo_AccountManager_CreateUserAccount_Password, DemoSetup.Demo_AccountManager_CreateUserAccount_ContainerDN, DemoSetup.Demo_AccountManager_CreateUserAccount_Name, DemoSetup.Demo_AccountManager_CreateUserAccount_Surname, DemoSetup.Demo_AccountManager_CreateUserAccount_DNSDomainName, memberOf, objectClasses, DemoSetup.Demo_AccountManager_CreateUserAccount_UserAccountControlFlags);
 				}
 				#endregion
 
@@ -448,7 +435,7 @@ namespace Bitai.LDAPHelper.Demo
 			}
 		}
 
-		public static async Task Demo_AccountManager_CreateUserAccount(string userAccountName, string password, string distinguishedNameOfContainer, string name, string surName, string dnsDomainName, string[] memberOf, string[] objectClasses, UserAccountControlFlagsForMsAD userAccountControlFlags)
+		public static async Task Demo_AccountManager_CreateUserAccount(string userAccountName, string password, string distinguishedNameOfContainer, string name, string surName, string dnsDomainName, string[] memberOf, string[] objectClasses, string userAccountControlFlags)
 		{
 			try
 			{

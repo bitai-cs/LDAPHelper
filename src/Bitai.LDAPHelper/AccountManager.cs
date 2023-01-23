@@ -87,7 +87,8 @@ namespace Bitai.LDAPHelper
 				if (!string.IsNullOrEmpty(newUserAccount.UserPrincipalName))
 					ldapAttributeSet.Add(new LdapAttribute(EntryAttribute.userPrincipalName.ToString(), newUserAccount.UserPrincipalName));
 
-				ldapAttributeSet.Add(new LdapAttribute(EntryAttribute.userAccountControl.ToString(), ((int)newUserAccount.UserAccountControl).ToString()));
+				if (newUserAccount.UserAccountControlFlags.HasValue)
+					ldapAttributeSet.Add(new LdapAttribute(EntryAttribute.userAccountControl.ToString(), ((int)newUserAccount.UserAccountControlFlags).ToString()));
 
 				if (!string.IsNullOrEmpty(newUserAccount.Department))
 					ldapAttributeSet.Add(new LdapAttribute(EntryAttribute.department.ToString(), newUserAccount.Department));
