@@ -27,6 +27,12 @@ namespace Bitai.LDAPHelper
 
 
 
+		public void InitializeMissingMsADUserAccountDN(LDAPMsADUserAccount userAccount)
+		{
+			if (string.IsNullOrEmpty(userAccount.DistinguishedName))
+				userAccount.DistinguishedName = $"CN={userAccount.Cn},{userAccount.DistinguishedNameOfContainer}";
+		}
+
 		/// <summary>
 		/// Create a user account in MS Active Directory service
 		/// https://www.rlmueller.net/Name_Attributes.htm
@@ -57,7 +63,7 @@ namespace Bitai.LDAPHelper
 				#endregion
 
 				//Generate user account DistinguishedName LDAP attribute
-				newUserAccount.DistinguishedName = $"CN={newUserAccount.Cn},{newUserAccount.DistinguishedNameOfContainer}";
+				InitializeMissingMsADUserAccountDN(newUserAccount);
 
 				#region Initialize and populate LDAP attribute set
 				LdapAttributeSet ldapAttributeSet = new LdapAttributeSet();
