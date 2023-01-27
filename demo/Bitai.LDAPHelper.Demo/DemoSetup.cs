@@ -27,7 +27,14 @@ namespace Bitai.LDAPHelper.Demo
 		public string Demo_AccountManager_SetAccountPassword_DistinguishedName { get; set; }
 
 		public bool Demo_Authenticator_Authenticate_RunTest { get; set; }
+		public bool Demo_Authenticator_Authenticate_RunTest_Simple { get; set; }
 		public string Demo_Authenticator_Authenticate_DomainAccountName { get; set; }
+
+		public bool Demo_AccountManager_DisableUserAccount_RunTest { get; set; }
+		public string Demo_AccountManager_DisableUserAccount_UserAccountDistinguishedName { get; set; }
+
+		public bool Demo_AccountManager_RemoveUserAccount_RunTest { get; set; }
+		public string Demo_AccountManager_RemoveUserAccount_UserAccountDistinguishedName { get; set; }
 
 		public bool Demo_Searcher_SearchUsers_RunTest { get; set; }
 		public string Demo_Searcher_SearchUsers_Filter_sAMAccountName { get; set; }
