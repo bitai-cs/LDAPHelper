@@ -14,7 +14,7 @@ namespace Bitai.LDAPHelper.DTO
 
 
 		/// <summary>
-		/// Defaulr constructor.
+		/// Default constructor.
 		/// </summary>
 		public LDAPCreateMsADUserAccountResult()
 		{

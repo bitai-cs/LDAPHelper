@@ -9,8 +9,8 @@
 		<Description>Demo of Bitai.Bitai.LDAPHelper usage.</Description>
 		<PackageId>Bitai.Bitai.LDAPHelper.Demo</PackageId>
 		<PackageIcon>hierarchy_32.png</PackageIcon>
-		<Version>6.1.0</Version>
-		<AssemblyVersion>6.1.0.0</AssemblyVersion>
+		<Version>6.2.0</Version>
+		<AssemblyVersion>6.2.0.0</AssemblyVersion>
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="6.0.0" />

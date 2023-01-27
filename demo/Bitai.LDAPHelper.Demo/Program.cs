@@ -361,9 +361,24 @@ namespace Bitai.LDAPHelper.Demo
 				#region Authentication
 				if (DemoSetup.Demo_Authenticator_Authenticate_RunTest)
 				{
-					await Demo_Authenticator_Authenticate_Simple(DemoSetup.Demo_Authenticator_Authenticate_DomainAccountName);
+					if (DemoSetup.Demo_Authenticator_Authenticate_RunTest_Simple)
+						await Demo_Authenticator_Authenticate_Simple(DemoSetup.Demo_Authenticator_Authenticate_DomainAccountName);
+					else
+						await Demo_Authenticator_Authenticate_WithAccountValidation(DemoSetup.Demo_Authenticator_Authenticate_DomainAccountName);
+				}
+				#endregion
 
-					await Demo_Authenticator_Authenticate_WithAccountValidation(DemoSetup.Demo_Authenticator_Authenticate_DomainAccountName);
+				#region Disable user account
+				if (DemoSetup.Demo_AccountManager_DisableUserAccount_RunTest)
+				{
+					await Demo_AccountManager_DisableUserAccount(DemoSetup.Demo_AccountManager_DisableUserAccount_UserAccountDistinguishedName);
+				}
+				#endregion
+
+				#region Remove user account
+				if (DemoSetup.Demo_AccountManager_RemoveUserAccount_RunTest)
+				{
+					await Demo_AccountManager_RemoveUserAccount(DemoSetup.Demo_AccountManager_RemoveUserAccount_UserAccountDistinguishedName);
 				}
 				#endregion
 
@@ -415,11 +430,17 @@ namespace Bitai.LDAPHelper.Demo
 
 				var executeAgain = requestYESorNO("Dou you want to execute DEMO again?");
 				if (executeAgain)
+				{
+					Console.WriteLine("You can take advantage, before running the demo again, to change the parameters in the demo's configuration file if you need it. To continue press a key.");
+
+					Console.ReadLine();
+
 					goto EXECUTE_DEMO;
+				}
 
 				Console.WriteLine();
 
-				Log.Warning("Demo complete: " + DateTime.Now.ToString());
+				Log.Warning("Demo completed: " + DateTime.Now.ToString());
 			}
 			catch (Exception ex)
 			{
@@ -497,7 +518,7 @@ namespace Bitai.LDAPHelper.Demo
 				var accountManager = new LDAPHelper.AccountManager(getClientConfiguration());
 
 				Log.Information("Setting account password...");
-				var result = await accountManager.SetAccountPassword(credential);
+				var result = await accountManager.SetUserAccountPasswordForMsAD(credential);
 
 				if (result.IsSuccessfulOperation)
 				{
@@ -511,6 +532,68 @@ namespace Bitai.LDAPHelper.Demo
 						Log.Error(result.ErrorObject.Message);
 						Log.Error(result.ErrorObject.StackTrace);
 					}
+				}
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine();
+
+				Log.Error(ex.Message);
+				Log.Error(ex.StackTrace);
+			}
+		}
+
+		public static async Task Demo_AccountManager_DisableUserAccount(string distinguishedName)
+		{
+			try
+			{
+				printDemoTitle(nameof(Demo_AccountManager_DisableUserAccount));
+
+				var accountManager = new LDAPHelper.AccountManager(getClientConfiguration());
+
+				Log.Information("Disabling user account {dn}", distinguishedName);
+				var result = await accountManager.DisableUserAccountForMsAD(distinguishedName, Program.RequestLabel);
+
+				if (result.IsSuccessfulOperation)
+				{
+					Log.Information(result.OperationMessage);
+					Log.Information("{@r}", result);
+				}
+				else
+				{
+					Log.Error(result.OperationMessage);
+					Log.Error("{@r}", result);
+				}
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine();
+
+				Log.Error(ex.Message);
+				Log.Error(ex.StackTrace);
+			}
+		}
+
+		public static async Task Demo_AccountManager_RemoveUserAccount(string distinguishedName)
+		{
+			try
+			{
+				printDemoTitle(nameof(Demo_AccountManager_RemoveUserAccount));
+
+				var accountManager = new LDAPHelper.AccountManager(getClientConfiguration());
+
+				Log.Information("Remove user account {dn}", distinguishedName);
+				var result = await accountManager.RemoveUserAccountForMsAD(distinguishedName, Program.RequestLabel);
+
+				if (result.IsSuccessfulOperation)
+				{
+					Log.Information(result.OperationMessage);
+					Log.Information("{@r}", result);
+				}
+				else
+				{
+					Log.Error(result.OperationMessage);
+					Log.Error("{@r}", result);
 				}
 			}
 			catch (Exception ex)
