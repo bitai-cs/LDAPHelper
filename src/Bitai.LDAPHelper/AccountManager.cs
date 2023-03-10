@@ -121,7 +121,7 @@ namespace Bitai.LDAPHelper
 				{
 					LdapEntry newEntry = new LdapEntry(newUserAccount.DistinguishedName, ldapAttributeSet);
 
-					ldapConnection.Add(newEntry);
+					await ldapConnection.AddAsync(newEntry);
 				}
 
 				return new LDAPCreateMsADUserAccountResult(newUserAccount.SecureClone(), requestLabel)
@@ -166,7 +166,7 @@ namespace Bitai.LDAPHelper
 
 				using (var ldapConnection = await GetLdapConnection(this.ConnectionInfo, this.DomainAccountCredential))
 				{
-					ldapConnection.Modify(entry.distinguishedName, pwdModification);
+					await ldapConnection.ModifyAsync(entry.distinguishedName, pwdModification);
 
 					if (postUpdateTestAuthentication)
 					{
@@ -220,7 +220,7 @@ namespace Bitai.LDAPHelper
 
 				using (var ldapConnection = await GetLdapConnection(this.ConnectionInfo, this.DomainAccountCredential))
 				{
-					ldapConnection.Modify(entry.distinguishedName, userAccountControlModification);
+					await ldapConnection.ModifyAsync(entry.distinguishedName, userAccountControlModification);
 				}
 
 				return new DTO.LDAPDisableUserAccountOperationResult(requestLabel)
@@ -251,7 +251,7 @@ namespace Bitai.LDAPHelper
 
 				using (var ldapConnection = await GetLdapConnection(this.ConnectionInfo, this.DomainAccountCredential))
 				{
-					ldapConnection.Delete(entry.distinguishedName);
+					await ldapConnection.DeleteAsync(entry.distinguishedName);
 				}
 
 				return new LDAPRemoveMsADUserAccountResult(requestLabel)

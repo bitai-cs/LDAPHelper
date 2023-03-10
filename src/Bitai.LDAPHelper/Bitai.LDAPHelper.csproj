@@ -1,16 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <Authors>Viko Bastidas (BITAI)</Authors>
     <Company>BITAI</Company>
     <Product>LDAP Services Wrappers</Product>
     <Description>Library to wrap Novell.Directory.Ldap.NETStandard functionality to make LDAP common queries to search accounts and objects in a Directory Service.</Description>
     <Copyright></Copyright>
-    <Version>6.1.13</Version>
-    <AssemblyVersion>6.1.13.7</AssemblyVersion>
+    <Version>7.0.0</Version>
+    <AssemblyVersion>7.0.0.7</AssemblyVersion>
     <PackageIcon>hierarchy_32.png</PackageIcon>
-    <FileVersion>6.1.13.7</FileVersion>
+    <FileVersion>7.0.0.7</FileVersion>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>Bitai.LDAPHelper</PackageId>
     <AssemblyName>Bitai.LDAPHelper</AssemblyName>
@@ -37,7 +37,7 @@ https://github.com/bitai-cs/IdentityServer4.Admin</PackageReleaseNotes>
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Novell.Directory.Ldap.NETStandard" Version="3.6.0" />
+    <PackageReference Include="Novell.Directory.Ldap.NETStandard" Version="4.0.0-beta4" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,12 +1,12 @@
 # LDAP Helper ![Logo](resources/hierarchy_32.png)
 
-**.NET 6.0** library which wraps  **Novell.Directory.Ldap.NETStandard** functionality to make LDAP searches and also authenticate users against a Directory Service.
+**.NET 7.0** library which wraps  **Novell.Directory.Ldap.NETStandard** functionality to make LDAP searches and also authenticate users against a Directory Service.
 
 This libary is part of [Bitai.LDAPWebApi](https://github.com/bitai-cs/LDAPWebApi) solution
 
 ## Requirements
 
-- **.NET 6.0**
+- **.NET 7.0**
   - Have at least [.NET 6.0 SDK installed](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) on your system.  
 
 ## How to use the library?
@@ -20,19 +20,18 @@ This libary is part of [Bitai.LDAPWebApi](https://github.com/bitai-cs/LDAPWebApi
   
 ```json
 {
-    "DomainAccountName": "DOMAIN\\AccountName",
     "LdapServers": [
         {
-            "Address": "10.113.58.132"
+            "Address": "hr.company.com"
         },
         {
-            "Address": "140.141.33.65"
+            "Address": "10.100.54.4"
         },
         {
             "Address": "55.55.55.13"
         },
         {
-            "Address": "34.11.58.13"
+            "Address": "10.100.54.35"
         },
         {
             "Address": "11.11.11.13"
@@ -43,13 +42,13 @@ This libary is part of [Bitai.LDAPWebApi](https://github.com/bitai-cs/LDAPWebApi
     ],
     "BaseDNs": [
         {
-            "DN": "DC=company, DC=com"
+            "DN": "DC=school,DC=edu,DC=uk"
         },
         {
-            "DN": "DC=us, DC=company, DC=com"
+            "DN": "DC=university,DC=edu,DC=br"
         },
         {
-            "DN": "DC=uk, DC=company, DC=com"
+            "DN": "DC=domain,CD=local"
         },
         {
             "DN": "DC=br, DC=company, DC=com"
@@ -61,20 +60,53 @@ This libary is part of [Bitai.LDAPWebApi](https://github.com/bitai-cs/LDAPWebApi
             "DN": "DC=es, DC=company, DC=com"
         }
     ],
+
     "ConnectionTimeout": 15,
-    "UseSSL": false,
-    "Demo_Authenticator_Authenticate_DomainAccountName": "DOMAIN\\AccountName",
-    "Demo_Searcher_SearchUsersAndGroups_Filter_sAMAccountName": "usr_ext01",
-    "Demo_Searcher_SearchUsersAndGroups_Filter_cn": "*Bastidas*",
-    "Demo_Searcher_SearchUsersAndGroupsByTwoFilters_Filter1_sAMAccountName": "*smith",
-    "Demo_Searcher_SearchUsersAndGroupsByTwoFilters_Filter2_cn": "*Smith*",
-    "Demo_Searcher_SearchEntries_Filter_cn": "DB Server",
-    "Demo_Searcher_SearchEntries_Filter_objectSid": "S-1-5-21-638406840-1180129177-883519231-179439",
+    "DomainUserAccountForRunTests": "CERTUS\\usrrpa_mda",
+    "AccountPassword": "@secret-password!",
+
+    "Demo_AccountManager_CreateUserAccount_RunTest": true,
+    "Demo_AccountManager_CreateUserAccount_UserAccountName": "vbastidas77",
+    "Demo_AccountManager_CreateUserAccount_Password": "rpa2023@@",
+    "Demo_AccountManager_CreateUserAccount_ContainerDN": "OU=TEST_RPA_MDA,OU=ADM,OU=CERTUS,DC=certus,DC=edu,DC=pe",
+    "Demo_AccountManager_CreateUserAccount_Name": "Victor G.",
+    "Demo_AccountManager_CreateUserAccount_Surname": "Bastidas G.",
+    "Demo_AccountManager_CreateUserAccount_DNSDomainName": "certus.edu.pe",
+    "Demo_AccountManager_CreateUserAccount_MemberOf": null,
+    "Demo_AccountManager_CreateUserAccount_ObjectClasses": "user,top,person,organizationalPerson",
+    "Demo_AccountManager_CreateUserAccount_UserAccountControlFlags": "NORMAL_ACCOUNT,DONT_EXPIRE_PASSWORD",
+
+    "Demo_AccountManager_SetAccountPassword_RunTest": false,
+    "Demo_AccountManager_SetAccountPassword_DistinguishedName": "CN=Victor Bastidas,OU=TEST_RPA_MDA,OU=ADM,OU=CERTUS,DC=certus,DC=edu,DC=pe",
+
+    "Demo_Authenticator_Authenticate_RunTest": true,
+    "Demo_Authenticator_Authenticate_RunTest_Simple": false,
+    "Demo_Authenticator_Authenticate_DomainAccountName": "CERTUS\\vbastidas77",
+
+    "Demo_AccountManager_DisableUserAccount_RunTest": false,
+    "Demo_AccountManager_DisableUserAccount_UserAccountDistinguishedName": "CN=Victor Bastidas,OU=TEST_RPA_MDA,OU=ADM,OU=CERTUS,DC=certus,DC=edu,DC=pe",
+
+    "Demo_AccountManager_RemoveUserAccount_RunTest": false,
+    "Demo_AccountManager_RemoveUserAccount_UserAccountDistinguishedName": "CN=Victor German Bastidas Gonzales,OU=TEST_RPA_MDA,OU=ADM,OU=CERTUS,DC=certus,DC=edu,DC=pe",
+
+    "Demo_Searcher_SearchUsers_RunTest": false,
+    "Demo_Searcher_SearchUsers_Filter_sAMAccountName": "00000002",
+    "Demo_Searcher_SearchUsers_Filter_cn": "*Isaac*",
+    "Demo_Searcher_SearchUsersByTwoFilters_Filter1_sAMAccountName": "*cordoba",
+    "Demo_Searcher_SearchUsersByTwoFilters_Filter2_cn": "*manuel*",
+
+    "Demo_Searcher_SearchEntries_RunTest": false,
+    "Demo_Searcher_SearchEntries_Filter_cn": "SRVWEBDEV",
+    "Demo_Searcher_SearchEntries_Filter_objectSid": "S-1-5-21-3451337281-1996239963-2625140484-1000",
     "Demo_Searcher_SearchEntriesByTwoFilters_Filter1_cn": "*server*",
     "Demo_Searcher_SearchEntriesByTwoFilters_Filter2_cn": "*database*",
-    "Demo_Searcher_SearchParentEntries_Filter_sAMAccountName": "usr_ext01",
-    "Demo_GroupMembershipValidator_CheckGroupmembership_sAMAccountName": "4439690",
-    "Demo_GroupMembershipValidator_CheckGroupmembership_Check_GroupName": "Software Administrators"
+
+    "Demo_Searcher_SearchParentEntries_RunTest": false,
+    "Demo_Searcher_SearchParentEntries_Filter_sAMAccountName": "00000002",
+
+    "Demo_GroupMembershipValidator_RunTest": false,
+    "Demo_GroupMembershipValidator_CheckGroupmembership_sAMAccountName": "Administrator",
+    "Demo_GroupMembershipValidator_CheckGroupmembership_Check_GroupName": "Administrators"
 }
 ```
 

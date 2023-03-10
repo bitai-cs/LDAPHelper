@@ -183,39 +183,36 @@ namespace Bitai.LDAPHelper
 
 
 		#region Private methods
-		private Task<LdapConnection> getLdapConnection(ConnectionInfo connectionInfo, string userAccount, string password, bool bindRequired = true)
+		private async Task<LdapConnection> getLdapConnection(ConnectionInfo connectionInfo, string userAccount, string password, bool bindRequired = true)
 		{
-			return Task.Run(() =>
+			var ldapConnection = new LdapConnection
 			{
-				var ldapConnection = new LdapConnection
-				{
-					ConnectionTimeout = ConnectionInfo.ConnectionTimeout * 1000
-				};
+				ConnectionTimeout = ConnectionInfo.ConnectionTimeout * 1000
+			};
 
-				if (connectionInfo.UseSSL)
-				{
-					ldapConnection.SecureSocketLayer = true;
-					ldapConnection.UserDefinedServerCertValidationDelegate += (sender, certificate, chain, sslPolicyErrors) => true;
-				}
+			if (connectionInfo.UseSSL)
+			{
+				ldapConnection.SecureSocketLayer = true;
+				ldapConnection.UserDefinedServerCertValidationDelegate += (sender, certificate, chain, sslPolicyErrors) => true;
+			}
 
-				ldapConnection.Connect(connectionInfo.Server, connectionInfo.ServerPort);
+			await ldapConnection.ConnectAsync(connectionInfo.Server, connectionInfo.ServerPort);
 
-				try
-				{
-					ldapConnection.Bind(userAccount, password);
-				}
-				catch (LdapException)
-				{
-					if (bindRequired)
-						throw;
-				}
-				catch (Exception)
-				{
+			try
+			{
+				await ldapConnection.BindAsync(userAccount, password);
+			}
+			catch (LdapException)
+			{
+				if (bindRequired)
 					throw;
-				}
+			}
+			catch (Exception)
+			{
+				throw;
+			}
 
-				return ldapConnection;
-			});
+			return ldapConnection;
 		}
 		#endregion
 	}

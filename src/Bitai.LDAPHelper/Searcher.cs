@@ -160,7 +160,7 @@ namespace Bitai.LDAPHelper
 						MaxResults = this.SearchLimits.MaxSearchResults,
 					};
 
-					Novell.Directory.Ldap.LdapSearchQueue searchQueue = connection.Search(this.SearchLimits.BaseDN, Novell.Directory.Ldap.LdapConnection.ScopeSub, searchFilter, attributesToLoad.ToArray(), false, (Novell.Directory.Ldap.LdapSearchQueue)null, searchConstraints);
+					Novell.Directory.Ldap.LdapSearchQueue searchQueue = await connection.SearchAsync(this.SearchLimits.BaseDN, Novell.Directory.Ldap.LdapConnection.ScopeSub, searchFilter, attributesToLoad.ToArray(), false, (Novell.Directory.Ldap.LdapSearchQueue)null, searchConstraints);
 
 					Novell.Directory.Ldap.LdapMessage responseMessage = null;
 					while ((responseMessage = searchQueue.GetResponse()) != null)
