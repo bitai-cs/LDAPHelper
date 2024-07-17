@@ -16,7 +16,7 @@ namespace Bitai.LDAPHelper.Demo
 	/// </summary>
 	public partial class Program
 	{
-		internal static string DemoSetup_FilePath = $"{Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory).Replace('\\', '/')}/ldaphelper_demo_setup.json";
+		internal static string DemoSetup_FilePath = $"{Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory).Replace('\\', '/')}/ldap-helper-demo-setup.json";
 
 		internal const string Message_LdapEntriesNotFound = "LDAP entries not found with the provided filters.";
 
@@ -305,6 +305,11 @@ namespace Bitai.LDAPHelper.Demo
 
 
 
+
+		/// <summary>
+		/// Program entry point
+		/// </summary>
+		/// <returns></returns>
 		public static async Task Main()
 		{
 			try
