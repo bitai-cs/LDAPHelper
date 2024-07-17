@@ -1,17 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
-    <AssemblyVersion>7.0.0.7</AssemblyVersion>
-    <FileVersion>7.0.0.7</FileVersion>
-    <Version>7.0.0</Version>
+    <TargetFramework>net8.0</TargetFramework>
+    <AssemblyVersion>8.0.0.7</AssemblyVersion>
+    <FileVersion>8.0.0.7</FileVersion>
+    <Version>8.0.0</Version>
     <AssemblyName>Bitai.LDAPHelper.DTO</AssemblyName>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Viko Bastidas (BITAI)</Authors>
     <Company>BITAI</Company>
     <Product>LDAP Services Wrappers</Product>
     <Description>DTO classes to generate output data by Bitai.LDAPHelper and to be used in other applications.</Description>
-    <Copyright></Copyright>
+    <Copyright>© 2024 BITAI. All rights reserved.</Copyright>
     <PackageIcon>hierarchy_32.png</PackageIcon>
     <RootNamespace>Bitai.LDAPHelper.DTO</RootNamespace>
     <PackageId>Bitai.LDAPHelper.DTO</PackageId>
@@ -20,6 +20,8 @@
     <RepositoryUrl>https://github.com/bitai-cs/LDAPHelper.git</RepositoryUrl>
     <RepositoryType>GitHub</RepositoryType>
     <PackageTags>ldap, authentication, directory, helper</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageReleaseNotes>Upgraded to .NET 8</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
@@ -30,6 +32,13 @@
     <None Include="..\..\resources\hierarchy_32.png">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
     </None>
   </ItemGroup>
 

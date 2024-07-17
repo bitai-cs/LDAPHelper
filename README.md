@@ -1,13 +1,13 @@
 # LDAP Helper ![Logo](resources/hierarchy_32.png)
 
-**.NET 7.0** library which wraps  **Novell.Directory.Ldap.NETStandard** functionality to make LDAP searches and also authenticate users against a Directory Service.
+**.NET 7.0** library which wraps  **Novell.Directory.Ldap.NETStandard** functionality to make LDAP searches and also authenticate, create, remove users in a LDAP compliant Directory Service.
 
 This libary is part of [Bitai.LDAPWebApi](https://github.com/bitai-cs/LDAPWebApi) solution
 
 ## Requirements
 
-- **.NET 7.0**
-  - Have at least [.NET 6.0 SDK installed](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) on your system.  
+- **.NET 8.0**
+  - Have at least [.NET 8.0 SDK installed](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) on your system.  
 
 ## How to use the library?
 
@@ -15,7 +15,7 @@ This libary is part of [Bitai.LDAPWebApi](https://github.com/bitai-cs/LDAPWebApi
 
 ## How to execute Demo console application?
 
-- First, make a copy on your desktop of the  [Bitai.LDAPHelper.Demo/ldaphelper_demosetup.json](src/Bitai.LDAPHelper.Demo/ldaphelper_demosetup.json) file.
+- First, make a copy on your desktop of the  [Bitai.LDAPHelper.Demo/ldap-helper-demo-setup.json](src/Bitai.LDAPHelper.Demo/ldap-helper-demo-setup.json) file.
 - Edit the copied file and set the parameters as needed.
   
 ```json
