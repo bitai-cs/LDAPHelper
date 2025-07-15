@@ -733,6 +733,7 @@ namespace Bitai.LDAPHelper.Demo
 						Log.Information(entry.displayName);
 						Log.Information(entry.distinguishedName);
 						Log.Information(entry.objectSid);
+						Log.Information(entry.userAccountControl);
 
 						if (entry.memberOfEntries == null || entry.memberOfEntries.Count() > 0)
 							Console.WriteLine();
@@ -792,8 +793,9 @@ namespace Bitai.LDAPHelper.Demo
 						Log.Information(entry.displayName);
 						Log.Information(entry.distinguishedName);
 						Log.Information(entry.objectSid);
+                        Log.Information(entry.userAccountControl);
 
-						Console.WriteLine();
+                        Console.WriteLine();
 					}
 
 					Log.Information($"{searchResult.Entries.Count()} entrie(s) found.");
@@ -842,8 +844,9 @@ namespace Bitai.LDAPHelper.Demo
 						Log.Information(_entry.displayName);
 						Log.Information(_entry.distinguishedName);
 						Log.Information(_entry.objectSid);
+                        Log.Information(entry.userAccountControl);
 
-						Console.WriteLine();
+                        Console.WriteLine();
 					}
 
 					Log.Information($"{searchResult.Entries.Count()} entrie(s) found.");
@@ -894,8 +897,9 @@ namespace Bitai.LDAPHelper.Demo
 						Log.Information(entry.displayName);
 						Log.Information(entry.distinguishedName);
 						Log.Information(entry.objectSid);
+                        Log.Information(entry.userAccountControl);
 
-						Console.WriteLine();
+                        Console.WriteLine();
 					}
 
 					Log.Information($"{searchResult.Entries.Count()} entrie(s) found.");
@@ -944,8 +948,9 @@ namespace Bitai.LDAPHelper.Demo
 						Log.Information(entry.displayName);
 						Log.Information(entry.distinguishedName);
 						Log.Information(entry.objectSid);
+                        Log.Information(entry.userAccountControl);
 
-						Console.WriteLine();
+                        Console.WriteLine();
 					}
 
 					Log.Information($"{searchResult.Entries.Count()} entrie(s) found.");

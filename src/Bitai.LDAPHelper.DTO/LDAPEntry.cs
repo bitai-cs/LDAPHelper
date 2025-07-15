@@ -94,6 +94,7 @@ namespace Bitai.LDAPHelper.DTO
 
         public byte[] objectSidBytes { get; set; }
 
+        public string? userAccountControl { get; set; }
 
         public IEnumerable<LDAPEntry> GetMemberOfEntriesRecursively()
         {

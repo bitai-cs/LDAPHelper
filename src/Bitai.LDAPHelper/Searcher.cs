@@ -141,7 +141,11 @@ namespace Bitai.LDAPHelper
 				ldapEntry.memberOfEntries = parentEntries.ToArray();
 			}
 
-			return ldapEntry;
+            if (attributeSet.ContainsKey(DTO.EntryAttribute.userAccountControl.ToString())) {
+                ldapEntry.userAccountControl = attributeSet.GetAttribute(DTO.EntryAttribute.userAccountControl.ToString()).StringValue;
+            }
+
+            return ldapEntry;
 		}
 
 		private async Task<DTO.LDAPSearchResult> getSearchResultAsync(DTO.RequiredEntryAttributes requiredEntryAttributes, string searchFilter, string requestLabel)
