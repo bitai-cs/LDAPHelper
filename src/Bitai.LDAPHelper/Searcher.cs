@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
 namespace Bitai.LDAPHelper
@@ -152,14 +153,11 @@ namespace Bitai.LDAPHelper
 		{
 			DTO.LDAPSearchResult searchResult;
 
-			try
-			{
+			try {
 				var attributesToLoad = this.GetRequiredAttributeNames(requiredEntryAttributes);
 				var entries = new List<DTO.LDAPEntry>();
-				using (var connection = await GetLdapConnection(this.ConnectionInfo, this.DomainAccountCredential))
-				{
-					var searchConstraints = new Novell.Directory.Ldap.LdapSearchConstraints
-					{
+				using (var connection = await GetLdapConnection(this.ConnectionInfo, this.DomainAccountCredential)) {
+					var searchConstraints = new Novell.Directory.Ldap.LdapSearchConstraints {
 						ServerTimeLimit = this.SearchLimits.MaxSearchTimeout,
 						MaxResults = this.SearchLimits.MaxSearchResults,
 					};
@@ -167,10 +165,8 @@ namespace Bitai.LDAPHelper
 					Novell.Directory.Ldap.LdapSearchQueue searchQueue = await connection.SearchAsync(this.SearchLimits.BaseDN, Novell.Directory.Ldap.LdapConnection.ScopeSub, searchFilter, attributesToLoad.ToArray(), false, (Novell.Directory.Ldap.LdapSearchQueue)null, searchConstraints);
 
 					Novell.Directory.Ldap.LdapMessage responseMessage = null;
-					while ((responseMessage = searchQueue.GetResponse()) != null)
-					{
-						if (responseMessage is Novell.Directory.Ldap.LdapSearchResult)
-						{
+					while ((responseMessage = searchQueue.GetResponse()) != null) {
+						if (responseMessage is Novell.Directory.Ldap.LdapSearchResult) {
 							var _ldapEntry = await getEntryFromAttributeSet(((Novell.Directory.Ldap.LdapSearchResult)responseMessage).Entry.GetAttributeSet(), requiredEntryAttributes, requestLabel);
 
 							entries.Add(_ldapEntry);
@@ -184,9 +180,13 @@ namespace Bitai.LDAPHelper
 
 				return searchResult;
 			}
-			catch(Exception ex)
-			{
-				searchResult = new DTO.LDAPSearchResult("Unexpected error performing search.", ex, requestLabel);
+			catch (Novell.Directory.Ldap.LdapException ex) {
+				searchResult = new DTO.LDAPSearchResult($"{ex.Message} ({ex.LdapErrorMessage})", ex, requestLabel);
+
+				return searchResult;
+			}
+			catch (Exception ex) {
+				searchResult = new DTO.LDAPSearchResult($"Unexpected error performing search. {ex.Message}", ex, requestLabel);
 
 				return searchResult;
 			}
