@@ -203,17 +203,17 @@ namespace Bitai.LDAPHelper
 
 		public async Task<DTO.LDAPSearchResult> SearchParentEntriesAsync(QueryFilters.ICombinableFilter searchFilter, DTO.RequiredEntryAttributes requiredEntryAttributes, string requestLabel)
 		{
-			DTO.LDAPSearchResult addTopExceptionToResult(DTO.LDAPSearchResult partialSearchResult)
-			{
-				return new DTO.LDAPSearchResult("Error looking up parent LDAP entries.", new Exception(partialSearchResult.OperationMessage, partialSearchResult.ErrorObject), requestLabel);
-			}
+			//DTO.LDAPSearchResult addTopExceptionToResult(DTO.LDAPSearchResult partialSearchResult)
+			//{
+			//	return new DTO.LDAPSearchResult("Error looking up parent LDAP entries.", new Exception(partialSearchResult.OperationMessage, partialSearchResult.ErrorObject), requestLabel);
+			//}
 
-			DTO.LDAPSearchResult addTopMessageToResult(DTO.LDAPSearchResult partialSearchResult)
-			{
-				partialSearchResult.SetUnsuccessfullOperation($"Error looking up parent LDAP entries. {partialSearchResult.OperationMessage}");
+			//DTO.LDAPSearchResult addTopMessageToResult(DTO.LDAPSearchResult partialSearchResult)
+			//{
+			//	partialSearchResult.SetUnsuccessfullOperation($"Error looking up parent LDAP entries. {partialSearchResult.OperationMessage}");
 
-				return partialSearchResult;
-			}
+			//	return partialSearchResult;
+			//}
 
 			try
 			{
@@ -221,11 +221,13 @@ namespace Bitai.LDAPHelper
 
 				if (!partialSearchResult.IsSuccessfulOperation)
 				{
-					if (partialSearchResult.HasErrorObject)
-						return addTopExceptionToResult(partialSearchResult);
-					else
-						return addTopMessageToResult(partialSearchResult);
-				}
+					//if (partialSearchResult.HasErrorObject)
+					//	return addTopExceptionToResult(partialSearchResult);
+					//else
+					//	return addTopMessageToResult(partialSearchResult);
+
+					return partialSearchResult;
+                }
 				else if (partialSearchResult.Entries.Count() == 0)
 				{
 					partialSearchResult.SetUnsuccessfullOperation("No entry was found according to the search filter.");
@@ -241,13 +243,14 @@ namespace Bitai.LDAPHelper
 					var distinguishedNameFilter = new QueryFilters.AttributeFilter(DTO.EntryAttribute.distinguishedName, new QueryFilters.FilterValue(entry.distinguishedName.ReplaceSpecialCharsToScapedChars()));
 
 					partialSearchResult = await SearchEntriesAsync(distinguishedNameFilter, requiredEntryAttributes, requestLabel);
-
 					if (!partialSearchResult.IsSuccessfulOperation)
 					{
-						if (partialSearchResult.HasErrorObject)
-							return addTopExceptionToResult(partialSearchResult);
-						else
-							return addTopMessageToResult(partialSearchResult);
+						//if (partialSearchResult.HasErrorObject)
+						//	return addTopExceptionToResult(partialSearchResult);
+						//else
+						//	return addTopMessageToResult(partialSearchResult);
+
+						return partialSearchResult;
 					}
 
 					resultEntries.AddRange(partialSearchResult.Entries);
@@ -255,11 +258,17 @@ namespace Bitai.LDAPHelper
 
 				return new DTO.LDAPSearchResult(requestLabel, resultEntries);
 			}
-			catch(Exception ex)
-			{
-				return new DTO.LDAPSearchResult("Unexpected error when searching for parent entries.", ex, requestLabel);
-			}
-		}
+            catch (Novell.Directory.Ldap.LdapException ex) {
+                var searchResult = new DTO.LDAPSearchResult($"{ex.Message} ({ex.LdapErrorMessage})", ex, requestLabel);
+
+                return searchResult;
+            }
+            catch (Exception ex) {
+                var searchResult = new DTO.LDAPSearchResult($"Unexpected error performing search. {ex.Message}", ex, requestLabel);
+
+                return searchResult;
+            }
+        }
 		#endregion
 	}
 }
