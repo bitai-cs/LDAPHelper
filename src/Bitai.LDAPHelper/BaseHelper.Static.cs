@@ -70,7 +70,7 @@ namespace Bitai.LDAPHelper
         #region Private static methods
         private static IEnumerable<string> GetMinimunAttributeNames()
         {
-            return new string[] { DTO.EntryAttribute.objectSid.ToString(), DTO.EntryAttribute.distinguishedName.ToString(), DTO.EntryAttribute.sAMAccountName.ToString(), DTO.EntryAttribute.cn.ToString(), DTO.EntryAttribute.displayName.ToString(), DTO.EntryAttribute.objectClass.ToString() };
+            return new string[] { DTO.EntryAttribute.objectSid.ToString(), DTO.EntryAttribute.distinguishedName.ToString(), DTO.EntryAttribute.sAMAccountName.ToString(), DTO.EntryAttribute.cn.ToString(), DTO.EntryAttribute.displayName.ToString(), DTO.EntryAttribute.objectClass.ToString(), DTO.EntryAttribute.userAccountControl.ToString() };
         }
 
         private static IEnumerable<string> GetMinimunWithMemberAttributeNames()
@@ -90,7 +90,7 @@ namespace Bitai.LDAPHelper
 
         private static IEnumerable<string> GetFewAttributeNames()
         {
-            return new string[] { DTO.EntryAttribute.objectSid.ToString(), DTO.EntryAttribute.objectGuid.ToString(), DTO.EntryAttribute.distinguishedName.ToString(), DTO.EntryAttribute.sAMAccountName.ToString(), DTO.EntryAttribute.cn.ToString(), DTO.EntryAttribute.name.ToString(), DTO.EntryAttribute.displayName.ToString(), DTO.EntryAttribute.objectClass.ToString(), DTO.EntryAttribute.objectCategory.ToString() };
+            return new string[] { DTO.EntryAttribute.objectSid.ToString(), DTO.EntryAttribute.objectGuid.ToString(), DTO.EntryAttribute.distinguishedName.ToString(), DTO.EntryAttribute.sAMAccountName.ToString(), DTO.EntryAttribute.cn.ToString(), DTO.EntryAttribute.name.ToString(), DTO.EntryAttribute.displayName.ToString(), DTO.EntryAttribute.objectClass.ToString(), DTO.EntryAttribute.objectCategory.ToString(), DTO.EntryAttribute.userAccountControl.ToString() };
         }
 
         private static IEnumerable<string> GetFewWithMemberAttributeNames()

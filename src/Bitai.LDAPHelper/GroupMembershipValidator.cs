@@ -34,13 +34,21 @@ namespace Bitai.LDAPHelper
             var searcher = new Searcher(this.ConnectionInfo, this.SearchLimits, this.DomainAccountCredential);
 
             var searchResult = await searcher.SearchParentEntriesAsync(attributeFilter, DTO.RequiredEntryAttributes.OnlyCN, null);
-
-            if (searchResult.Entries.Count().Equals(0))
+            if (!searchResult.IsSuccessfulOperation) 
             {
                 if (searchResult.HasErrorObject)
                     throw searchResult.ErrorObject;
                 else
-                    throw new EntryNotFoundException($"{sAMAccountName} not found.");
+                    throw new Exception($"An error occurred while searching for the entry with sAMAccountName: {sAMAccountName}. {searchResult.OperationMessage}");
+            }
+            else if (searchResult.Entries.Count() == 0)
+            {
+                //if (searchResult.HasErrorObject)
+                //    throw searchResult.ErrorObject;
+                //else
+                //    throw new EntryNotFoundException($"{sAMAccountName} not found.");
+
+                return false; // Entry not found, so it cannot be a member of the group
             }
 
             return searchResult.Entries.Where(entry => entry.cn.Equals(parentGroupName, StringComparison.OrdinalIgnoreCase)).Any();

@@ -713,16 +713,8 @@ namespace Bitai.LDAPHelper.Demo
 				Log.Information($"Searching by {searchFilterCombiner}");
 				Console.WriteLine();
 
-				var searchResult = await searcher.SearchEntriesAsync(searchFilterCombiner, requiredEntryAttributes, Program.RequestLabel);
-
-				if (searchResult.Entries.Count() == 0)
-				{
-					if (searchResult.HasErrorObject)
-						throw searchResult.ErrorObject;
-					else
-						Log.Warning(Program.Message_LdapEntriesNotFound);
-				}
-				else
+				var searchResult = await searcher.SearchEntriesAsync(searchFilterCombiner, requiredEntryAttributes, Program.RequestLabel);		
+				if (searchResult.IsSuccessfulOperation)
 				{
 					foreach (var entry in searchResult.Entries)
 					{
@@ -733,6 +725,7 @@ namespace Bitai.LDAPHelper.Demo
 						Log.Information(entry.displayName);
 						Log.Information(entry.distinguishedName);
 						Log.Information(entry.objectSid);
+						Log.Information(entry.userAccountControl);
 
 						if (entry.memberOfEntries == null || entry.memberOfEntries.Count() > 0)
 							Console.WriteLine();
@@ -744,14 +737,21 @@ namespace Bitai.LDAPHelper.Demo
 
 					Log.Information($"{searchResult.Entries.Count()} entrie(s) found.");
 				}
-			}
+                else 
+				{
+                    if (searchResult.HasErrorObject)
+                        throw new Exception(searchResult.OperationMessage, searchResult.ErrorObject);
+                    else
+                        throw new Exception(searchResult.OperationMessage);
+                }
+            }
 			catch (Exception ex)
 			{
-				Console.WriteLine();
-
-				Log.Error(ex.Message);
-				Log.Error(ex.StackTrace);
-			}
+                Console.WriteLine();
+                
+                Log.Error(ex.Message);
+                Log.Error(ex.StackTrace);
+            }
 		}
 
 		public static async Task Demo_Searcher_SearchUsersByTwoFilters(EntryAttribute filterAttribute, string filterValue, EntryAttribute secondFilterAttribute, string secondFilterValue, bool conjunctiveFilters, RequiredEntryAttributes requiredEntryAttributes)
@@ -773,15 +773,8 @@ namespace Bitai.LDAPHelper.Demo
 				Log.Information($"Searching by {searchFilterCombiner}");
 				Console.WriteLine();
 
-				var searchResult = await searcher.SearchEntriesAsync(searchFilterCombiner, requiredEntryAttributes, Program.RequestLabel);
-				if (searchResult.Entries.Count().Equals(0))
-				{
-					if (searchResult.HasErrorObject)
-						throw searchResult.ErrorObject;
-					else
-						Log.Warning(Program.Message_LdapEntriesNotFound);
-				}
-				else
+				var searchResult = await searcher.SearchEntriesAsync(searchFilterCombiner, requiredEntryAttributes, Program.RequestLabel);		
+				if (searchResult.IsSuccessfulOperation)
 				{
 					foreach (var entry in searchResult.Entries)
 					{
@@ -792,12 +785,20 @@ namespace Bitai.LDAPHelper.Demo
 						Log.Information(entry.displayName);
 						Log.Information(entry.distinguishedName);
 						Log.Information(entry.objectSid);
+                        Log.Information(entry.userAccountControl);
 
-						Console.WriteLine();
+                        Console.WriteLine();
 					}
 
 					Log.Information($"{searchResult.Entries.Count()} entrie(s) found.");
 				}
+				else 
+				{
+                    if (searchResult.HasErrorObject)
+                        throw new Exception(searchResult.OperationMessage, searchResult.ErrorObject);
+                    else
+                        throw new Exception(searchResult.OperationMessage);
+                }
 			}
 			catch (Exception ex)
 			{
@@ -824,31 +825,29 @@ namespace Bitai.LDAPHelper.Demo
 				Console.WriteLine();
 
 				var searchResult = await searcher.SearchEntriesAsync(filter, requiredEntryAttributes, Program.RequestLabel);
-				if (searchResult.Entries.Count().Equals(0))
-				{
-					if (searchResult.HasErrorObject)
-						throw searchResult.ErrorObject;
-					else
-						Log.Warning(Program.Message_LdapEntriesNotFound);
-				}
-				else
-				{
-					foreach (var _entry in searchResult.Entries)
-					{
-						Log.Information(_entry.company);
-						Log.Information(_entry.co);
-						Log.Information(_entry.samAccountName);
-						Log.Information(_entry.cn);
-						Log.Information(_entry.displayName);
-						Log.Information(_entry.distinguishedName);
-						Log.Information(_entry.objectSid);
+                if (searchResult.IsSuccessfulOperation) {
+                    foreach (var entry in searchResult.Entries) {
+                        Log.Information(entry.company);
+                        Log.Information(entry.co);
+                        Log.Information(entry.samAccountName);
+                        Log.Information(entry.cn);
+                        Log.Information(entry.displayName);
+                        Log.Information(entry.distinguishedName);
+                        Log.Information(entry.objectSid);
+                        Log.Information(entry.userAccountControl);
 
-						Console.WriteLine();
-					}
+                        Console.WriteLine();
+                    }
 
-					Log.Information($"{searchResult.Entries.Count()} entrie(s) found.");
-				}
-			}
+                    Log.Information($"{searchResult.Entries.Count()} entrie(s) found.");
+                }
+                else {
+                    if (searchResult.HasErrorObject)
+                        throw new Exception(searchResult.OperationMessage, searchResult.ErrorObject);
+                    else
+                        throw new Exception(searchResult.OperationMessage);
+                }
+            }
 			catch (Exception ex)
 			{
 				Console.WriteLine();
@@ -876,31 +875,29 @@ namespace Bitai.LDAPHelper.Demo
 				Console.WriteLine();
 
 				var searchResult = await searcher.SearchEntriesAsync(filterCombiner, requiredEntryAttributes, Program.RequestLabel);
-				if (searchResult.Entries.Count().Equals(0))
-				{
-					if (searchResult.HasErrorObject)
-						throw searchResult.ErrorObject;
-					else
-						Log.Warning(Program.Message_LdapEntriesNotFound);
-				}
-				else
-				{
-					foreach (var entry in searchResult.Entries)
-					{
-						Log.Information(entry.company);
-						Log.Information(entry.co);
-						Log.Information(entry.samAccountName);
-						Log.Information(entry.cn);
-						Log.Information(entry.displayName);
-						Log.Information(entry.distinguishedName);
-						Log.Information(entry.objectSid);
+                if (searchResult.IsSuccessfulOperation) {
+                    foreach (var entry in searchResult.Entries) {
+                        Log.Information(entry.company);
+                        Log.Information(entry.co);
+                        Log.Information(entry.samAccountName);
+                        Log.Information(entry.cn);
+                        Log.Information(entry.displayName);
+                        Log.Information(entry.distinguishedName);
+                        Log.Information(entry.objectSid);
+                        Log.Information(entry.userAccountControl);
 
-						Console.WriteLine();
-					}
+                        Console.WriteLine();
+                    }
 
-					Log.Information($"{searchResult.Entries.Count()} entrie(s) found.");
-				}
-			}
+                    Log.Information($"{searchResult.Entries.Count()} entrie(s) found.");
+                }
+                else {
+                    if (searchResult.HasErrorObject)
+                        throw new Exception(searchResult.OperationMessage, searchResult.ErrorObject);
+                    else
+                        throw new Exception(searchResult.OperationMessage);
+                }
+            }
 			catch (Exception ex)
 			{
 				Console.WriteLine();
@@ -926,31 +923,29 @@ namespace Bitai.LDAPHelper.Demo
 				Console.WriteLine();
 
 				var searchResult = await searcher.SearchParentEntriesAsync(attributeFilter, requiredEntryAttributes, Program.RequestLabel);
-				if (searchResult.Entries.Count().Equals(0))
-				{
-					if (searchResult.HasErrorObject)
-						throw searchResult.ErrorObject;
-					else
-						Log.Warning(Program.Message_LdapEntriesNotFound);
-				}
-				else
-				{
-					foreach (var entry in searchResult.Entries)
-					{
-						Log.Information(entry.company);
-						Log.Information(entry.co);
-						Log.Information(entry.samAccountName);
-						Log.Information(entry.cn);
-						Log.Information(entry.displayName);
-						Log.Information(entry.distinguishedName);
-						Log.Information(entry.objectSid);
+                if (searchResult.IsSuccessfulOperation) {
+                    foreach (var entry in searchResult.Entries) {
+                        Log.Information(entry.company);
+                        Log.Information(entry.co);
+                        Log.Information(entry.samAccountName);
+                        Log.Information(entry.cn);
+                        Log.Information(entry.displayName);
+                        Log.Information(entry.distinguishedName);
+                        Log.Information(entry.objectSid);
+                        Log.Information(entry.userAccountControl);
 
-						Console.WriteLine();
-					}
+                        Console.WriteLine();
+                    }
 
-					Log.Information($"{searchResult.Entries.Count()} entrie(s) found.");
-				}
-			}
+                    Log.Information($"{searchResult.Entries.Count()} entrie(s) found.");
+                }
+                else {
+                    if (searchResult.HasErrorObject)
+                        throw new Exception(searchResult.OperationMessage, searchResult.ErrorObject);
+                    else
+                        throw new Exception(searchResult.OperationMessage);
+                }
+            }
 			catch (Exception ex)
 			{
 				Console.WriteLine();
