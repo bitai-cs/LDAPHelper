@@ -17,8 +17,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\Bitai.LDAPHelper.DTO\Bitai.LDAPHelper.DTO.csproj" />
-    <ProjectReference Include="..\src\Bitai.LDAPHelper\Bitai.LDAPHelper.csproj" />
+    <ProjectReference Include="..\..\src\Bitai.LDAPHelper.DTO\Bitai.LDAPHelper.DTO.csproj" />
+    <ProjectReference Include="..\..\src\Bitai.LDAPHelper\Bitai.LDAPHelper.csproj" />
   </ItemGroup>
 
   <ItemGroup>

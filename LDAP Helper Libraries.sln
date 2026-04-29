@@ -16,7 +16,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bitai.LDAPHelper.Tests", "Bitai.LDAPHelper.Tests\Bitai.LDAPHelper.Tests.csproj", "{2D343BE2-3906-4541-B9A5-CBB9A866BE54}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bitai.LDAPHelper.Tests", "tests\Bitai.LDAPHelper.Tests\Bitai.LDAPHelper.Tests.csproj", "{2D343BE2-3906-4541-B9A5-CBB9A866BE54}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{C4F50587-D862-43DF-AFE6-D2EEC0B7454D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,7 +49,10 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{2386A126-F237-43FD-9A7C-FDF6718ACAD7} = {C4F50587-D862-43DF-AFE6-D2EEC0B7454D}
+		{87B1AB51-6C42-4EC0-9ECB-189370A724C2} = {C4F50587-D862-43DF-AFE6-D2EEC0B7454D}
 		{EF0E7C00-6116-46A7-BC21-6B30DE8361DD} = {D026C7BE-09AB-4BFD-B78E-1DF35734EBFD}
+		{2D343BE2-3906-4541-B9A5-CBB9A866BE54} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DB0C2252-0846-4C49-970A-C7C68C82A4F3}
