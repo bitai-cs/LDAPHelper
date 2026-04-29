@@ -1,4 +1,6 @@
-﻿using Bitai.LDAPHelper.Extensions;
+﻿using Bitai.LDAPHelper.Adapters;
+using Bitai.LDAPHelper.Adapters.Novell;
+using Bitai.LDAPHelper.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,11 +12,11 @@ namespace Bitai.LDAPHelper
 	public class Searcher : BaseHelper
 	{
 		#region Constructor 
-		public Searcher(ClientConfiguration clientConfiguration) : base(clientConfiguration)
+		public Searcher(ClientConfiguration clientConfiguration, ILdapConnectionFactoryAdapter connectionFactory) : base(clientConfiguration, connectionFactory)
 		{
 		}
 
-		public Searcher(ConnectionInfo connectionInfo, SearchLimits searchLimits, DTO.LDAPDomainAccountCredential domainAccountCredential) : base(connectionInfo, searchLimits, domainAccountCredential)
+		public Searcher(ConnectionInfo connectionInfo, SearchLimits searchLimits, DTO.LDAPDomainAccountCredential domainAccountCredential, ILdapConnectionFactoryAdapter connectionFactory) : base(connectionInfo, searchLimits, domainAccountCredential, connectionFactory)
 		{
 		}
 		#endregion
@@ -22,12 +24,13 @@ namespace Bitai.LDAPHelper
 
 
 		#region Private methods
-		private async Task<DTO.LDAPEntry> getEntryFromAttributeSet(Novell.Directory.Ldap.LdapAttributeSet attributeSet, DTO.RequiredEntryAttributes requiredEntryAttributes, string requestLabel)
+		private async Task<DTO.LDAPEntry> getEntryFromAttributeSet(ILdapAttributeSetAdapter attributeSet, DTO.RequiredEntryAttributes requiredEntryAttributes, string requestLabel)
 		{
 			var ldapEntry = new DTO.LDAPEntry(requestLabel);
 
-			Novell.Directory.Ldap.LdapAttribute attribute;
-			byte[] bytes;
+            //Novell.Directory.Ldap.LdapAttribute attribute;
+            ILdapAttributeAdapter attribute;
+            byte[] bytes;
 			string tempValue;
 
 			if (attributeSet.ContainsKey(DTO.EntryAttribute.objectSid.ToString()))
@@ -157,17 +160,18 @@ namespace Bitai.LDAPHelper
 				var attributesToLoad = this.GetRequiredAttributeNames(requiredEntryAttributes);
 				var entries = new List<DTO.LDAPEntry>();
 				using (var connection = await GetLdapConnection(this.ConnectionInfo, this.DomainAccountCredential)) {
-					var searchConstraints = new Novell.Directory.Ldap.LdapSearchConstraints {
+					var searchConstraints = new NovellLdapSearchConstraintsAdapter {
 						ServerTimeLimit = this.SearchLimits.MaxSearchTimeout,
 						MaxResults = this.SearchLimits.MaxSearchResults,
 					};
 
-					Novell.Directory.Ldap.LdapSearchQueue searchQueue = await connection.SearchAsync(this.SearchLimits.BaseDN, Novell.Directory.Ldap.LdapConnection.ScopeSub, searchFilter, attributesToLoad.ToArray(), false, (Novell.Directory.Ldap.LdapSearchQueue)null, searchConstraints);
+                    ILdapSearchQueueAdapter searchQueue = await connection.SearchAsync(this.SearchLimits.BaseDN, Novell.Directory.Ldap.LdapConnection.ScopeSub, searchFilter, attributesToLoad.ToArray(), false, searchConstraints);
 
-					Novell.Directory.Ldap.LdapMessage responseMessage = null;
+                    ILdapMessageAdapter responseMessage = null;
 					while ((responseMessage = searchQueue.GetResponse()) != null) {
-						if (responseMessage is Novell.Directory.Ldap.LdapSearchResult) {
-							var _ldapEntry = await getEntryFromAttributeSet(((Novell.Directory.Ldap.LdapSearchResult)responseMessage).Entry.GetAttributeSet(), requiredEntryAttributes, requestLabel);
+						//if (responseMessage is Novell.Directory.Ldap.LdapSearchResult) {
+						if (responseMessage.IsSearchResult && responseMessage.Entry != null) { 
+							var _ldapEntry = await getEntryFromAttributeSet(responseMessage.Entry.GetAttributeSet(), requiredEntryAttributes, requestLabel);
 
 							entries.Add(_ldapEntry);
 						}

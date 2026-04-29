@@ -1,0 +1,85 @@
+﻿// MockLdapConnectionAdapter.cs
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Bitai.LDAPHelper.Adapters;
+
+namespace Bitai.LDAPHelper.Tests.Mocks
+{
+    public class MockLdapConnectionAdapter : ILdapConnectionAdapter
+    {
+        private bool _disposed = false;
+        private Dictionary<string, List<MockLdapEntryAdapter>> _searchResults = new();
+        private bool _isBound = false;
+
+        public int ConnectionTimeout { get; set; }
+        public bool SecureSocketLayer { get; set; }
+        public bool IsBound => _isBound;
+
+        public void AddSearchResult(string filterPattern, List<MockLdapEntryAdapter> entries) {
+            _searchResults[filterPattern] = entries;
+        }
+
+        public void ServerCertificateValidationByPass() {
+            throw new InvalidOperationException($"{nameof(ServerCertificateValidationByPass)}: Not allowed in mocked classes!");
+        }
+
+        public Task ConnectAsync(string host, int port) {
+            if (host == "unknown" || port <= 0)
+                throw new Exception($"{nameof(MockLdapConnectionAdapter)}.{nameof(MockLdapConnectionAdapter.ConnectAsync)}: Invalid server connection!");
+
+            return Task.CompletedTask;
+        }
+
+        public Task BindAsync(string userDN, string password) {
+            if (userDN.Contains("forbidden_mock_user") || password.Contains("forbidden_mock_user"))
+                throw new Novell.Directory.Ldap.LdapException($"{nameof(MockLdapConnectionAdapter)}.{nameof(MockLdapConnectionAdapter.BindAsync)}: Invalid credencials!");
+
+            _isBound = !string.IsNullOrEmpty(userDN) && !string.IsNullOrEmpty(password);
+
+            return Task.CompletedTask;
+        }
+
+        public Task<ILdapSearchQueueAdapter> SearchAsync(
+            string searchBase,
+            int searchScope,
+            string searchFilter,
+            string[] attributeNames,
+            bool typesOnly,
+            ILdapSearchConstraintsAdapter constraints) {
+            var matchingEntries = new List<MockLdapEntryAdapter>();
+
+            // Find matching results based on filter
+            foreach (var kvp in _searchResults) {
+                if (searchFilter.Contains(kvp.Key) || kvp.Key == searchFilter) {
+                    matchingEntries.AddRange(kvp.Value);
+                }
+            }
+
+            var mockQueue = new MockLdapSearchQueueAdapter();
+            foreach (var entry in matchingEntries) {
+                mockQueue.AddSearchResult(new MockLdapMessageAdapter(entry));
+            }
+
+            return Task.FromResult<ILdapSearchQueueAdapter>(mockQueue);
+        }
+
+        public void Disconnect() {
+            _isBound = false;
+        }
+
+        public void Dispose() {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing) {
+            if (!_disposed) {
+                if (disposing) {
+                    // Cleanup
+                }
+                _disposed = true;
+            }
+        }        
+    }
+}
