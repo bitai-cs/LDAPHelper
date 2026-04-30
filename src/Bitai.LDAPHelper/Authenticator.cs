@@ -17,11 +17,11 @@ namespace Bitai.LDAPHelper
 
 
         #region Public methods
-        public async Task<DTO.LDAPDomainAccountAuthenticationResult> AuthenticateAsync(DTO.LDAPDomainAccountCredential credential, SearchLimits searchLimits, LDAPDomainAccountCredential searchCredential, string requestLabel = null) {
+        public async Task<DTO.LDAPDomainAccountAuthenticationResult> AuthenticateAsync(DTO.LDAPDomainAccountCredential credential, SearchLimits searchLimits, LDAPDomainAccountCredential credentialForSearching, string requestLabel = null) {
             LDAPDomainAccountAuthenticationResult authenticationResult;
 
             try {
-                var searcher = new Searcher(ConnectionInfo, searchLimits, searchCredential, ConnectionFactory);
+                var searcher = new Searcher(ConnectionInfo, searchLimits, credentialForSearching, ConnectionFactory);
 
                 var onlyUsersFilter = AttributeFilterCombiner.CreateOnlyUsersFilterCombiner();
                 var attributeFilter = new AttributeFilter(EntryAttribute.sAMAccountName, new FilterValue(credential.AccountName));
@@ -105,11 +105,11 @@ namespace Bitai.LDAPHelper
             }
         }
 
-        public async Task<DTO.LDAPDistinguishedNameAuthenticationResult> AuthenticateAsync(DTO.LDAPDistinguishedNameCredential credential, SearchLimits searchLimits, LDAPDomainAccountCredential searchCredential, string requestLabel = null) {
+        public async Task<DTO.LDAPDistinguishedNameAuthenticationResult> AuthenticateAsync(DTO.LDAPDistinguishedNameCredential credential, SearchLimits searchLimits, LDAPDomainAccountCredential credentialForSearching, string requestLabel = null) {
             LDAPDistinguishedNameAuthenticationResult authenticationResult;
 
             try {
-                var searcher = new Searcher(ConnectionInfo, searchLimits, searchCredential, ConnectionFactory);
+                var searcher = new Searcher(ConnectionInfo, searchLimits, credentialForSearching, ConnectionFactory);
 
                 var onlyUsersFilter = AttributeFilterCombiner.CreateOnlyUsersFilterCombiner();
                 var attributeFilter = new AttributeFilter(EntryAttribute.distinguishedName, new FilterValue(credential.DistinguishedName));

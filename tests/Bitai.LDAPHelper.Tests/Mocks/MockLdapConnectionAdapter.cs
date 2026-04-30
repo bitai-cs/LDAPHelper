@@ -25,28 +25,22 @@ namespace Bitai.LDAPHelper.Tests.Mocks
         }
 
         public Task ConnectAsync(string host, int port) {
-            if (host == "unknown" || port <= 0)
+            if (string.IsNullOrEmpty(host) || host == "unknown" || host == "0.0.0.0" || port <= 0)
                 throw new Exception($"{nameof(MockLdapConnectionAdapter)}.{nameof(MockLdapConnectionAdapter.ConnectAsync)}: Invalid server connection!");
 
             return Task.CompletedTask;
         }
 
         public Task BindAsync(string userDN, string password) {
-            if (userDN.Contains("forbidden_mock_user") || password.Contains("forbidden_mock_user"))
-                throw new Novell.Directory.Ldap.LdapException($"{nameof(MockLdapConnectionAdapter)}.{nameof(MockLdapConnectionAdapter.BindAsync)}: Invalid credencials!");
+            if (string.IsNullOrEmpty(userDN) || string.IsNullOrEmpty(password) || userDN.Contains("hacker") || password.Contains("123456"))
+                throw new Novell.Directory.Ldap.LdapException($"{nameof(MockLdapConnectionAdapter)}.{nameof(MockLdapConnectionAdapter.BindAsync)}: Invalid credentials!");
 
             _isBound = !string.IsNullOrEmpty(userDN) && !string.IsNullOrEmpty(password);
 
             return Task.CompletedTask;
         }
 
-        public Task<ILdapSearchQueueAdapter> SearchAsync(
-            string searchBase,
-            int searchScope,
-            string searchFilter,
-            string[] attributeNames,
-            bool typesOnly,
-            ILdapSearchConstraintsAdapter constraints) {
+        public Task<ILdapSearchQueueAdapter> SearchAsync(string searchBase, int searchScope, string searchFilter, string[] attributeNames, bool typesOnly, ILdapSearchConstraintsAdapter constraints) {
             var matchingEntries = new List<MockLdapEntryAdapter>();
 
             // Find matching results based on filter

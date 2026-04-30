@@ -9,7 +9,7 @@ using Xunit;
 
 namespace Bitai.LDAPHelper.Tests
 {
-    public class SearcherAdapterTests
+    public class SearcherAdapterTests : BaseTests
     {
         [Fact]
         public async Task SearchEntriesAsync_WithMockAdapter_ReturnsExpectedEntries() {
