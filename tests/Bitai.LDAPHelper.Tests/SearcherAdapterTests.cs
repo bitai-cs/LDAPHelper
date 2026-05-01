@@ -2,6 +2,7 @@
 using Bitai.LDAPHelper.Adapters;
 using Bitai.LDAPHelper.DTO;
 using Bitai.LDAPHelper.Tests.Mocks;
+using NuGet.Frameworks;
 using System;
 using System.Buffers.Text;
 using System.Threading.Tasks;
@@ -12,86 +13,113 @@ namespace Bitai.LDAPHelper.Tests
     public class SearcherAdapterTests : BaseTests
     {
         [Fact]
-        public async Task SearchEntriesAsync_WithMockAdapter_ReturnsExpectedEntries() {
-            // Arrange
+        public async Task SearchEntries_ReturnsExpectedEntries() {
+            var connectionInfo = CreateValidConnectionInfo(ssl: true);
+
             var mockConnection = new MockLdapConnectionAdapter();
-            var mockEntry = new MockLdapEntryAdapter("CN=Test User,DC=domain,DC=com");
+            
+            var mockConnectionFactory = new MockLdapConnectionFactoryAdapter(mockConnection);
 
-            mockEntry.AddAttribute("objectSid", new byte[] { 1, 2, 3, 4, 5 });
-            mockEntry.AddAttribute("sAMAccountName", "testuser");
-            mockEntry.AddAttribute("cn", "Test User");
-            mockEntry.AddAttribute("displayName", "Test User Display");
-            mockEntry.AddAttribute("objectClass", new[] { "top", "person", "organizationalPerson", "user" });
-            mockEntry.AddAttribute("userAccountControl", "512");
+            var searchLimits = CreateValidSearchLimits();
 
-            mockConnection.AddSearchResult("(sAMAccountName=testuser)", new List<MockLdapEntryAdapter> { mockEntry });
+            var mockUserEntry = CreateMockUserEntry("Test", "User", searchLimits, out var userSearchFilter, out var _); 
 
-            var mockFactory = new MockLdapConnectionFactoryAdapter(mockConnection);
+            mockConnection.AddSearchResult(userSearchFilter.ToString(), new List<MockLdapEntryAdapter> { mockUserEntry });
+           
+            var credential = new LDAPDomainAccountCredential("domain", "admin", "p@55w0rd");
 
-            var connectionInfo = new ConnectionInfo(
-                server: "localhost",
-                port: 389,
-                useSSL: false,
-                connectionTimeout: 30);
+            var searcher = new Searcher(connectionInfo, searchLimits, credential, mockConnectionFactory);
 
-            var searchLimits = new SearchLimits(baseDN: "DC=domain,DC=com") {
-                MaxSearchResults = 100,
-                MaxSearchTimeout = 60
-            };
+            var result = await searcher.SearchEntriesAsync(userSearchFilter, RequiredEntryAttributes.Minimun, "TestRequest");
 
-            var credential = new LDAPDomainAccountCredential("domain", "testuser", "password");
-            var searcher = new Searcher(connectionInfo, searchLimits, credential, mockFactory);
-
-            var filter = new QueryFilters.AttributeFilter(
-                DTO.EntryAttribute.sAMAccountName,
-                new QueryFilters.FilterValue("testuser"));
-
-            // Act
-            var result = await searcher.SearchEntriesAsync(
-                filter,
-                RequiredEntryAttributes.Minimun,
-                "TestRequest");
-
-            // Assert
             Assert.True(result.IsSuccessfulOperation);
             Assert.Single(result.Entries);
-            Assert.Equal("testuser", result.Entries.First().samAccountName);
-            Assert.Equal("CN=Test User,DC=domain,DC=com", result.Entries.First().distinguishedName);
+            Assert.Equal(userSearchFilter.FilterValue.Value, result.Entries.First().samAccountName);
+            Assert.Equal(mockUserEntry.DistinguishedName, result.Entries.First().distinguishedName);
         }
 
         [Fact]
-        public async Task SearchEntriesAsync_WithNoResults_ReturnsEmptyList() {
-            // Arrange
+        public async Task SearchEntries_ReturnsEmptyList() {
+            var connectionInfo = CreateValidConnectionInfo(ssl: true);
+
             var mockConnection = new MockLdapConnectionAdapter();
-            var mockFactory = new MockLdapConnectionFactoryAdapter(mockConnection);
 
-            var connectionInfo = new ConnectionInfo(
-                server: "localhost",
-                port: 389,
-                useSSL: false,
-                connectionTimeout: 30);
+            var mockConnectionFactory = new MockLdapConnectionFactoryAdapter(mockConnection);
 
-            var searchLimits = new SearchLimits(baseDN: "DC=domain,DC=com") {
-                MaxSearchResults = 100,
-                MaxSearchTimeout = 60
-            };
+            var searchLimits = CreateValidSearchLimits();
 
-            var credential = new LDAPDomainAccountCredential("domain", "testuser", "password");
-            var searcher = new Searcher(connectionInfo, searchLimits, credential, mockFactory);
+            var mockUserEntry = CreateMockUserEntry("Test", "User", searchLimits, out var userSearchFilter, out var _);
 
-            var filter = new QueryFilters.AttributeFilter(
-                DTO.EntryAttribute.sAMAccountName,
-                new QueryFilters.FilterValue("nonexistent"));
+            mockConnection.AddSearchResult(userSearchFilter.ToString(), new List<MockLdapEntryAdapter> { mockUserEntry });
 
-            // Act
-            var result = await searcher.SearchEntriesAsync(
-                filter,
-                RequiredEntryAttributes.Minimun,
-                "TestRequest");
+            var credential = new LDAPDomainAccountCredential("domain", "admin", "p@55w0rd");
 
-            // Assert
+            var searcher = new Searcher(connectionInfo, searchLimits, credential, mockConnectionFactory);
+
+            GenerateCommonUserSearchFilter("Hacker", "User", out var unknownUserSearchFilter, out var _);
+
+            var result = await searcher.SearchEntriesAsync(unknownUserSearchFilter, RequiredEntryAttributes.Minimun, "TestRequest");
+
             Assert.True(result.IsSuccessfulOperation);
             Assert.Empty(result.Entries);
+        }
+
+        [Fact]
+        public async Task SearchParentEntries_ReturnsExpectedEntries() {
+            var connectionInfo = CreateValidConnectionInfo(ssl: true);
+
+            var mockConnection = new MockLdapConnectionAdapter();
+
+            var mockConnectionFactory = new MockLdapConnectionFactoryAdapter(mockConnection);
+
+            var searchLimits = CreateValidSearchLimits();
+
+            var mockGroupEntry1 = CreateMockGroupEntry("Developers", "IT", searchLimits, out var groupSearchFilter1);
+            var mockGroupEntry2 = CreateMockGroupEntry("Administrators", "Trusted", searchLimits, out var groupSearchFilter2);
+            var mockUserEntry = CreateMockUserEntry("John", "Doe", searchLimits, out var userSearchFilter, out var _, new string[] { mockGroupEntry1.DistinguishedName, mockGroupEntry2.DistinguishedName });
+
+            mockConnection.AddSearchResult(groupSearchFilter1.ToString(), new List<MockLdapEntryAdapter> { mockGroupEntry1 });
+            mockConnection.AddSearchResult(groupSearchFilter2.ToString(), new List<MockLdapEntryAdapter> { mockGroupEntry2 });
+            mockConnection.AddSearchResult(userSearchFilter.ToString(), new List<MockLdapEntryAdapter> { mockUserEntry });
+
+            var credential = new LDAPDomainAccountCredential("domain", "admin", "p@55w0rd");
+
+            var searcher = new Searcher(connectionInfo, searchLimits, credential, mockConnectionFactory);
+
+            var result = await searcher.SearchParentEntriesAsync(userSearchFilter, RequiredEntryAttributes.Minimun, "TestRequest");
+
+            Assert.True(result.IsSuccessfulOperation);
+            Assert.NotEmpty(result.Entries);
+        }
+
+        [Fact]
+        public async Task SearchParentEntries_ReturnsEmptyList() {
+            var connectionInfo = CreateValidConnectionInfo(ssl: true);
+
+            var mockConnection = new MockLdapConnectionAdapter();
+
+            var mockConnectionFactory = new MockLdapConnectionFactoryAdapter(mockConnection);
+
+            var searchLimits = CreateValidSearchLimits();
+
+            var mockGroupEntry1 = CreateMockGroupEntry("Developers", "IT", searchLimits, out var groupSearchFilter1);
+            var mockGroupEntry2 = CreateMockGroupEntry("Administrators", "Trusted", searchLimits, out var groupSearchFilter2);
+            var mockUserEntry = CreateMockUserEntry("John", "Doe", searchLimits, out var userSearchFilter, out var _, new string[] { mockGroupEntry1.DistinguishedName, mockGroupEntry2.DistinguishedName });
+
+            mockConnection.AddSearchResult(groupSearchFilter1.ToString(), new List<MockLdapEntryAdapter> { mockGroupEntry1 });
+            mockConnection.AddSearchResult(groupSearchFilter2.ToString(), new List<MockLdapEntryAdapter> { mockGroupEntry2 });
+            mockConnection.AddSearchResult(userSearchFilter.ToString(), new List<MockLdapEntryAdapter> { mockUserEntry });
+
+            var credential = new LDAPDomainAccountCredential("domain", "admin", "p@55w0rd");
+
+            var searcher = new Searcher(connectionInfo, searchLimits, credential, mockConnectionFactory);
+
+            GenerateCommonUserSearchFilter("Dummiest", "User", out var expectedDummiestUserSearchFilter, out var _);
+            var result = await searcher.SearchParentEntriesAsync(expectedDummiestUserSearchFilter, RequiredEntryAttributes.Minimun, "TestRequest");
+
+            Assert.False(result.IsSuccessfulOperation);
+            Assert.Empty(result.Entries);
+            Assert.Contains("no one entry was found", result.OperationMessage.ToLower());
         }
     }
 }

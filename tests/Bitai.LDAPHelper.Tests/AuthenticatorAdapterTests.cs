@@ -37,12 +37,12 @@ namespace Bitai.LDAPHelper.Tests
             var searchLimits = CreateValidSearchLimits();
 
             //Mock LDAP entry for the user
-            var mockEntry = CreateMockUserEntry("Victor", "Bastidas", searchLimits, out var expectedFilter, out var dummy);
+            var userMockEntry = CreateMockUserEntry("Victor", "Bastidas", searchLimits, out var userSearchFilter, out var _);
 
             //Mock connection
             var mockConnection = new MockLdapConnectionAdapter();
             //Mock the search for the user
-            mockConnection.AddSearchResult(expectedFilter.ToString(), new List<MockLdapEntryAdapter> { mockEntry });
+            mockConnection.AddSearchResult(userSearchFilter.ToString(), new List<MockLdapEntryAdapter> { userMockEntry });
 
             //Mock connection factory
             var mockConnectionFactory = new MockLdapConnectionFactoryAdapter(mockConnection);
@@ -52,7 +52,7 @@ namespace Bitai.LDAPHelper.Tests
 
             var authenticator = new Authenticator(connectionInfo, mockConnectionFactory);
 
-            var credential = new LDAPDomainAccountCredential("domain", expectedFilter.FilterValue.Value, "p@55w0rd");
+            var credential = new LDAPDomainAccountCredential("domain", userSearchFilter.FilterValue.Value, "p@55w0rd");
             var credentialForSearching = new LDAPDomainAccountCredential("domain", "admin", "p@55w0rd");
 
             //Execute authentication
@@ -66,7 +66,7 @@ namespace Bitai.LDAPHelper.Tests
         [Fact]
         public async Task AuthenticateDN_ReturnsSuccess() {
             //Mock LDAP entry for the user
-            var mockEntry = CreateMockUserEntry("Victor", "Bastidas", null, out var dummy, out var expectedFilter);
+            var userMockEntry = CreateMockUserEntry("Victor", "Bastidas", null, out var _, out var _);
 
             //Mock connection
             var mockConnection = new MockLdapConnectionAdapter();
@@ -79,7 +79,7 @@ namespace Bitai.LDAPHelper.Tests
 
             var authenticator = new Authenticator(connectionInfo, mockConnectionFactory);
 
-            var credential = new LDAPDistinguishedNameCredential(mockEntry.DistinguishedName, "p@55w0rd");
+            var credential = new LDAPDistinguishedNameCredential(userMockEntry.DistinguishedName, "p@55w0rd");
 
             //Execute authentication
             var result = await authenticator.AuthenticateAsync(credential, "TestAuth");
@@ -95,12 +95,12 @@ namespace Bitai.LDAPHelper.Tests
             var searchLimits = CreateValidSearchLimits();
 
             //Mock LDAP entry for the user
-            var mockEntry = CreateMockUserEntry("Victor", "Bastidas", searchLimits, out var dummy, out var expectedFilter);
+            var userMockEntry = CreateMockUserEntry("Victor", "Bastidas", searchLimits, out var _, out var userSearchFilter);
 
             //Mock connection
             var mockConnection = new MockLdapConnectionAdapter();
             //Mock the search for the user
-            mockConnection.AddSearchResult(expectedFilter.ToString(), new List<MockLdapEntryAdapter> { mockEntry });
+            mockConnection.AddSearchResult(userSearchFilter.ToString(), new List<MockLdapEntryAdapter> { userMockEntry });
 
             //Mock connection factory
             var mockConnectionFactory = new MockLdapConnectionFactoryAdapter(mockConnection);
@@ -110,7 +110,7 @@ namespace Bitai.LDAPHelper.Tests
 
             var authenticator = new Authenticator(connectionInfo, mockConnectionFactory);
 
-            var credential = new LDAPDistinguishedNameCredential(mockEntry.DistinguishedName, "p@55w0rd");
+            var credential = new LDAPDistinguishedNameCredential(userMockEntry.DistinguishedName, "p@55w0rd");
             var credentialForSearching = new LDAPDomainAccountCredential("domain", "admin", "p@55w0rd");
 
             //Execute authentication
@@ -155,12 +155,12 @@ namespace Bitai.LDAPHelper.Tests
             var searchLimits = CreateValidSearchLimits();
 
             //Mock LDAP entry for the user
-            var mockEntry = CreateMockUserEntry("Victor", "Bastidas", searchLimits, out var expectedFilter, out var dummy);
+            var userMockEntry = CreateMockUserEntry("Victor", "Bastidas", searchLimits, out var userSearchFilter, out var _);
 
             //Mock connection
             var mockConnection = new MockLdapConnectionAdapter();
             //Mock the search for the user
-            mockConnection.AddSearchResult(expectedFilter.ToString(), new List<MockLdapEntryAdapter> { mockEntry });
+            mockConnection.AddSearchResult(userSearchFilter.ToString(), new List<MockLdapEntryAdapter> { userMockEntry });
 
             //Mock connection factory
             var mockConnectionFactory = new MockLdapConnectionFactoryAdapter(mockConnection);
@@ -185,7 +185,7 @@ namespace Bitai.LDAPHelper.Tests
         [Fact]
         public async Task AuthenticateDN_ReturnsFailed() {
             //Mock LDAP entry for the user
-            var mockEntry = CreateMockUserEntry("Victor", "Bastidas", null, out var dummy, out var expectedFilter);
+            var userMockEntry = CreateMockUserEntry("Victor", "Bastidas", null, out var _, out var userSearchFilter);
 
             //Mock connection
             var mockConnection = new MockLdapConnectionAdapter();
@@ -198,7 +198,7 @@ namespace Bitai.LDAPHelper.Tests
 
             var authenticator = new Authenticator(connectionInfo, mockConnectionFactory);
 
-            var credential = new LDAPDistinguishedNameCredential(mockEntry.DistinguishedName, "123456");
+            var credential = new LDAPDistinguishedNameCredential(userMockEntry.DistinguishedName, "123456");
 
             //Execute authentication
             var result = await authenticator.AuthenticateAsync(credential, "TestAuth");
@@ -215,12 +215,12 @@ namespace Bitai.LDAPHelper.Tests
             var searchLimits = CreateValidSearchLimits();
 
             //Mock LDAP entry for the user
-            var mockEntry = CreateMockUserEntry("Victor", "Bastidas", searchLimits, out var dummy, out var expectedFilter);
+            var userMockEntry = CreateMockUserEntry("Victor", "Bastidas", searchLimits, out var _, out var userSearchFilter);
 
             //Mock connection
             var mockConnection = new MockLdapConnectionAdapter();
             //Mock the search for the user
-            mockConnection.AddSearchResult(expectedFilter.ToString(), new List<MockLdapEntryAdapter> { mockEntry });
+            mockConnection.AddSearchResult(userSearchFilter.ToString(), new List<MockLdapEntryAdapter> { userMockEntry });
 
             //Mock connection factory
             var mockConnectionFactory = new MockLdapConnectionFactoryAdapter(mockConnection);

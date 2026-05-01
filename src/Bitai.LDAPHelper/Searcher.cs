@@ -207,34 +207,17 @@ namespace Bitai.LDAPHelper
 
 		public async Task<DTO.LDAPSearchResult> SearchParentEntriesAsync(QueryFilters.ICombinableFilter searchFilter, DTO.RequiredEntryAttributes requiredEntryAttributes, string requestLabel)
 		{
-			//DTO.LDAPSearchResult addTopExceptionToResult(DTO.LDAPSearchResult partialSearchResult)
-			//{
-			//	return new DTO.LDAPSearchResult("Error looking up parent LDAP entries.", new Exception(partialSearchResult.OperationMessage, partialSearchResult.ErrorObject), requestLabel);
-			//}
-
-			//DTO.LDAPSearchResult addTopMessageToResult(DTO.LDAPSearchResult partialSearchResult)
-			//{
-			//	partialSearchResult.SetUnsuccessfullOperation($"Error looking up parent LDAP entries. {partialSearchResult.OperationMessage}");
-
-			//	return partialSearchResult;
-			//}
-
 			try
 			{
 				var partialSearchResult = await this.SearchEntriesAsync(searchFilter, DTO.RequiredEntryAttributes.OnlyMemberOf, requestLabel);
 
 				if (!partialSearchResult.IsSuccessfulOperation)
 				{
-					//if (partialSearchResult.HasErrorObject)
-					//	return addTopExceptionToResult(partialSearchResult);
-					//else
-					//	return addTopMessageToResult(partialSearchResult);
-
 					return partialSearchResult;
                 }
 				else if (partialSearchResult.Entries.Count() == 0)
 				{
-					partialSearchResult.SetUnsuccessfullOperation("No entry was found according to the search filter.");
+					partialSearchResult.SetUnsuccessfullOperation("No one entry was found according to the search filter.");
 
 					return partialSearchResult;
 				}
@@ -249,11 +232,6 @@ namespace Bitai.LDAPHelper
 					partialSearchResult = await SearchEntriesAsync(distinguishedNameFilter, requiredEntryAttributes, requestLabel);
 					if (!partialSearchResult.IsSuccessfulOperation)
 					{
-						//if (partialSearchResult.HasErrorObject)
-						//	return addTopExceptionToResult(partialSearchResult);
-						//else
-						//	return addTopMessageToResult(partialSearchResult);
-
 						return partialSearchResult;
 					}
 
