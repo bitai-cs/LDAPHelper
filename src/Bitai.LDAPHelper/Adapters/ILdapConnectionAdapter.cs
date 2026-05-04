@@ -1,5 +1,5 @@
-﻿// ILdapConnectionAdapter.cs
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Bitai.LDAPHelper.Adapters
@@ -16,13 +16,12 @@ namespace Bitai.LDAPHelper.Adapters
         void ServerCertificateValidationByPass(); 
         Task ConnectAsync(string host, int port);
         Task BindAsync(string userDN, string password);
-        Task<ILdapSearchQueueAdapter> SearchAsync(
-            string searchBase,
-            int searchScope,
-            string searchFilter,
-            string[] attributeNames,
-            bool typesOnly,
-            ILdapSearchConstraintsAdapter constraints);
+        Task<ILdapSearchQueueAdapter> SearchAsync(string searchBase, int searchScope, string searchFilter, string[] attributeNames, bool typesOnly, ILdapSearchConstraintsAdapter constraints);
+        ILdapAttributeSetAdapter CreateAttributeSet();
+        Task AddEntryAsync(string distinguishedName, ILdapAttributeSetAdapter attributes);
+        ILdapModificationAdapter CreateModification(LdapModificationType type, string attributeName, object value);
+        Task ModifyEntryAsync(string distinguishedName, IEnumerable<ILdapModificationAdapter> modifications);
+        Task DeleteEntryAsync(string distinguishedName);
         void Disconnect();
     }
 }

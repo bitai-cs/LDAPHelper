@@ -1,12 +1,14 @@
-﻿// ILdapAttributeSetAdapter.cs
-namespace Bitai.LDAPHelper.Adapters
+﻿namespace Bitai.LDAPHelper.Adapters
 {
     /// <summary>
-    /// Target interface for LDAP attribute set operations
+    /// Target interface for LDAP AttributeSet operations
     /// </summary>
     public interface ILdapAttributeSetAdapter
     {
+        void AddAttribute(string name, string value);
+        void AddAttribute(string name, string[] values);
+        void AddAttribute(string name, byte[] value);
         bool ContainsKey(string attributeName);
-        ILdapAttributeAdapter GetAttribute(string attributeName);
+        ILdapAttributeAdapter GetAttribute(string attributeName);        
     }
 }

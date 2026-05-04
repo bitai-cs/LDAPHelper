@@ -1,8 +1,8 @@
-﻿// MockLdapConnectionAdapter.cs
+﻿using Bitai.LDAPHelper.Adapters;
+using Bitai.LDAPHelper.DTO;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Bitai.LDAPHelper.Adapters;
 
 namespace Bitai.LDAPHelper.Tests.Mocks
 {
@@ -15,6 +15,9 @@ namespace Bitai.LDAPHelper.Tests.Mocks
         public int ConnectionTimeout { get; set; }
         public bool SecureSocketLayer { get; set; }
         public bool IsBound => _isBound;
+        public List<MockLdapEntryAdapter> CreatedEntries { get; } = new List<MockLdapEntryAdapter>();
+        public List<MockModification> Modifications { get; } = new List<MockModification>();
+        public List<string> DeletedEntries { get; } = new List<string>();
 
         public void AddSearchResult(string filterPattern, List<MockLdapEntryAdapter> entries) {
             _searchResults[filterPattern] = entries;
@@ -38,7 +41,7 @@ namespace Bitai.LDAPHelper.Tests.Mocks
             _isBound = !string.IsNullOrEmpty(userDN) && !string.IsNullOrEmpty(password);
 
             return Task.CompletedTask;
-        }
+        }        
 
         public Task<ILdapSearchQueueAdapter> SearchAsync(string searchBase, int searchScope, string searchFilter, string[] attributeNames, bool typesOnly, ILdapSearchConstraintsAdapter constraints) {
             var matchingEntries = new List<MockLdapEntryAdapter>();
@@ -57,6 +60,45 @@ namespace Bitai.LDAPHelper.Tests.Mocks
 
             return Task.FromResult<ILdapSearchQueueAdapter>(mockQueue);
         }
+
+        public ILdapAttributeSetAdapter CreateAttributeSet() {
+            return new MockLdapAttributeSetAdapter();
+        }
+
+        public Task AddEntryAsync(string distinguishedName, ILdapAttributeSetAdapter attributes) {
+            var mockAttributes = (MockLdapAttributeSetAdapter)attributes;
+            if (!mockAttributes.ContainsKey(EntryAttribute.distinguishedName.ToString()))
+                mockAttributes.AddAttribute(EntryAttribute.distinguishedName.ToString(), distinguishedName);
+
+            var entry = new MockLdapEntryAdapter(distinguishedName, mockAttributes);
+
+            CreatedEntries.Add(entry);
+
+            return Task.CompletedTask;
+        }
+
+        public ILdapModificationAdapter CreateModification(LdapModificationType type, string attributeName, object value) {
+            return new MockLdapModificationAdapter(type, attributeName, value);
+        }
+
+        public Task ModifyEntryAsync(string distinguishedName, IEnumerable<ILdapModificationAdapter> modifications) {
+            foreach (var mod in modifications) {
+                var mockMod = (MockLdapModificationAdapter)mod;
+
+                Modifications.Add(new MockModification {
+                    DistinguishedName = distinguishedName,
+                    ModificationType = mockMod.ModificationType,
+                    AttributeName = mockMod.AttributeName,
+                    Value = mockMod.Value
+                });
+            }
+            return Task.CompletedTask;
+        }
+
+        public Task DeleteEntryAsync(string distinguishedName) {
+            DeletedEntries.Add(distinguishedName);
+            return Task.CompletedTask;
+        }                
 
         public void Disconnect() {
             _isBound = false;

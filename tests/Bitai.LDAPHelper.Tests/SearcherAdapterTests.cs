@@ -56,7 +56,7 @@ namespace Bitai.LDAPHelper.Tests
 
             var searcher = new Searcher(connectionInfo, searchLimits, credential, mockConnectionFactory);
 
-            GenerateCommonUserSearchFilter("Hacker", "User", out var unknownUserSearchFilter, out var _);
+            GenerateCommonUserSearchFilter("Hacker", "User", searchLimits, out var unknownUserSearchFilter, out var _);
 
             var result = await searcher.SearchEntriesAsync(unknownUserSearchFilter, RequiredEntryAttributes.Minimun, "TestRequest");
 
@@ -114,7 +114,7 @@ namespace Bitai.LDAPHelper.Tests
 
             var searcher = new Searcher(connectionInfo, searchLimits, credential, mockConnectionFactory);
 
-            GenerateCommonUserSearchFilter("Dummiest", "User", out var expectedDummiestUserSearchFilter, out var _);
+            GenerateCommonUserSearchFilter("Dummiest", "User", searchLimits, out var expectedDummiestUserSearchFilter, out var _);
             var result = await searcher.SearchParentEntriesAsync(expectedDummiestUserSearchFilter, RequiredEntryAttributes.Minimun, "TestRequest");
 
             Assert.False(result.IsSuccessfulOperation);
