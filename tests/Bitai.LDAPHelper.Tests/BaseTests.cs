@@ -72,10 +72,7 @@ namespace Bitai.LDAPHelper.Tests
             // GUID: f8e9d7c6-b5a4-4321-8765-43210fedcba9
             mockLdapEntry.AddAttribute("objectGUID", new byte[] { 0xC6, 0xD7, 0xE9, 0xF8, 0xA4, 0xB5, 0x21, 0x43, 0x87, 0x65, 0x43, 0x21, 0x0F, 0xED, 0xCB, 0xA9 });
             mockLdapEntry.AddAttribute("sAMAccountName", $"{groupName}");
-            mockLdapEntry.AddAttribute("cn", $"{organitationalUnitName} {groupName}");
-            //mockLdapEntry.AddAttribute("sn", $"{lastName}");    
-            //mockLdapEntry.AddAttribute("givenName", $"{firstName}");
-            //mockLdapEntry.AddAttribute("mail", $"{firstName.ToLower()}.{lastName.ToLower()}@bitaitec.com");
+            mockLdapEntry.AddAttribute("cn", $"{groupName}");
             mockLdapEntry.AddAttribute("objectClass", new string[] { "top", "group" });
             mockLdapEntry.AddAttribute("sAMAccountType", "268435456");
             mockLdapEntry.AddAttribute("groupType", "-2147483640"); // Represents a Universal Security Group

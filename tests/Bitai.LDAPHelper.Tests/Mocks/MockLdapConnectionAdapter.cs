@@ -48,7 +48,7 @@ namespace Bitai.LDAPHelper.Tests.Mocks
 
             // Find matching results based on filter
             foreach (var kvp in _searchResults) {
-                if (searchFilter.Contains(kvp.Key) || kvp.Key == searchFilter) {
+                if (searchFilter.Contains(kvp.Key, StringComparison.OrdinalIgnoreCase) || kvp.Key.Equals(searchFilter, StringComparison.OrdinalIgnoreCase)) {
                     matchingEntries.AddRange(kvp.Value);
                 }
             }

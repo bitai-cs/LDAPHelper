@@ -123,14 +123,16 @@ namespace Bitai.LDAPHelper
 				ldapEntry.memberOf = attributeSet.GetAttribute(DTO.EntryAttribute.memberOf.ToString()).StringValueArray;
 			}
 
-			if (ldapEntry.memberOf != null && ldapEntry.memberOf.Length > 0)
+            /// Load parent entries (groups/containers) if memberOf is requested and available. This allows callers to have the full parent objects with their attributes instead of just the distinguished names.
+			/// IMPORTANT: Note that this will perform additional LDAP searches for each parent entry, so it may impact performance if there are many parent entries or if the LDAP server is slow. Callers should consider this when requesting memberOf and the expected number of parent entries.
+            if (ldapEntry.memberOf != null && ldapEntry.memberOf.Length > 0)
 			{
 				var parentEntries = new List<DTO.LDAPEntry>();
 
 				foreach (var parentDN in ldapEntry.memberOf)
 				{
-					//Avoid circular reference
-					if (ldapEntry.distinguishedName.Equals(parentDN, StringComparison.OrdinalIgnoreCase))
+                    // Avoid circular reference. In some cases, an entry could be member of a group that is itself member of the entry (this is not common but possible), so we can end in a loop if we try to get the parent entry in that case. To avoid this, we check if the parent DN is the same that the entry DN, and if it is, we skip it.
+                    if (ldapEntry.distinguishedName.Equals(parentDN, StringComparison.OrdinalIgnoreCase))
 						continue; //Pasar al siguiente objeto.
 
 					var filter = new QueryFilters.AttributeFilter(DTO.EntryAttribute.distinguishedName, new QueryFilters.FilterValue(parentDN.ReplaceSpecialCharsToScapedChars()));
@@ -200,46 +202,91 @@ namespace Bitai.LDAPHelper
 
 
 		#region Public methods
+		/// <summary>
+		/// Searches for entries matching the provided LDAP filter and loads the requested attributes.
+		/// </summary>
+		/// <param name="searchFilter">
+		/// A combinable LDAP filter that identifies the entries to search for. This filter will be converted 
+		/// to its string representation and used directly in the LDAP search operation.
+		/// </param>
+		/// <param name="requiredEntryAttributes">
+		/// The set of attributes to load for each entry returned in the search result. Use this to limit 
+		/// attributes loaded for performance (for example, OnlyMemberOf, Few, All, etc.).
+		/// </param>
+		/// <param name="requestLabel">
+		/// Optional label/tag that will be set on the returned LDAPSearchResult and on created LDAPEntry 
+		/// instances to help callers correlate operations and results.
+		/// </param>
+		/// <returns>
+		/// A task that resolves to an <see cref="DTO.LDAPSearchResult"/> containing the entries found and 
+		/// any operation message. If an error occurs, the returned LDAPSearchResult will have 
+		/// IsSuccessfulOperation == false and contain error details.
+		/// </returns>
 		public Task<DTO.LDAPSearchResult> SearchEntriesAsync(QueryFilters.ICombinableFilter searchFilter, DTO.RequiredEntryAttributes requiredEntryAttributes, string requestLabel)
 		{
 			return getSearchResultAsync(requiredEntryAttributes, searchFilter.ToString(), requestLabel);
 		}
 
-		public async Task<DTO.LDAPSearchResult> SearchParentEntriesAsync(QueryFilters.ICombinableFilter searchFilter, DTO.RequiredEntryAttributes requiredEntryAttributes, string requestLabel)
-		{
-			try
-			{
-				var partialSearchResult = await this.SearchEntriesAsync(searchFilter, DTO.RequiredEntryAttributes.OnlyMemberOf, requestLabel);
 
-				if (!partialSearchResult.IsSuccessfulOperation)
-				{
-					return partialSearchResult;
+        /// <summary>
+        /// Searches for parent entries (groups or containers) for the entries matched by the provided filter,
+        /// then loads those parent entries (listed in memberOf attibute) with the requested attributes.
+        /// </summary>
+        /// <param name="searchFilter">
+        /// A combinable LDAP filter that identifies the starting entries whose parent membership (memberOf) 
+		/// will be traversed. This filter is used only to find the initial set of entries; the method then 
+		/// resolves their memberOf hierarchy.
+        /// </param>
+        /// <param name="requiredEntryAttributes">
+        /// The set of attributes to load for each parent entry returned in the final result. Use this 
+		/// to limit attributes loaded for performance (for example, OnlyMemberOf, Few, All, etc.).
+        /// </param>
+        /// <param name="requestLabel">
+        /// Optional label/tag that will be set on the returned LDAPSearchResult and on created LDAPEntry 
+		/// instances to help callers correlate operations and results.
+        /// </param>
+        /// <returns>
+        /// A task that resolves to an <see cref="DTO.LDAPSearchResult"/> containing the parent entries found 
+		/// and any operation message. If an error occurs, the returned LDAPSearchResult will have 
+		/// IsSuccessfulOperation == false and contain error details.
+        /// </returns>
+        /// <remarks>
+        /// The method first performs a partial search requesting only memberOf to discover 
+		/// group/container relationships. It then traverses parents recursively (using the entry recursion 
+		/// helper) and performs targeted searches by distinguishedName to load the requested attributes for 
+		/// each discovered parent. Any LDAP or general exception is captured and returned as an unsuccessful 
+		/// LDAPSearchResult rather than being thrown.
+        /// </remarks>
+        public async Task<DTO.LDAPSearchResult> SearchParentEntriesAsync(QueryFilters.ICombinableFilter searchFilter, DTO.RequiredEntryAttributes requiredEntryAttributes, string requestLabel) {
+            try {
+                // First, perform a partial search to get the memberOf attributes of the entries matching the provided filter. This is necessary to discover the parent entries (groups/containers) that we need to load with the requested attributes.
+                var partialSearchResult = await this.SearchEntriesAsync(searchFilter, DTO.RequiredEntryAttributes.OnlyMemberOf, requestLabel);
+
+                if (!partialSearchResult.IsSuccessfulOperation) {
+                    return partialSearchResult;
                 }
-				else if (partialSearchResult.Entries.Count() == 0)
-				{
-					partialSearchResult.SetUnsuccessfullOperation("No one entry was found according to the search filter.");
+                else if (partialSearchResult.Entries.Count() == 0) {
+                    partialSearchResult.SetUnsuccessfullOperation("No one entry was found according to the search filter.");
 
-					return partialSearchResult;
-				}
+                    return partialSearchResult;
+                }
 
-				var collectedEntries = partialSearchResult.Entries.SelectAllMemberOfEntriesRecursively();
+                var collectedEntries = partialSearchResult.Entries.SelectAllMemberOfEntriesRecursively();
 
-				var resultEntries = new List<DTO.LDAPEntry>();
-				foreach (var entry in collectedEntries)
-				{
-					var distinguishedNameFilter = new QueryFilters.AttributeFilter(DTO.EntryAttribute.distinguishedName, new QueryFilters.FilterValue(entry.distinguishedName.ReplaceSpecialCharsToScapedChars()));
+                var resultEntries = new List<DTO.LDAPEntry>();
+                foreach (var entry in collectedEntries) {
+                    var distinguishedNameFilter = new QueryFilters.AttributeFilter(DTO.EntryAttribute.distinguishedName, new QueryFilters.FilterValue(entry.distinguishedName.ReplaceSpecialCharsToScapedChars()));
 
-					partialSearchResult = await SearchEntriesAsync(distinguishedNameFilter, requiredEntryAttributes, requestLabel);
-					if (!partialSearchResult.IsSuccessfulOperation)
-					{
-						return partialSearchResult;
-					}
+                    partialSearchResult = await SearchEntriesAsync(distinguishedNameFilter, requiredEntryAttributes, requestLabel);
+                    if (!partialSearchResult.IsSuccessfulOperation) {
+                        return partialSearchResult;
+                    }
 
-					resultEntries.AddRange(partialSearchResult.Entries);
-				}
+                    resultEntries.AddRange(partialSearchResult.Entries);
+                }
 
-				return new DTO.LDAPSearchResult(requestLabel, resultEntries);
-			}
+                return new DTO.LDAPSearchResult(requestLabel, resultEntries);
+            }
             catch (Novell.Directory.Ldap.LdapException ex) {
                 var searchResult = new DTO.LDAPSearchResult($"{ex.Message} ({ex.LdapErrorMessage})", ex, requestLabel);
 

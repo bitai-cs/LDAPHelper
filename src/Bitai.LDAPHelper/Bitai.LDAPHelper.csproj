@@ -25,10 +25,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="GroupMembershipValidator.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="..\..\LICENSE.md">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
