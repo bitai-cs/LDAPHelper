@@ -29,5 +29,6 @@
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\Bitai.LDAPHelper\Bitai.LDAPHelper.csproj" />
+		<ProjectReference Include="..\..\tests\Bitai.LDAPHelper.Tests\Bitai.LDAPHelper.Tests.csproj" />
 	</ItemGroup>
 </Project>

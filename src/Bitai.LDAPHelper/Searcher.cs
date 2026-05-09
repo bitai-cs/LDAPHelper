@@ -182,7 +182,7 @@ namespace Bitai.LDAPHelper
 					connection.Disconnect();
 				}
 
-				searchResult = new DTO.LDAPSearchResult(requestLabel, entries, $"The search returned {entries.Count} entrie(s).");
+				searchResult = new DTO.LDAPSearchResult(requestLabel, entries, $"The search returned {entries.Count} entries.");
 
 				return searchResult;
 			}
@@ -266,7 +266,7 @@ namespace Bitai.LDAPHelper
                     return partialSearchResult;
                 }
                 else if (partialSearchResult.Entries.Count() == 0) {
-                    partialSearchResult.SetUnsuccessfullOperation("No one entry was found according to the search filter.");
+                    partialSearchResult.SetUnsuccessfulOperation("No one entry was found according to the search filter.");
 
                     return partialSearchResult;
                 }

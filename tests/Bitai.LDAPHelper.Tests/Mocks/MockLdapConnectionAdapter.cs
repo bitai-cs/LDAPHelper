@@ -43,7 +43,7 @@ namespace Bitai.LDAPHelper.Tests.Mocks
             return Task.CompletedTask;
         }        
 
-        public Task<ILdapSearchQueueAdapter> SearchAsync(string searchBase, int searchScope, string searchFilter, string[] attributeNames, bool typesOnly, ILdapSearchConstraintsAdapter constraints) {
+        public virtual Task<ILdapSearchQueueAdapter> SearchAsync(string searchBase, int searchScope, string searchFilter, string[] attributeNames, bool typesOnly, ILdapSearchConstraintsAdapter constraints) {
             var matchingEntries = new List<MockLdapEntryAdapter>();
 
             // Find matching results based on filter
@@ -65,7 +65,7 @@ namespace Bitai.LDAPHelper.Tests.Mocks
             return new MockLdapAttributeSetAdapter();
         }
 
-        public Task AddEntryAsync(string distinguishedName, ILdapAttributeSetAdapter attributes) {
+        public virtual Task AddEntryAsync(string distinguishedName, ILdapAttributeSetAdapter attributes) {
             var mockAttributes = (MockLdapAttributeSetAdapter)attributes;
             if (!mockAttributes.ContainsKey(EntryAttribute.distinguishedName.ToString()))
                 mockAttributes.AddAttribute(EntryAttribute.distinguishedName.ToString(), distinguishedName);
@@ -81,7 +81,7 @@ namespace Bitai.LDAPHelper.Tests.Mocks
             return new MockLdapModificationAdapter(type, attributeName, value);
         }
 
-        public Task ModifyEntryAsync(string distinguishedName, IEnumerable<ILdapModificationAdapter> modifications) {
+        public virtual Task ModifyEntryAsync(string distinguishedName, IEnumerable<ILdapModificationAdapter> modifications) {
             foreach (var mod in modifications) {
                 var mockMod = (MockLdapModificationAdapter)mod;
 
@@ -95,7 +95,7 @@ namespace Bitai.LDAPHelper.Tests.Mocks
             return Task.CompletedTask;
         }
 
-        public Task DeleteEntryAsync(string distinguishedName) {
+        public virtual Task DeleteEntryAsync(string distinguishedName) {
             DeletedEntries.Add(distinguishedName);
             return Task.CompletedTask;
         }                

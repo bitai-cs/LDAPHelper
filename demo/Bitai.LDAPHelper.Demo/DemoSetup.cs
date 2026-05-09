@@ -4,6 +4,11 @@ using System.Text;
 
 namespace Bitai.LDAPHelper.Demo
 {
+	public enum ImplementationType {
+		Novell,
+		Mock
+	}
+
 	public class DemoSetup
 	{
 		public Ldapserver[] LdapServers { get; set; }

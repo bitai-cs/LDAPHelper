@@ -43,13 +43,13 @@ namespace Bitai.LDAPHelper
                 else {
                     if (searchResult.Entries.Count() == 0) {
                         authenticationResult = new LDAPDomainAccountAuthenticationResult(credential.SecureClone(), false, requestLabel);
-                        authenticationResult.SetSuccessfullOperation($"The domain user account {credential.DomainName}\\{credential.AccountName} could not be found.");
+                        authenticationResult.SetSuccessfulOperation($"The domain user account {credential.DomainName}\\{credential.AccountName} could not be found.");
 
                         return authenticationResult;
                     }
                     else if (searchResult.Entries.Count() > 1) {
                         authenticationResult = new LDAPDomainAccountAuthenticationResult(credential.SecureClone(), false, requestLabel);
-                        authenticationResult.SetSuccessfullOperation($"Multiple {credential.DomainName}\\{credential.AccountName} accounts were found. Accounts must be unique. Verify the parameters with which the search for user accounts is carried out.");
+                        authenticationResult.SetSuccessfulOperation($"Multiple {credential.DomainName}\\{credential.AccountName} accounts were found. Accounts must be unique. Verify the parameters with which the search for user accounts is carried out.");
 
                         return authenticationResult;
                     }
@@ -65,9 +65,9 @@ namespace Bitai.LDAPHelper
 
                 authenticationResult = new DTO.LDAPDomainAccountAuthenticationResult(credential.SecureClone(), authenticated.Value, requestLabel);
                 if (authenticated.Value)
-                    authenticationResult.SetSuccessfullOperation($"The domain user account {credential.DomainName}\\{credential.AccountName} has been successfully authenticated.");
+                    authenticationResult.SetSuccessfulOperation($"The domain user account {credential.DomainName}\\{credential.AccountName} has been successfully authenticated.");
                 else
-                    authenticationResult.SetSuccessfullOperation("The password is wrong");
+                    authenticationResult.SetSuccessfulOperation("The password is wrong");
 
                 return authenticationResult;
             }
@@ -94,9 +94,9 @@ namespace Bitai.LDAPHelper
                 var result = new DTO.LDAPDomainAccountAuthenticationResult(credential.SecureClone(), authenticated.Value, requestLabel);
 
                 if (authenticated.Value)
-                    result.SetSuccessfullOperation($"The domain user account {credential.DomainAccountName} has been successfully authenticated.");
+                    result.SetSuccessfulOperation($"The domain user account {credential.DomainAccountName} has been successfully authenticated.");
                 else
-                    result.SetSuccessfullOperation("Wrong user account and/or password.");
+                    result.SetSuccessfulOperation("Wrong user account and/or password.");
 
                 return result;
             }
@@ -131,13 +131,13 @@ namespace Bitai.LDAPHelper
                 else {
                     if (searchResult.Entries.Count() == 0) {
                         authenticationResult = new LDAPDistinguishedNameAuthenticationResult(credential.SecureClone(), false, requestLabel);
-                        authenticationResult.SetSuccessfullOperation($"The account {credential.DistinguishedName} could not be found.");
+                        authenticationResult.SetSuccessfulOperation($"The account {credential.DistinguishedName} could not be found.");
 
                         return authenticationResult;
                     }
                     else if (searchResult.Entries.Count() > 1) {
                         authenticationResult = new LDAPDistinguishedNameAuthenticationResult(credential.SecureClone(), false, requestLabel);
-                        authenticationResult.SetSuccessfullOperation($"Multiple accounts were found. Accounts must be unique. Verify the parameters with which the search for user accounts is carried out.");
+                        authenticationResult.SetSuccessfulOperation($"Multiple accounts were found. Accounts must be unique. Verify the parameters with which the search for user accounts is carried out.");
 
                         return authenticationResult;
                     }
@@ -153,9 +153,9 @@ namespace Bitai.LDAPHelper
 
                 authenticationResult = new DTO.LDAPDistinguishedNameAuthenticationResult(credential.SecureClone(), authenticated.Value, requestLabel);
                 if (authenticated.Value)
-                    authenticationResult.SetSuccessfullOperation($"The account {credential.DistinguishedName} has been successfully authenticated.");
+                    authenticationResult.SetSuccessfulOperation($"The account {credential.DistinguishedName} has been successfully authenticated.");
                 else
-                    authenticationResult.SetSuccessfullOperation("The password is wrong");
+                    authenticationResult.SetSuccessfulOperation("The password is wrong");
 
                 return authenticationResult;
             }
@@ -177,9 +177,9 @@ namespace Bitai.LDAPHelper
                 var result = new DTO.LDAPDistinguishedNameAuthenticationResult(credential.SecureClone(), authenticated.Value, requestLabel);
 
                 if (authenticated.Value)
-                    result.SetSuccessfullOperation($"The account {credential.DistinguishedName} has been successfully authenticated.");
+                    result.SetSuccessfulOperation($"The account {credential.DistinguishedName} has been successfully authenticated.");
                 else
-                    result.SetSuccessfullOperation("Wrong account and/or password.");
+                    result.SetSuccessfulOperation("Wrong account and/or password.");
 
                 return result;
             }

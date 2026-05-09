@@ -16,11 +16,11 @@ namespace Bitai.LDAPHelper
 	public class AccountManager : BaseHelper
 	{
         #region Constructors
-        public AccountManager(ClientConfiguration clientConfiguration, ILdapConnectionFactoryAdapter connectionFactory = null)
+        public AccountManager(ClientConfiguration clientConfiguration, ILdapConnectionFactoryAdapter connectionFactory)
             : base(clientConfiguration, connectionFactory) {
         }
 
-        public AccountManager(ConnectionInfo connectionInfo, SearchLimits searchLimits, DTO.LDAPDomainAccountCredential domainAccountCredential, ILdapConnectionFactoryAdapter connectionFactory = null)
+        public AccountManager(ConnectionInfo connectionInfo, SearchLimits searchLimits, DTO.LDAPDomainAccountCredential domainAccountCredential, ILdapConnectionFactoryAdapter connectionFactory)
             : base(connectionInfo, searchLimits, domainAccountCredential, connectionFactory) {
         }
         #endregion
@@ -148,7 +148,7 @@ namespace Bitai.LDAPHelper
 			try
 			{
 				if (string.IsNullOrEmpty(credential.DistinguishedName))
-					throw new ArgumentNullException("The distinguished name of the user account is requiered.");
+					throw new ArgumentNullException("The distinguished name of the user account is required.");
 
 				if (string.IsNullOrEmpty(credential.Password))
 					throw new ArgumentNullException($"The password to be assigned is required.");

@@ -33,7 +33,7 @@ namespace Bitai.LDAPHelper.DTO
 		public bool HasErrorObject { get => ErrorObject != null; }
 
 		/// <summary>
-		/// Custom label to tag tihs object.
+		/// Custom label to tag this object.
 		/// </summary>
 		public string RequestLabel { get; set; }
 		#endregion
@@ -51,9 +51,9 @@ namespace Bitai.LDAPHelper.DTO
 			RequestLabel = requestLabel;
 
 			if (isSuccessfulOperation)
-                SetSuccessfullOperation("OK");
+                SetSuccessfulOperation("OK");
             else
-                SetUnsuccessfullOperation("Error");
+                SetUnsuccessfulOperation("Error");
         }
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace Bitai.LDAPHelper.DTO
 
             RequestLabel = requestLabel;
 
-            SetUnsuccessfullOperation(operationMessage, exception);
+            SetUnsuccessfulOperation(operationMessage, exception);
         }
 		#endregion
 
@@ -76,7 +76,7 @@ namespace Bitai.LDAPHelper.DTO
 
 
 		#region Public methods
-		public void SetSuccessfullOperation(string operationMessage)
+		public void SetSuccessfulOperation(string operationMessage)
 		{
 			IsSuccessfulOperation = true;
 
@@ -90,7 +90,7 @@ namespace Bitai.LDAPHelper.DTO
 		/// Store Error information.
 		/// </summary>
 		/// <param name="exception"></param>
-		public void SetUnsuccessfullOperation(string operationMessage, Exception exception)
+		public void SetUnsuccessfulOperation(string operationMessage, Exception exception)
         {
             IsSuccessfulOperation = false;
 
@@ -100,7 +100,7 @@ namespace Bitai.LDAPHelper.DTO
             OperationMessage = operationMessage;
         }
 
-        public void SetUnsuccessfullOperation(string operationMessage)
+        public void SetUnsuccessfulOperation(string operationMessage)
         {
             IsSuccessfulOperation = false;
 

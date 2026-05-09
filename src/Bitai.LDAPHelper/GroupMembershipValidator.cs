@@ -9,7 +9,7 @@ namespace Bitai.LDAPHelper
     public class GroupMembershipValidator : BaseHelper
     {
         #region Constructors
-        public GroupMembershipValidator(ClientConfiguration clientConfiguration, ILdapConnectionFactoryAdapter connectionFactory = null)
+        public GroupMembershipValidator(ClientConfiguration clientConfiguration, ILdapConnectionFactoryAdapter connectionFactory)
             : base(clientConfiguration, connectionFactory) {
         }
 
@@ -17,7 +17,7 @@ namespace Bitai.LDAPHelper
             ConnectionInfo connectionInfo,
             SearchLimits searchLimits,
             DTO.LDAPDomainAccountCredential domainAccountCredential,
-            ILdapConnectionFactoryAdapter connectionFactory = null)
+            ILdapConnectionFactoryAdapter connectionFactory)
             : base(connectionInfo, searchLimits, domainAccountCredential, connectionFactory) {
         }
         #endregion
