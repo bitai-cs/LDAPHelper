@@ -1,9 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Bitai.LDAPHelper.DTO;
 using Bitai.LDAPHelper.Tests.Mocks;
 using Serilog;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
 
 namespace Bitai.LDAPHelper.Demo
 {
@@ -161,7 +162,11 @@ namespace Bitai.LDAPHelper.Demo
             user.AddAttribute("sAMAccountType", "805306368"); // Normal user account
             user.AddAttribute("whenCreated", DateTime.UtcNow.AddDays(-30).ToString("yyyyMMddHHmmss.0Z"));
             user.AddAttribute("distinguishedName", distinguishedName);
-            
+            user.AddAttribute(nameof(EntryAttribute.userPassword), "P@55w0rd2025");
+
+            var encondedNewPasswordBytes = System.Text.Encoding.Unicode.GetBytes($"\"P@55w0rd2025\"");
+            user.AddAttribute(nameof(EntryAttribute.unicodePwd), encondedNewPasswordBytes);
+
             _dataStore.AddOrUpdateEntry(user);
         }
 

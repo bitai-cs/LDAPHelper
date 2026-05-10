@@ -6,8 +6,9 @@ namespace Bitai.LDAPHelper.Adapters
     /// </summary>
     public interface ILdapAttributeAdapter
     {
-        object ByteValue { get; }
+        byte[] ByteValue { get; }
         string StringValue { get; }
         string[] StringValueArray { get; }
+        public byte[][] ByteValueArray { get; }
     }
 }

@@ -1,58 +1,75 @@
-﻿using System.Collections.Generic;
+﻿// Enhanced MockLdapAttributeSetAdapter.cs (updated to work with enhanced attributes)
+using System.Collections.Generic;
 using Bitai.LDAPHelper.Adapters;
 
 namespace Bitai.LDAPHelper.Tests.Mocks
 {
     public class MockLdapAttributeSetAdapter : ILdapAttributeSetAdapter
     {
-        private Dictionary<string, MockLdapAttributeAdapter> _attributes = new();
+        private Dictionary<string, MockLdapAttributeAdapter> _attributeDictionary = new();
+
+        //public void AddAttribute(string name, object value) {
+        //    _attributes[name] = new MockLdapAttributeAdapter(name, value);
+        //}
 
         public void AddAttribute(string name, string value) {
-            _attributes[name] = new MockLdapAttributeAdapter(value);
+            _attributeDictionary[name] = new MockLdapAttributeAdapter(name, value);
         }
 
-        public void AddAttribute(string name, string[] value) {
-            _attributes[name] = new MockLdapAttributeAdapter(value);
+        public void AddAttribute(string name, string[] values) {
+            _attributeDictionary[name] = new MockLdapAttributeAdapter(name, values);
         }
 
         public void AddAttribute(string name, byte[] value) {
-            _attributes[name] = new MockLdapAttributeAdapter(value);
+            _attributeDictionary[name] = new MockLdapAttributeAdapter(name, value);
+        }
+
+        public void AddAttribute(MockLdapAttributeAdapter attribute) {
+            if (attribute != null) {
+                _attributeDictionary[attribute.Name] = attribute;
+            }
         }
 
         public bool ContainsKey(string attributeName) {
-            return _attributes.ContainsKey(attributeName);
+            return _attributeDictionary.ContainsKey(attributeName);
         }
 
         public ILdapAttributeAdapter GetAttribute(string attributeName) {
-            return _attributes.TryGetValue(attributeName, out var attribute) ? attribute : null;
+            _attributeDictionary.TryGetValue(attributeName, out var attribute);
+            return attribute;
         }
 
-        /// <summary>
-        /// Gets all attributes for verification in tests
-        /// </summary>
+        public bool RemoveAttribute(string attributeName) {
+            return _attributeDictionary.Remove(attributeName);
+        }
+
+        public void Clear() {
+            _attributeDictionary.Clear();
+        }
+
+        public int Count => _attributeDictionary.Count;
+
+        public IEnumerable<string> GetAttributeNames() {
+            return _attributeDictionary.Keys;
+        }
+
         public Dictionary<string, MockLdapAttributeAdapter> GetAllAttributes() {
-            return new Dictionary<string, MockLdapAttributeAdapter>(_attributes);
+            return new Dictionary<string, MockLdapAttributeAdapter>(_attributeDictionary);
         }
 
-        /// <summary>
-        /// Verifies that an attribute exists with the expected string value
-        /// </summary>
         public bool VerifyAttributeValue(string attributeName, string expectedValue) {
-            if (!_attributes.ContainsKey(attributeName))
+            if (!_attributeDictionary.ContainsKey(attributeName))
                 return false;
 
-            var attribute = _attributes[attributeName];
+            var attribute = _attributeDictionary[attributeName];
             return attribute.StringValue == expectedValue;
         }
 
-        /// <summary>
-        /// Verifies that an attribute exists with the expected string array values
-        /// </summary>
         public bool VerifyAttributeArrayValues(string attributeName, string[] expectedValues) {
-            if (!_attributes.ContainsKey(attributeName))
+            if (!_attributeDictionary.ContainsKey(attributeName))
                 return false;
 
-            var attribute = _attributes[attributeName];
+            var attribute = _attributeDictionary[attributeName];
             var actualValues = attribute.StringValueArray;
 
             if (actualValues == null && expectedValues == null)
@@ -72,14 +89,11 @@ namespace Bitai.LDAPHelper.Tests.Mocks
             return true;
         }
 
-        /// <summary>
-        /// Verifies that an attribute exists with the expected byte array value
-        /// </summary>
         public bool VerifyAttributeByteValue(string attributeName, byte[] expectedValue) {
-            if (!_attributes.ContainsKey(attributeName))
+            if (!_attributeDictionary.ContainsKey(attributeName))
                 return false;
 
-            var attribute = _attributes[attributeName];
+            var attribute = _attributeDictionary[attributeName];
             var actualValue = attribute.ByteValue as byte[];
 
             if (actualValue == null && expectedValue == null)

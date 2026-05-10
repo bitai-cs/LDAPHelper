@@ -14,10 +14,12 @@ namespace Bitai.LDAPHelper.Adapters.Novell
             _attribute = attribute;
         }
 
-        public object ByteValue => _attribute.ByteValue;
+        public byte[] ByteValue => _attribute.ByteValue;
 
         public string StringValue => _attribute.StringValue;
 
         public string[] StringValueArray => _attribute.StringValueArray;
+
+        public byte[][] ByteValueArray => _attribute.ByteValueArray;
     }
 }

@@ -13,7 +13,7 @@ namespace Bitai.LDAPHelper.Tests.Mocks
         public LdapModificationType ModificationType { get; }
         public string AttributeName { get; }
         public object Value { get; }
-        public ILdapAttributeAdapter Attribute => new MockLdapAttributeAdapter(Value);
+        public ILdapAttributeAdapter Attribute => new MockLdapAttributeAdapter(AttributeName, Value);
     }
 
     public class MockModification

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Bitai.LDAPHelper.Adapters;
 using Bitai.LDAPHelper.Tests.Mocks;
+using Microsoft.VisualStudio.TestPlatform.Common.DataCollection;
 
 namespace Bitai.LDAPHelper.Demo
 {
@@ -51,20 +52,80 @@ namespace Bitai.LDAPHelper.Demo
             if (entry == null)
                 throw new Exception($"Entry {distinguishedName} not found");
 
+            var entryAttrSet = (MockLdapAttributeSetAdapter)entry.GetAttributeSet();
+
             foreach (var mod in modifications)
             {
-                var mockMod = mod as PersistentMockLdapModificationAdapter;
+                var mockMod = mod as MockLdapModificationAdapter;
                 if (mockMod != null)
                 {
-                    // Apply modification
-                    if (mockMod.ModificationType == LdapModificationType.Replace)
-                    {
-                        if (mockMod.Value is byte[] bytes)
-                            entry.AddAttribute(mockMod.AttributeName, bytes);
-                        else if (mockMod.Value is string[] strings)
-                            entry.AddAttribute(mockMod.AttributeName, strings);
-                        else
-                            entry.AddAttribute(mockMod.AttributeName, mockMod.Value?.ToString());
+                    MockLdapAttributeAdapter attr;
+                    attr = (MockLdapAttributeAdapter)entry.GetAttributeSet().GetAttribute(mockMod.AttributeName);
+
+                    if (mockMod.ModificationType == LdapModificationType.Add) {
+                        if (attr == null) {
+                            entry.AddAttribute(mockMod.AttributeName, mockMod.Value);
+                        }
+                        else {
+                            attr.AddValue(mockMod.Value);
+                        }
+                    }
+                    else if (mockMod.ModificationType == LdapModificationType.Delete) {
+                        if (attr != null) {
+                            if (mockMod.Value is string stringValue) {
+                                attr.RemoveValue(stringValue);
+                            }
+                            else if (mockMod.Value is string[] stringArray) {
+                                foreach (var val in stringArray)
+                                    attr.RemoveValue(val);
+                            }
+                            else if (mockMod.Value is byte[] byteValue) {
+                                attr.RemoveValue(byteValue);
+                            }
+                            else 
+                                throw new InvalidOperationException($"Unsupported value type for delete modification: {mockMod.Value?.GetType().Name}");
+
+                            if (attr.ValueCount == 0) {
+                                entryAttrSet.RemoveAttribute(mockMod.AttributeName);
+                            }
+                        }
+                    }
+                    else if (mockMod.ModificationType == LdapModificationType.Replace) {
+                        if (attr != null) {
+                            if (mockMod.Value != null) {
+                                // Remove existing attribute before adding new value(s)
+                                entryAttrSet.RemoveAttribute(mockMod.AttributeName);
+
+                                // Add new value(s) if not null or empty
+                                if (mockMod.Value is byte[] bytes) {
+                                    if (bytes.Length > 0) {
+                                        entry.AddAttribute(mockMod.AttributeName, bytes);
+                                        continue;
+                                    }
+                                }
+                                else if (mockMod.Value is string[] stringArray) {
+                                    if (stringArray.Length > 0) {
+                                        entry.AddAttribute(mockMod.AttributeName, stringArray);
+                                        continue;
+                                    }
+                                }
+                                else if (mockMod.Value is string stringValue) {
+                                    if (stringValue.Length > 0) {
+                                        entry.AddAttribute(mockMod.AttributeName, stringValue);
+                                        continue;
+                                    }
+                                }
+                                else
+                                    throw new InvalidOperationException($"Unsupported value type for replace modification: {mockMod.Value.GetType().Name}");
+                            }
+                            else { //Attribute EXISTS and Mod.Value is NULL!
+                                // Remove existing attribute since replace with null means delete all values
+                                entryAttrSet.RemoveAttribute(mockMod.AttributeName);
+                            }
+                        }
+                        else {
+                            // Attribute DOESN'T EXIST ignored if the attribute does not exist.
+                        }
                     }
                     
                     Modifications.Add(new MockModification
@@ -78,6 +139,7 @@ namespace Bitai.LDAPHelper.Demo
             }
 
             _dataStore.AddOrUpdateEntry(entry);
+
             return Task.CompletedTask;
         }
 
@@ -87,6 +149,7 @@ namespace Bitai.LDAPHelper.Demo
             {
                 DeletedEntries.Add(distinguishedName);
             }
+
             return Task.CompletedTask;
         }
 
