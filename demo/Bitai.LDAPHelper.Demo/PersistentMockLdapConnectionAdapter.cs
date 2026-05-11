@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Bitai.LDAPHelper.Adapters;
 using Bitai.LDAPHelper.Tests.Mocks;
-using Microsoft.VisualStudio.TestPlatform.Common.DataCollection;
 
 namespace Bitai.LDAPHelper.Demo
 {

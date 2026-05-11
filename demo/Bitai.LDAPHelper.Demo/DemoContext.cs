@@ -1,5 +1,3 @@
-// DemoContext.cs
-using System;
 using Bitai.LDAPHelper.Adapters;
 using Bitai.LDAPHelper.DTO;
 

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Bitai.LDAPHelper.Demo
+﻿namespace Bitai.LDAPHelper.Demo
 {
 	public enum ImplementationType {
 		Novell,
