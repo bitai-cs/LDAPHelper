@@ -1,6 +1,6 @@
 # LDAP Helper ![Logo](resources/hierarchy_32.png)
 
-**.NET 7.0** library which wraps  **Novell.Directory.Ldap.NETStandard** functionality to make LDAP searches and also authenticate, create, remove users in a LDAP compliant Directory Service.
+**.NET 8.0** library which wraps  **Novell.Directory.Ldap.NETStandard** functionality to make LDAP searches and also authenticate, create, remove users in a LDAP compliant Directory Service.
 
 This libary is part of [Bitai.LDAPWebApi](https://github.com/bitai-cs/LDAPWebApi) solution
 

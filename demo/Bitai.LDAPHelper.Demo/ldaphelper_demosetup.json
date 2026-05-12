@@ -1,89 +1,71 @@
 {
-    "LdapServers": [
-        {
-            "Address": "iedusur1dc1.ieduca.edu.pe"
-        },
-        {
-            "Address": "10.100.54.4"
-        },
-        {
-            "Address": "55.55.55.13"
-        },
-        {
-            "Address": "10.100.54.35"
-        },
-        {
-            "Address": "11.11.11.13"
-        },
-        {
-            "Address": "124.11.58.130"
-        }
-    ],
-    "BaseDNs": [
-        {
-            "DN": "DC=ieduca,DC=edu,DC=pe"
-        },
-        {
-            "DN": "DC=certus,DC=edu,DC=pe"
-        },
-        {
-            "DN": "DC=desdominio,CD=local"
-        },
-        {
-            "DN": "DC=br, DC=company, DC=com"
-        },
-        {
-            "DN": "DC=pe, DC=company, DC=com"
-        },
-        {
-            "DN": "DC=es, DC=company, DC=com"
-        }
-    ],
+   "LdapServers": [
+      {
+         "Address": "dcsrvr1.bitai.com"
+      },
+      {
+         "Address": "10.100.54.4"
+      },
+      {
+         "Address": "55.55.55.13"
+      }
+   ],
+   "BaseDNs": [
+      {
+         "DN": "DC=holding,DC=latam,DC=com"
+      },
+      {
+         "DN": "DC=us,DC=latam,DC=com"
+      },
+      {
+         "DN": "DC=pe,DC=latam,DC=com"
+      }
+   ],
 
-    "ConnectionTimeout": 15,
-    "DomainUserAccountForRunTests": "CERTUS\\usrrpa_mda",
-    "AccountPassword": "rpa2023@@",
+   "ConnectionTimeout": 15,
+   "DomainUserAccountForRunTests": "LATAM\\it.user",
+   "AccountPassword": "P@55w0rd2026",
 
-    "Demo_AccountManager_CreateUserAccount_RunTest": true,
-    "Demo_AccountManager_CreateUserAccount_UserAccountName": "vbastidas01",
-    "Demo_AccountManager_CreateUserAccount_Password": "rpa2023@@",
-    "Demo_AccountManager_CreateUserAccount_ContainerDN": "OU=TEST_RPA_MDA,OU=ADM,OU=CERTUS,DC=certus,DC=edu,DC=pe",
-    "Demo_AccountManager_CreateUserAccount_Name": "Victor",
-    "Demo_AccountManager_CreateUserAccount_Surname": "Bastidas",
-    "Demo_AccountManager_CreateUserAccount_DNSDomainName": "certus.edu.pe",
-    "Demo_AccountManager_CreateUserAccount_MemberOf": null,
-    "Demo_AccountManager_CreateUserAccount_ObjectClasses": "user,top,person,organizationalPerson",
-    "Demo_AccountManager_CreateUserAccount_UserAccountControlFlags": "NORMAL_ACCOUNT,DONT_EXPIRE_PASSWORD",
+   "Demo_AccountManager_CreateUserAccount_RunTest": true,
+   "Demo_AccountManager_CreateUserAccount_UserAccountName": "victor.bastidas",
+   "Demo_AccountManager_CreateUserAccount_Password": "rpa2023@@",
+   "Demo_AccountManager_CreateUserAccount_ContainerDN": "OU=Seniors,OU=DevOps,OU=IT,DC=holding,DC=latam,DC=com",
+   "Demo_AccountManager_CreateUserAccount_Name": "Victor",
+   "Demo_AccountManager_CreateUserAccount_Surname": "Bastidas",
+   "Demo_AccountManager_CreateUserAccount_DNSDomainName": "holding.latam.com",
+   "Demo_AccountManager_CreateUserAccount_MemberOf": null,
+   "Demo_AccountManager_CreateUserAccount_ObjectClasses": "user,top,person,organizationalPerson",
+   "Demo_AccountManager_CreateUserAccount_UserAccountControlFlags": "NORMAL_ACCOUNT,DONT_EXPIRE_PASSWORD",
 
-    "Demo_AccountManager_SetAccountPassword_RunTest": true,
-    "Demo_AccountManager_SetAccountPassword_DistinguishedName": "CN=Victor Bastidas,OU=TEST_RPA_MDA,OU=ADM,OU=CERTUS,DC=certus,DC=edu,DC=pe",
+   "Demo_AccountManager_SetAccountPassword_RunTest": false,
+   "Demo_AccountManager_SetAccountPassword_DistinguishedName": "CN=Red Robbin,OU=Interships,OU=DevOps,OU=IT,DC=holding,DC=latam,DC=com",
 
-    "Demo_Authenticator_Authenticate_RunTest": true,
-    "Demo_Authenticator_Authenticate_RunTest_Simple": false,
-    "Demo_Authenticator_Authenticate_DomainAccountName": "CERTUS\\vbastidas01",
+   "Demo_Authenticator_Authenticate_RunTest": false,
+   "Demo_Authenticator_Authenticate_RunTest_Simple": false,
+   "Demo_Authenticator_Authenticate_DomainAccountName": "HOLDING\\james.dockers",
 
-    "Demo_AccountManager_DisableUserAccount_RunTest": true,
-    "Demo_AccountManager_DisableUserAccount_UserAccountDistinguishedName": "CN=Victor Bastidas,OU=TEST_RPA_MDA,OU=ADM,OU=CERTUS,DC=certus,DC=edu,DC=pe",
+   "Demo_AccountManager_DisableUserAccount_RunTest": true,
+   "Demo_AccountManager_DisableUserAccount_UserAccountDistinguishedName": "CN=Sara Pikes,OU=Interships,OU=Support,OU=IT,DC=us,DC=latam,DC=com",
 
-    "Demo_AccountManager_RemoveUserAccount_RunTest": true,
-    "Demo_AccountManager_RemoveUserAccount_UserAccountDistinguishedName": "CN=Victor Bastidas,OU=TEST_RPA_MDA,OU=ADM,OU=CERTUS,DC=certus,DC=edu,DC=pe",
+   "Demo_AccountManager_RemoveUserAccount_RunTest": true,
+   "Demo_AccountManager_RemoveUserAccount_UserAccountDistinguishedName": "CN=Magic Cuy,OU=Interships,OU=Support,OU=IT,DC=pe,DC=latam,DC=com",
 
-    "Demo_Searcher_SearchUsers_RunTest": false,
-    "Demo_Searcher_SearchUsers_Filter_sAMAccountName": "00000002",
-    "Demo_Searcher_SearchUsers_Filter_cn": "*Isaac*",
-    "Demo_Searcher_SearchUsersByTwoFilters_Filter1_sAMAccountName": "*cordoba",
-    "Demo_Searcher_SearchUsersByTwoFilters_Filter2_cn": "*manuel*",
+   "Demo_Searcher_SearchUsers_RunTest": false,
+   "Demo_Searcher_SearchUsers_Filter_sAMAccountName": "victor.bastidas",
+   "Demo_Searcher_SearchUsers_Filter_cn": "*lopez*",
+   "Demo_Searcher_SearchUsersByTwoFilters_Filter1_sAMAccountName": "*sanchez",
+   "Demo_Searcher_SearchUsersByTwoFilters_Filter2_cn": "*lopez*",
 
-    "Demo_Searcher_SearchEntries_RunTest": false,
-    "Demo_Searcher_SearchEntries_Filter_cn": "SRVWEBDEV",
-    "Demo_Searcher_SearchEntries_Filter_objectSid": "S-1-5-21-3451337281-1996239963-2625140484-1000",
-    "Demo_Searcher_SearchEntriesByTwoFilters_Filter1_cn": "*server*",
-    "Demo_Searcher_SearchEntriesByTwoFilters_Filter2_cn": "*database*",
+   "Demo_Searcher_SearchEntries_RunTest": false,
+   "Demo_Searcher_SearchEntries_Filter_cn": "DEVSERVER01",
+   "Demo_Searcher_SearchEntries_Filter_objectSid": "S-1-5-21-3451337281-1996239963-2625140484-1000",
+   "Demo_Searcher_SearchEntriesByTwoFilters_Filter1_cn": "*server*",
+   "Demo_Searcher_SearchEntriesByTwoFilters_Filter2_cn": "*database*",
 
-    "Demo_Searcher_SearchParentEntries_RunTest": false,
-    "Demo_Searcher_SearchParentEntries_Filter_sAMAccountName": "00000002",
+   "Demo_Searcher_SearchParentEntries_RunTest": false,
+   "Demo_Searcher_SearchParentEntries_Filter_sAMAccountName": "saint.seiya",
 
-    "Demo_GroupMembershipValidator_RunTest": false,
-    "Demo_GroupMembershipValidator_CheckGroupmembership_sAMAccountName": "Administrador",
-    "Demo_GroupMembershipValidator_CheckGroupmembership_Check_GroupName": "Administradores"
+   "Demo_GroupMembershipValidator_RunTest": false,
+   "Demo_GroupMembershipValidator_CheckGroupmembership_sAMAccountName": "ken.master",
+   "Demo_GroupMembershipValidator_CheckGroupmembership_Check_GroupName": "Administrators"
 }

@@ -237,14 +237,14 @@ namespace Bitai.LDAPHelper.Demo
             {
                 foreach (var entry in searchResult.Entries)
                 {
-                    Log.Information(entry.company);
-                    Log.Information(entry.co);
-                    Log.Information(entry.samAccountName);
-                    Log.Information(entry.cn);
-                    Log.Information(entry.displayName);
-                    Log.Information(entry.distinguishedName);
-                    Log.Information(entry.objectSid);
-                    Log.Information(entry.userAccountControl);
+                    Log.Information($"{nameof(entry.company)}: {entry.company}");
+                    Log.Information($"{nameof(entry.co)}: {entry.co}");
+                    Log.Information($"{nameof(entry.samAccountName)}: {entry.samAccountName}");
+                    Log.Information($"{nameof(entry.cn)}: {entry.cn}");
+                    Log.Information($"{nameof(entry.displayName)}: {entry.displayName}");
+                    Log.Information($"{nameof(entry.distinguishedName)}: {entry.displayName}");
+                    Log.Information($"{nameof(entry.objectSid)}: {entry.objectSid}");
+                    Log.Information($"{nameof(entry.userAccountControl)}: {entry.userAccountControl}");
 
                     if (entry.memberOfEntries != null && entry.memberOfEntries.Count() > 0)
                         Console.WriteLine();
@@ -295,14 +295,14 @@ namespace Bitai.LDAPHelper.Demo
             {
                 foreach (var entry in searchResult.Entries)
                 {
-                    Log.Information(entry.company);
-                    Log.Information(entry.co);
-                    Log.Information(entry.samAccountName);
-                    Log.Information(entry.cn);
-                    Log.Information(entry.displayName);
-                    Log.Information(entry.distinguishedName);
-                    Log.Information(entry.objectSid);
-                    Log.Information(entry.userAccountControl);
+                    Log.Information($"{nameof(entry.company)}: {entry.company}");
+                    Log.Information($"{nameof(entry.co)}: {entry.co}");
+                    Log.Information($"{nameof(entry.samAccountName)}: {entry.samAccountName}");
+                    Log.Information($"{nameof(entry.cn)}: {entry.cn}");
+                    Log.Information($"{nameof(entry.displayName)}: {entry.displayName}");
+                    Log.Information($"{nameof(entry.distinguishedName)}: {entry.displayName}");
+                    Log.Information($"{nameof(entry.objectSid)}: {entry.objectSid}");
+                    Log.Information($"{nameof(entry.userAccountControl)}: {entry.userAccountControl}");
 
                     Console.WriteLine();
                 }
@@ -342,14 +342,14 @@ namespace Bitai.LDAPHelper.Demo
             {
                 foreach (var entry in searchResult.Entries)
                 {
-                    Log.Information(entry.company);
-                    Log.Information(entry.co);
-                    Log.Information(entry.samAccountName);
-                    Log.Information(entry.cn);
-                    Log.Information(entry.displayName);
-                    Log.Information(entry.distinguishedName);
-                    Log.Information(entry.objectSid);
-                    Log.Information(entry.userAccountControl);
+                    Log.Information($"{nameof(entry.company)}: {entry.company}");
+                    Log.Information($"{nameof(entry.co)}: {entry.co}");
+                    Log.Information($"{nameof(entry.samAccountName)}: {entry.samAccountName}");
+                    Log.Information($"{nameof(entry.cn)}: {entry.cn}");
+                    Log.Information($"{nameof(entry.displayName)}: {entry.displayName}");
+                    Log.Information($"{nameof(entry.distinguishedName)}: {entry.displayName}");
+                    Log.Information($"{nameof(entry.objectSid)}: {entry.objectSid}");
+                    Log.Information($"{nameof(entry.userAccountControl)}: {entry.userAccountControl}");
 
                     Console.WriteLine();
                 }
@@ -393,14 +393,14 @@ namespace Bitai.LDAPHelper.Demo
             {
                 foreach (var entry in searchResult.Entries)
                 {
-                    Log.Information(entry.company);
-                    Log.Information(entry.co);
-                    Log.Information(entry.samAccountName);
-                    Log.Information(entry.cn);
-                    Log.Information(entry.displayName);
-                    Log.Information(entry.distinguishedName);
-                    Log.Information(entry.objectSid);
-                    Log.Information(entry.userAccountControl);
+                    Log.Information($"{nameof(entry.company)}: {entry.company}");
+                    Log.Information($"{nameof(entry.co)}: {entry.co}");
+                    Log.Information($"{nameof(entry.samAccountName)}: {entry.samAccountName}");
+                    Log.Information($"{nameof(entry.cn)}: {entry.cn}");
+                    Log.Information($"{nameof(entry.displayName)}: {entry.displayName}");
+                    Log.Information($"{nameof(entry.distinguishedName)}: {entry.displayName}");
+                    Log.Information($"{nameof(entry.objectSid)}: {entry.objectSid}");
+                    Log.Information($"{nameof(entry.userAccountControl)}: {entry.userAccountControl}");
 
                     Console.WriteLine();
                 }
@@ -439,14 +439,14 @@ namespace Bitai.LDAPHelper.Demo
             {
                 foreach (var entry in searchResult.Entries)
                 {
-                    Log.Information(entry.company);
-                    Log.Information(entry.co);
-                    Log.Information(entry.samAccountName);
-                    Log.Information(entry.cn);
-                    Log.Information(entry.displayName);
-                    Log.Information(entry.distinguishedName);
-                    Log.Information(entry.objectSid);
-                    Log.Information(entry.userAccountControl);
+                    Log.Information($"{nameof(entry.company)}: {entry.company}");
+                    Log.Information($"{nameof(entry.co)}: {entry.co}");
+                    Log.Information($"{nameof(entry.samAccountName)}: {entry.samAccountName}");
+                    Log.Information($"{nameof(entry.cn)}: {entry.cn}");
+                    Log.Information($"{nameof(entry.displayName)}: {entry.displayName}");
+                    Log.Information($"{nameof(entry.distinguishedName)}: {entry.displayName}");
+                    Log.Information($"{nameof(entry.objectSid)}: {entry.objectSid}");
+                    Log.Information($"{nameof(entry.userAccountControl)}: {entry.userAccountControl}");
 
                     Console.WriteLine();
                 }

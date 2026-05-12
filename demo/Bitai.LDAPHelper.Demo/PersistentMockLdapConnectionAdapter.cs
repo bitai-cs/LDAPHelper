@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
 using Bitai.LDAPHelper.Adapters;
 using Bitai.LDAPHelper.Tests.Mocks;
@@ -89,41 +90,32 @@ namespace Bitai.LDAPHelper.Demo
                         }
                     }
                     else if (mockMod.ModificationType == LdapModificationType.Replace) {
-                        if (attr != null) {
-                            if (mockMod.Value != null) {
-                                // Remove existing attribute before adding new value(s)
-                                entryAttrSet.RemoveAttribute(mockMod.AttributeName);
+                        // For replace, we remove the existing attribute and add the new value(s)
+                        entryAttrSet.RemoveAttribute(mockMod.AttributeName);
 
-                                // Add new value(s) if not null or empty
-                                if (mockMod.Value is byte[] bytes) {
-                                    if (bytes.Length > 0) {
-                                        entry.AddAttribute(mockMod.AttributeName, bytes);
-                                        continue;
-                                    }
-                                }
-                                else if (mockMod.Value is string[] stringArray) {
-                                    if (stringArray.Length > 0) {
-                                        entry.AddAttribute(mockMod.AttributeName, stringArray);
-                                        continue;
-                                    }
-                                }
-                                else if (mockMod.Value is string stringValue) {
-                                    if (stringValue.Length > 0) {
-                                        entry.AddAttribute(mockMod.AttributeName, stringValue);
-                                        continue;
-                                    }
-                                }
-                                else
-                                    throw new InvalidOperationException($"Unsupported value type for replace modification: {mockMod.Value.GetType().Name}");
-                            }
-                            else { //Attribute EXISTS and Mod.Value is NULL!
-                                // Remove existing attribute since replace with null means delete all values
-                                entryAttrSet.RemoveAttribute(mockMod.AttributeName);
+                        if (mockMod.Value == null)
+                            continue;
+
+                        if (mockMod.Value is byte[] bytes) {
+                            if (bytes.Length > 0) {
+                                entry.AddAttribute(mockMod.AttributeName, bytes);
+                                continue;
                             }
                         }
-                        else {
-                            // Attribute DOESN'T EXIST ignored if the attribute does not exist.
+                        else if (mockMod.Value is string[] stringArray) {
+                            if (stringArray.Length > 0) {
+                                entry.AddAttribute(mockMod.AttributeName, stringArray);
+                                continue;
+                            }
                         }
+                        else if (mockMod.Value is string stringValue) {
+                            if (stringValue.Length > 0) {
+                                entry.AddAttribute(mockMod.AttributeName, stringValue);
+                                continue;
+                            }
+                        }
+                        else
+                            throw new InvalidOperationException($"Unsupported value type for replace modification: {mockMod.Value.GetType().Name}");
                     }
                     
                     Modifications.Add(new MockModification
@@ -165,7 +157,6 @@ namespace Bitai.LDAPHelper.Demo
 
             foreach (var entry in allEntries)
             {
-                // Simple filter matching (supports wildcards)
                 if (MatchesFilter(entry, searchFilter))
                 {
                     matchingEntries.Add(entry);
@@ -201,9 +192,29 @@ namespace Bitai.LDAPHelper.Demo
                 var cn = entry.GetAttributeSet().GetAttribute("cn")?.StringValue;
                 return MatchWildcard(cn, value);
             }
+            else if (filter.Contains("(objectSid="))
+            {
+                var value = ExtractFilterValue(filter, "objectSid");
+                var objectSidBytes = entry.GetAttributeSet().GetAttribute("objectSid")?.ByteValue;
+                var objectSid = objectSidBytes == null ? null : ConvertByteToStringSid(objectSidBytes);
+                return MatchWildcard(objectSid, value);
+            }
+            else if (filter.Contains("(objectClass="))
+            {
+                var value = ExtractFilterValue(filter, "objectClass");
+                var objectClassValues = entry.GetAttributeSet().GetAttribute("objectClass")?.StringValueArray;
+                if (objectClassValues == null)
+                    return false;
+
+                foreach (var objectClass in objectClassValues) {
+                    if (MatchWildcard(objectClass, value))
+                        return true;
+                }
+
+                return false;
+            }
             
-            // Default - return true for complex filters in demo
-            return true;
+            return false;
         }
 
         private string ExtractFilterValue(string filter, string attributeName)
@@ -236,6 +247,46 @@ namespace Bitai.LDAPHelper.Demo
             }
             
             return value.Equals(pattern, StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static string ConvertByteToStringSid(byte[] sidBytes)
+        {
+            short subAuthorityCount = 0;
+            var sid = new StringBuilder();
+            sid.Append("S-");
+
+            sid.Append(sidBytes[0].ToString());
+
+            subAuthorityCount = Convert.ToInt16(sidBytes[1]);
+
+            if (sidBytes[2] != 0 || sidBytes[3] != 0) {
+                string authority = string.Format("0x{0:2x}{1:2x}{2:2x}{3:2x}{4:2x}{5:2x}",
+                    (short)sidBytes[2],
+                    (short)sidBytes[3],
+                    (short)sidBytes[4],
+                    (short)sidBytes[5],
+                    (short)sidBytes[6],
+                    (short)sidBytes[7]);
+                sid.Append("-");
+                sid.Append(authority);
+            }
+            else {
+                long authority = sidBytes[7] +
+                    (sidBytes[6] << 8) +
+                    (sidBytes[5] << 16) +
+                    (sidBytes[4] << 24);
+                sid.Append("-");
+                sid.Append(authority.ToString());
+            }
+
+            for (int i = 0; i < subAuthorityCount; i++) {
+                int offset = 8 + i * 4;
+                uint subAuthority = BitConverter.ToUInt32(sidBytes, offset);
+                sid.Append("-");
+                sid.Append(subAuthority.ToString());
+            }
+
+            return sid.ToString();
         }
     }
 }

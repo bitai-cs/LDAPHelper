@@ -120,7 +120,10 @@ namespace Bitai.LDAPHelper.Demo
                     // Seed mock data
                     var seeder = new MockDataSeeder(_context);
                     seeder.SeedAllData();
-                    
+
+                    //seeder.ExportGroupMembershipDataHierarchyToConsole(true);
+                    //Console.ReadKey();
+
                     // Set mock connection info (dummy values)
                     _context.SelectedLdapServer = "mock-server";
                     _context.SelectedLdapServerPort = 389;

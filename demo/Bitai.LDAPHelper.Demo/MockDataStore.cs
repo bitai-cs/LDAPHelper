@@ -1,6 +1,8 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using Bitai.LDAPHelper.Tests.Mocks;
 
@@ -14,104 +16,85 @@ namespace Bitai.LDAPHelper.Demo
         private readonly Dictionary<string, MockLdapEntryAdapter> _entries;
         private readonly ReaderWriterLockSlim _lock;
 
-        private MockDataStore()
-        {
+        private MockDataStore() {
             _entries = new Dictionary<string, MockLdapEntryAdapter>(StringComparer.OrdinalIgnoreCase);
             _lock = new ReaderWriterLockSlim();
         }
 
-        public void AddOrUpdateEntry(MockLdapEntryAdapter entry)
-        {
+        #region Basic CRUD Operations
+
+        public void AddOrUpdateEntry(MockLdapEntryAdapter entry) {
             _lock.EnterWriteLock();
-            try
-            {
+            try {
                 _entries[entry.DistinguishedName] = entry;
             }
-            finally
-            {
+            finally {
                 _lock.ExitWriteLock();
             }
         }
 
-        public MockLdapEntryAdapter GetEntry(string distinguishedName)
-        {
+        public MockLdapEntryAdapter GetEntry(string distinguishedName) {
             _lock.EnterReadLock();
-            try
-            {
+            try {
                 return _entries.TryGetValue(distinguishedName, out var entry) ? entry : null;
             }
-            finally
-            {
+            finally {
                 _lock.ExitReadLock();
             }
         }
 
-        public List<MockLdapEntryAdapter> SearchEntries(Func<MockLdapEntryAdapter, bool> predicate)
-        {
+        public List<MockLdapEntryAdapter> SearchEntries(Func<MockLdapEntryAdapter, bool> predicate) {
             _lock.EnterReadLock();
-            try
-            {
+            try {
                 return _entries.Values.Where(predicate).ToList();
             }
-            finally
-            {
+            finally {
                 _lock.ExitReadLock();
             }
         }
 
-        public bool RemoveEntry(string distinguishedName)
-        {
+        public bool RemoveEntry(string distinguishedName) {
             _lock.EnterWriteLock();
-            try
-            {
+            try {
                 return _entries.Remove(distinguishedName);
             }
-            finally
-            {
+            finally {
                 _lock.ExitWriteLock();
             }
         }
 
-        public void Clear()
-        {
+        public void Clear() {
             _lock.EnterWriteLock();
-            try
-            {
+            try {
                 _entries.Clear();
             }
-            finally
-            {
+            finally {
                 _lock.ExitWriteLock();
             }
         }
 
-        public List<MockLdapEntryAdapter> GetAllEntries()
-        {
+        public List<MockLdapEntryAdapter> GetAllEntries() {
             _lock.EnterReadLock();
-            try
-            {
+            try {
                 return _entries.Values.ToList();
             }
-            finally
-            {
+            finally {
                 _lock.ExitReadLock();
             }
         }
 
-        public int Count
-        {
-            get
-            {
+        public int Count {
+            get {
                 _lock.EnterReadLock();
-                try
-                {
+                try {
                     return _entries.Count;
                 }
-                finally
-                {
+                finally {
                     _lock.ExitReadLock();
                 }
             }
         }
+
+        #endregion
     }
 }
