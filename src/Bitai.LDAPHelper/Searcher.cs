@@ -1,10 +1,8 @@
-﻿using Bitai.LDAPHelper.Adapters;
-using Bitai.LDAPHelper.Adapters.Novell;
+using Bitai.LDAPHelper.LdapAdapters;
 using Bitai.LDAPHelper.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
 namespace Bitai.LDAPHelper
@@ -161,13 +159,9 @@ namespace Bitai.LDAPHelper
 			try {
 				var attributesToLoad = this.GetRequiredAttributeNames(requiredEntryAttributes);
 				var entries = new List<DTO.LDAPEntry>();
-				using (var connection = await GetLdapConnection(this.ConnectionInfo, this.DomainAccountCredential)) {
-					var searchConstraints = new NovellLdapSearchConstraintsAdapter {
-						ServerTimeLimit = this.SearchLimits.MaxSearchTimeout,
-						MaxResults = this.SearchLimits.MaxSearchResults,
-					};
+				using (var connection = await GetLdapConnection(this.ConnectionInfo, this.DomainAccountCredential)) {					
 
-                    ILdapSearchQueueAdapter searchQueue = await connection.SearchAsync(this.SearchLimits.BaseDN, Novell.Directory.Ldap.LdapConnection.ScopeSub, searchFilter, attributesToLoad.ToArray(), false, searchConstraints);
+                    ILdapSearchQueueAdapter searchQueue = await connection.SearchAsync(this.SearchLimits, searchFilter, attributesToLoad.ToArray(), false);
 
                     ILdapMessageAdapter responseMessage = null;
 					while ((responseMessage = searchQueue.GetResponse()) != null) {
@@ -186,8 +180,11 @@ namespace Bitai.LDAPHelper
 
 				return searchResult;
 			}
-			catch (Novell.Directory.Ldap.LdapException ex) {
-				searchResult = new DTO.LDAPSearchResult($"{ex.Message} ({ex.LdapErrorMessage})", ex, requestLabel);
+			catch (Exception ex) when (ex.GetType().Name == "LdapException") {
+				var ldapErrorMessageProp = ex.GetType().GetProperty("LdapErrorMessage");
+				string ldapErrorMessage = ldapErrorMessageProp?.GetValue(ex) as string ?? "";
+				string msg = string.IsNullOrEmpty(ldapErrorMessage) ? ex.Message : $"{ex.Message} ({ldapErrorMessage})";
+				searchResult = new DTO.LDAPSearchResult(msg, ex, requestLabel);
 
 				return searchResult;
 			}
@@ -287,16 +284,19 @@ namespace Bitai.LDAPHelper
 
                 return new DTO.LDAPSearchResult(requestLabel, resultEntries);
             }
-            catch (Novell.Directory.Ldap.LdapException ex) {
-                var searchResult = new DTO.LDAPSearchResult($"{ex.Message} ({ex.LdapErrorMessage})", ex, requestLabel);
+			catch (Exception ex) when (ex.GetType().Name == "LdapException") {
+				var ldapErrorMessageProp = ex.GetType().GetProperty("LdapErrorMessage");
+				string ldapErrorMessage = ldapErrorMessageProp?.GetValue(ex) as string ?? "";
+				string msg = string.IsNullOrEmpty(ldapErrorMessage) ? ex.Message : $"{ex.Message} ({ldapErrorMessage})";
+				var searchResult = new DTO.LDAPSearchResult(msg, ex, requestLabel);
 
-                return searchResult;
-            }
-            catch (Exception ex) {
-                var searchResult = new DTO.LDAPSearchResult($"Unexpected error performing search. {ex.Message}", ex, requestLabel);
+				return searchResult;
+			}
+			catch (Exception ex) {
+				var searchResult = new DTO.LDAPSearchResult($"Unexpected error performing search. {ex.Message}", ex, requestLabel);
 
-                return searchResult;
-            }
+				return searchResult;
+			}
         }
 		#endregion
 	}

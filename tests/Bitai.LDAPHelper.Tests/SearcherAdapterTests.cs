@@ -1,12 +1,5 @@
-// SearcherAdapterTests.cs
-using Bitai.LDAPHelper.Adapters;
 using Bitai.LDAPHelper.DTO;
-using Bitai.LDAPHelper.Tests.Mocks;
-using NuGet.Frameworks;
-using System;
-using System.Buffers.Text;
-using System.Threading.Tasks;
-using Xunit;
+using Bitai.LDAPHelper.Tests.Mocks.LdapAdapters;
 
 namespace Bitai.LDAPHelper.Tests
 {

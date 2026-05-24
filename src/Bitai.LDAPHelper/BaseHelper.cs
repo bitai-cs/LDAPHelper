@@ -1,5 +1,4 @@
-﻿using Bitai.LDAPHelper.Adapters;
-using Novell.Directory.Ldap;
+using Bitai.LDAPHelper.LdapAdapters;
 using System;
 using System.Collections.Generic;
 using System.Text;

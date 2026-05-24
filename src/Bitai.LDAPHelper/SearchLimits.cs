@@ -7,12 +7,18 @@
 		/// </summary>
 		public string BaseDN { get; set; } = "DC=com";
 
-		/// <summary>
-		/// Maximum number of search results (entries) to be returned for a search operation.
-		/// A value of 0 means no limit. Default: 1000 
-		/// The search operation will be terminated with an LdapException.SIZE_LIMIT_EXCEEDED if the number of results exceed the maximum.
-		/// </summary>
-		public int MaxSearchResults { get; set; } = 1000;
+        /// <summary>
+        /// The scope of the search operation, which determines how deep the search will 
+		/// go in the directory tree.
+        /// </summary>
+        public LdapSearchScope LdapSearchScope { get; set; } = LdapSearchScope.ScopeSub;
+
+        /// <summary>
+        /// Maximum number of search results (entries) to be returned for a search operation.
+        /// A value of 0 means no limit. Default: 1000 
+        /// The search operation will be terminated with an LdapException.SIZE_LIMIT_EXCEEDED if the number of results exceed the maximum.
+        /// </summary>
+        public int MaxSearchResults { get; set; } = 1000;
 
 		/// <summary>
 		///  Maximum number of seconds that the server waits when returning search results. 

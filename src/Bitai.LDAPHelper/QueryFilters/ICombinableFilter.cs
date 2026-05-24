@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-
-namespace Bitai.LDAPHelper.QueryFilters
+﻿namespace Bitai.LDAPHelper.QueryFilters
 {
     public interface ICombinableFilter
     {

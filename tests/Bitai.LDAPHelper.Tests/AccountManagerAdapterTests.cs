@@ -1,10 +1,5 @@
-﻿// AccountManagerAdapterTests.cs
-using System;
-using System.Threading.Tasks;
-using Bitai.LDAPHelper.Adapters;
-using Bitai.LDAPHelper.DTO;
-using Bitai.LDAPHelper.Tests.Mocks;
-using Xunit;
+﻿using Bitai.LDAPHelper.DTO;
+using Bitai.LDAPHelper.Tests.Mocks.LdapAdapters;
 
 namespace Bitai.LDAPHelper.Tests
 {

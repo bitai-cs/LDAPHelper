@@ -1,9 +1,8 @@
-﻿using Bitai.LDAPHelper.Adapters;
+﻿using Bitai.LDAPHelper.LdapAdapters;
 using Bitai.LDAPHelper.DTO;
 using Bitai.LDAPHelper.QueryFilters;
 using System;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 
 namespace Bitai.LDAPHelper

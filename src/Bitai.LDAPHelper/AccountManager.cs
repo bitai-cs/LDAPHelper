@@ -1,13 +1,8 @@
-﻿using Bitai.LDAPHelper.Adapters;
+using Bitai.LDAPHelper.LdapAdapters;
 using Bitai.LDAPHelper.DTO;
-using Bitai.LDAPHelper.QueryFilters;
-using Microsoft.VisualBasic;
-using Novell.Directory.Ldap;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 

@@ -1,11 +1,5 @@
-﻿using Bitai.LDAPHelper.Adapters;
-using Bitai.LDAPHelper.DTO;
-using Bitai.LDAPHelper.Tests.Mocks;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Xunit;
+﻿using Bitai.LDAPHelper.DTO;
+using Bitai.LDAPHelper.Tests.Mocks.LdapAdapters;
 
 namespace Bitai.LDAPHelper.Tests
 {

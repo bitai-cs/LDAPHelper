@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Bitai.LDAPHelper.Adapters;
-using Bitai.LDAPHelper.Extensions;
+using Bitai.LDAPHelper.LdapAdapters;
 
 namespace Bitai.LDAPHelper
 {

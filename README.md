@@ -231,4 +231,4 @@ Once started, the console app will automatically execute the active test routine
 ## 🤝 Community & Ecosystem
 
 - Part of the wider [Bitai.LDAPWebApi](https://github.com/bitai-cs/LDAPWebApi) project.
-- Feel free to check out [Bitai.IdentityServer4.Admin](https://github.com/bitai-cs/IdentityServer4.Admin) (forked from `skoruba.IdentityServer4.Admin`) which provides an identity server administration UI backed by LDAP authentication pipelines.
+- Feel free to check out [Bitai.IdentityServer4.Admin](https://github.com/bitai-cs/IdentityServer4.Admin) (forked from `Skoruba.IdentityServer4.Admin`) which provides an identity server administration UI backed by LDAP authentication pipelines.
