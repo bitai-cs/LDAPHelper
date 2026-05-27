@@ -1,4 +1,4 @@
-﻿using Novell.Directory.Ldap;
+using Bitai.LDAPHelper.LdapAdapters;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,32 +12,37 @@ namespace Bitai.LDAPHelper
 		public ConnectionInfo ConnectionInfo { get; set; }
 		public DTO.LDAPDomainAccountCredential DomainAccountCredential { get; set; }
 		public SearchLimits SearchLimits { get; set; }
-		#endregion
+        protected ILdapConnectionFactoryAdapter ConnectionFactory { get; set; }
+        #endregion
 
 
-		#region Protected constructors
-		protected BaseHelper(ClientConfiguration clientConfiguration)
+        #region Protected constructors
+        protected BaseHelper(ClientConfiguration clientConfiguration, ILdapConnectionFactoryAdapter connectionFactory)
 		{
 			ConnectionInfo = clientConfiguration.ServerSettings;
 			DomainAccountCredential = clientConfiguration.DomainAccountCredential;
 			SearchLimits = clientConfiguration.SearchLimits;
-		}
+			ConnectionFactory = connectionFactory;
+        }
 
-		protected BaseHelper(ConnectionInfo connectionInfo, SearchLimits searchLimits, DTO.LDAPDomainAccountCredential domainAccountCredential)
+		protected BaseHelper(ConnectionInfo connectionInfo, SearchLimits searchLimits, DTO.LDAPDomainAccountCredential domainAccountCredential, ILdapConnectionFactoryAdapter connectionFactory)
 		{
 			ConnectionInfo = connectionInfo;
 			SearchLimits = searchLimits;
 			DomainAccountCredential = domainAccountCredential;
-		}
+			ConnectionFactory = connectionFactory;
+
+        }
 
 		/// <summary>
 		/// Constructor used by <see cref="Authenticator"/>
 		/// </summary>
 		/// <param name="connectionInfo"><see cref="LDAPHelper.ConnectionInfo"/></param>
-		protected BaseHelper(ConnectionInfo connectionInfo)
+		protected BaseHelper(ConnectionInfo connectionInfo, ILdapConnectionFactoryAdapter connectionFactory)
 		{
 			ConnectionInfo = connectionInfo;
-		}
+            ConnectionFactory = connectionFactory;
+        }
 		#endregion
 
 
@@ -78,15 +83,27 @@ namespace Bitai.LDAPHelper
 		/// <param name="credential"><see cref="DomainAccountCredential"/>  to connect to the LDAP Server</param>
 		/// <param name="bindRequired">If <see cref="DomainAccountCredential"/> are required to be mandatorily authenticated on the LDAP Server</param>
 		/// <returns>Task of <see cref="LdapConnection"/></returns>
-		protected Task<LdapConnection> GetLdapConnection(ConnectionInfo connectionInfo, DTO.LDAPDomainAccountCredential credential, bool bindRequired = true)
+		protected async Task<ILdapConnectionAdapter> GetLdapConnection(ConnectionInfo connectionInfo, DTO.LDAPDomainAccountCredential credential, bool bindRequired = true)
 		{
-			return getLdapConnection(connectionInfo, credential.DomainAccountName, credential.DomainAccountPassword, bindRequired);
-		}
+            //return getLdapConnection(connectionInfo, credential.DomainAccountName, credential.DomainAccountPassword, bindRequired);
 
-		protected Task<LdapConnection> GetLdapConnection(ConnectionInfo connectionInfo, DTO.LDAPDistinguishedNameCredential credential, bool bindRequired = true)
+            return await ConnectionFactory.CreateConnectionAsync(
+                connectionInfo,
+                credential.DomainAccountName,
+                credential.DomainAccountPassword,
+                bindRequired);
+        }
+
+		protected async Task<ILdapConnectionAdapter> GetLdapConnection(ConnectionInfo connectionInfo, DTO.LDAPDistinguishedNameCredential credential, bool bindRequired = true)
 		{
-			return getLdapConnection(connectionInfo, credential.DistinguishedName, credential.Password, bindRequired);
-		}
+            //return getLdapConnection(connectionInfo, credential.DistinguishedName, credential.Password, bindRequired);
+
+            return await ConnectionFactory.CreateConnectionAsync(
+                connectionInfo,
+                credential.DistinguishedName,
+                credential.Password,
+                bindRequired);
+        }
 
 		protected string ConvertByteToStringSid(byte[] sidBytes)
 		{
@@ -178,41 +195,6 @@ namespace Bitai.LDAPHelper
 				default:
 					throw new ArgumentOutOfRangeException("requiredEntryAttributes");
 			}
-		}
-		#endregion
-
-
-		#region Private methods
-		private async Task<LdapConnection> getLdapConnection(ConnectionInfo connectionInfo, string userAccount, string password, bool bindRequired = true)
-		{
-			var ldapConnection = new LdapConnection
-			{
-				ConnectionTimeout = ConnectionInfo.ConnectionTimeout * 1000
-			};
-
-			if (connectionInfo.UseSSL)
-			{
-				ldapConnection.SecureSocketLayer = true;
-				ldapConnection.UserDefinedServerCertValidationDelegate += (sender, certificate, chain, sslPolicyErrors) => true;
-			}
-
-			await ldapConnection.ConnectAsync(connectionInfo.Server, connectionInfo.ServerPort);
-
-			try
-			{
-				await ldapConnection.BindAsync(userAccount, password);
-			}
-			catch (LdapException)
-			{
-				if (bindRequired)
-					throw;
-			}
-			catch (Exception)
-			{
-				throw;
-			}
-
-			return ldapConnection;
 		}
 		#endregion
 	}

@@ -9,9 +9,9 @@
 		<Description>Demo of Bitai.Bitai.LDAPHelper usage.</Description>
 		<PackageId>Bitai.Bitai.LDAPHelper.Demo</PackageId>
 		<PackageIcon>hierarchy_32.png</PackageIcon>
-		<Version>8.0.1</Version>
-		<AssemblyVersion>8.0.1.7</AssemblyVersion>
-		<FileVersion>8.0.1.7</FileVersion>
+		<Version>8.5.7</Version>
+		<AssemblyVersion>8.5.7.1</AssemblyVersion>
+		<FileVersion>8.5.7.1</FileVersion>
 		<PackageReleaseNotes>Upgraded to .NET 8 </PackageReleaseNotes>
 		<PackageTags>ldap-ad-identity-auth-openid-oauth-security</PackageTags>
 	</PropertyGroup>
@@ -20,6 +20,7 @@
 		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="7.0.0" />
 		<PackageReference Include="Serilog" Version="2.12.0" />
 		<PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
+		<PackageReference Include="Spectre.Console" Version="0.55.2" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="..\..\resources\hierarchy_32.png">
@@ -29,5 +30,6 @@
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\Bitai.LDAPHelper\Bitai.LDAPHelper.csproj" />
+		<ProjectReference Include="..\..\tests\Bitai.LDAPHelper.Tests\Bitai.LDAPHelper.Tests.csproj" />
 	</ItemGroup>
 </Project>
