@@ -24,7 +24,6 @@
 
    "ConnectionTimeout": 15,
    "DomainUserAccountForRunTests": "LATAM\\it.user",
-   "AccountPassword": "P@55w0rd2026",
 
    "Demo_AccountManager_CreateUserAccount_RunTest": true,
    "Demo_AccountManager_CreateUserAccount_UserAccountName": "victor.bastidas",
