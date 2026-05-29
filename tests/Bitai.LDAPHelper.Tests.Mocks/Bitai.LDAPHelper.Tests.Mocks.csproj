@@ -4,6 +4,14 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+	 <Version>8.6.0</Version>
+    <AssemblyVersion>8.6.0.0</AssemblyVersion>
+	 <FileVersion>8.6.0.0</FileVersion> 
+	 <Authors>Viko Bastidas (BITAI)</Authors>
+	 <Copyright>© 2026 BITAI. All rights reserved.</Copyright>
+	 <RepositoryUrl>https://github.com/bitai-cs/LDAPHelper.git</RepositoryUrl>
+	 <RepositoryType>GitHub</RepositoryType>
+	 <PackageTags>ldap, authentication, directory, helper</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
