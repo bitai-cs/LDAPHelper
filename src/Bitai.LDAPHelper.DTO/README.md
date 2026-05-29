@@ -13,7 +13,7 @@ Designed with API-driven architectures in mind, all DTOs are fully serializable 
 ## 🌟 Key Features
 
 - **Decoupled Entities:** Models standard LDAP entries (`LDAPEntry`) and MS Active Directory Specific structures (`LDAPMsADUserAccount`) cleanly.
-- **Secure Credentials Handling:** Implements secure credentials structures for Distinguished Name (DN) and Domain-based accounts.
+- **Secure Credentials Handling:** Implements secure credential structures for Distinguished Name (DN) and domain-based accounts.
 - **Unified Result Pattern:** Uses a robust, standardized wrapper (`LDAPOperationResult`) for handling LDAP success states, errors, exceptions, and execution tracking labels across all operations.
 - **MS Active Directory Flags:** Built-in enum representation for `UserAccountControl` flags (`UAC`) to easily manipulate AD-specific account states.
 - **Fully Serializable:** Properties are designed to integrate seamlessly into web service boundaries (e.g., ASP.NET Web API, gRPC, WCF).
