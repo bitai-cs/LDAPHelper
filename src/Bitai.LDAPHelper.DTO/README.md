@@ -52,7 +52,7 @@ Every operation in `Bitai.LDAPHelper` returns a specialized derivative of **`LDA
 
 ### 4. Enumerations
 
-*   **`EntryAttribute`**: Strongly typed mapped attributes representing standard and custom Active Directory and generic LDAP properties (`sAMAccountName`, `mail`, `unicodePwd`, `userAccountControl`, etc.).
+*   **`EntryAttribute`**: Strongly-typed mapped attributes representing standard and custom Active Directory and generic LDAP properties (`sAMAccountName`, `mail`, `unicodePwd`, `userAccountControl`, etc.).
 *   **`RequiredEntryAttributes`**: Preset levels to optimize data retrieval bandwidth (e.g., `Minimum`, `Few`, `All`, `MemberAndMemberOf`).
 *   **`UserAccountControlFlagsForMsAD`**: `[Flags]` bitwise enum assisting in the reading/writing of Microsoft Active Directory user states (e.g., `ACCOUNTDISABLE`, `NORMAL_ACCOUNT`, `DONT_EXPIRE_PASSWORD`, `PASSWORD_EXPIRED`).
 
