@@ -1,13 +1,19 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Text;
 
 namespace Bitai.LDAPHelper.DTO
 {
+    /// <summary>
+    /// Represents the base result of an LDAP operation.
+    /// </summary>
     public abstract class LDAPOperationResult
     {
 		#region Properties
+		/// <summary>
+		/// Gets or sets a value indicating whether the LDAP operation was successful.
+		/// </summary>
 		public bool IsSuccessfulOperation { get; set; }
 
 		/// <summary>
@@ -43,9 +49,10 @@ namespace Bitai.LDAPHelper.DTO
 
 		#region Constructors
 		/// <summary>
-		/// Constructor
+		/// Initializes a new instance of the <see cref="LDAPOperationResult"/> class.
 		/// </summary>
 		/// <param name="requestLabel">Optional tag to label this object.</param>
+		/// <param name="isSuccessfulOperation">Indicates if the operation should be initially set as successful.</param>
 		public LDAPOperationResult(string requestLabel = null, bool isSuccessfulOperation = true)
         {
 			RequestLabel = requestLabel;
@@ -57,10 +64,11 @@ namespace Bitai.LDAPHelper.DTO
         }
 
         /// <summary>
-        /// 
+        /// Initializes a new instance of the <see cref="LDAPOperationResult"/> class representing an unsuccessful operation due to an exception.
         /// </summary>
-        /// <param name="exception"></param>
-        /// <param name="requestLabel"></param>
+        /// <param name="operationMessage">The descriptive message of the operation failure.</param>
+        /// <param name="exception">The intercepted exception causing the failure.</param>
+        /// <param name="requestLabel">Optional tag to label this object.</param>
         public LDAPOperationResult(string operationMessage, Exception exception, string requestLabel = null)
         {
             if (exception == null)
@@ -76,6 +84,10 @@ namespace Bitai.LDAPHelper.DTO
 
 
 		#region Public methods
+		/// <summary>
+		/// Sets the state of the result to represent a successful operation.
+		/// </summary>
+		/// <param name="operationMessage">The success message to associate with the operation.</param>
 		public void SetSuccessfulOperation(string operationMessage)
 		{
 			IsSuccessfulOperation = true;
@@ -87,9 +99,10 @@ namespace Bitai.LDAPHelper.DTO
 		}
 
 		/// <summary>
-		/// Store Error information.
+		/// Sets the state of the result to represent an unsuccessful operation with error details.
 		/// </summary>
-		/// <param name="exception"></param>
+		/// <param name="operationMessage">The error message to associate with the operation.</param>
+		/// <param name="exception">The intercepted exception containing error details.</param>
 		public void SetUnsuccessfulOperation(string operationMessage, Exception exception)
         {
             IsSuccessfulOperation = false;
@@ -100,6 +113,10 @@ namespace Bitai.LDAPHelper.DTO
             OperationMessage = operationMessage;
         }
 
+		/// <summary>
+		/// Sets the state of the result to represent an unsuccessful operation without an associated exception.
+		/// </summary>
+		/// <param name="operationMessage">The error message to associate with the operation.</param>
         public void SetUnsuccessfulOperation(string operationMessage)
         {
             IsSuccessfulOperation = false;
