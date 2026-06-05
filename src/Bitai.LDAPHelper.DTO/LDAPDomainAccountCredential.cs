@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -28,21 +28,21 @@ namespace Bitai.LDAPHelper.DTO
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="domainName">Domain name.</param>
-		/// <param name="accountName">Account name.</param>
+		/// <param name="domainName">Domain name</param>
+		/// <param name="username">Username</param>
 		/// <param name="domainAccountPassword">Account password.</param>
 		/// <exception cref="InvalidOperationException">Constructor exception.</exception>
-		public LDAPDomainAccountCredential(string domainName, string accountName, string domainAccountPassword)
+		public LDAPDomainAccountCredential(string domainName, string username, string domainAccountPassword)
 		{
 			if (string.IsNullOrEmpty(domainName))
 				throw new InvalidOperationException("The domain name must be specified.");
 
-			if (string.IsNullOrEmpty(accountName))
-				throw new InvalidOperationException("The account name must be specified.");
+			if (string.IsNullOrEmpty(username))
+				throw new InvalidOperationException("The username must be specified.");
 
 
 			DomainName = domainName;
-			AccountName = accountName;
+			AccountName = username;
 			DomainAccountPassword = domainAccountPassword;
 		}
 

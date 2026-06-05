@@ -119,7 +119,7 @@ namespace Bitai.LDAPHelper
 
 				return new LDAPCreateMsADUserAccountResult(newUserAccount.SecureClone(), requestLabel)
 				{
-					OperationMessage = $"Account name created at {newUserAccount.DistinguishedName} with {EntryAttribute.sAMAccountName.ToString()}: {newUserAccount.SAMAccountName}"
+					OperationMessage = $"MS AD user account created at {newUserAccount.DistinguishedName} with {EntryAttribute.sAMAccountName.ToString()}: {newUserAccount.SAMAccountName}"
 				};
 			}
 			catch (Exception ex)
@@ -136,7 +136,7 @@ namespace Bitai.LDAPHelper
         /// </summary>
         /// <param name="credential"><see cref="LDAPDistinguishedNameCredential"/></param>
         /// <param name="requestLabel">Optional tag to mark the request and/or response.</param>
-        /// <param name="postUpdateTestAuthentication">True if the account name will be tested to verify authentication with the new password. False if the password will simply be assigned and authentication will not be tested.</param>
+        /// <param name="postUpdateTestAuthentication">True if the MS AD user account will be tested to verify authentication with the new password. False if the password will simply be assigned and authentication will not be tested.</param>
         /// <returns></returns>
         public async Task<LDAPPasswordUpdateResult> SetUserAccountPasswordForMsAD(DTO.LDAPDistinguishedNameCredential credential, string requestLabel = null, bool postUpdateTestAuthentication = true)
 		{
@@ -218,11 +218,11 @@ namespace Bitai.LDAPHelper
 				var entry = await verifyUserAccountAuthenticity(distinguishedName, requestLabel);
 
                 using (var ldapConnection = await GetLdapConnection(this.ConnectionInfo, this.DomainAccountCredential)) {
-                    //To disable an account name in MS AD, the userAccountControl attribute needs to be set with the appropriate flags. The flag for disabling an account name is ACCOUNTDISABLE (0x0002). However, when setting the userAccountControl attribute, it is important to preserve the existing flags that are set for the account, and only add the ACCOUNTDISABLE flag without removing any of the existing flags. This is because other flags may be set for the account name that are necessary for its proper functioning, and removing them could cause unintended consequences. Therefore, when disabling a username, you should retrieve the current value of the userAccountControl attribute, add the ACCOUNTDISABLE flag to it, and then update the attribute with the new value that includes both the existing flags and the ACCOUNTDISABLE flag.
+                    //To disable a MS AD user account, the userAccountControl attribute needs to be set with the appropriate flags. The flag for disabling an account is ACCOUNTDISABLE (0x0002). However, when setting the userAccountControl attribute, it is important to preserve the existing flags that are set for the account, and only add the ACCOUNTDISABLE flag without removing any of the existing flags. This is because other flags may be set for the account that are necessary for its proper functioning, and removing them could cause unintended consequences. Therefore, when disabling a username, you should retrieve the current value of the userAccountControl attribute, add the ACCOUNTDISABLE flag to it, and then update the attribute with the new value that includes both the existing flags and the ACCOUNTDISABLE flag.
                     UserAccountControlFlagsForMsAD userAccountControlFlags = UserAccountControlFlagsForMsAD.NORMAL_ACCOUNT | UserAccountControlFlagsForMsAD.ACCOUNTDISABLE;
                     //var userAccountControlAttribute = new LdapAttribute(DTO.EntryAttribute.userAccountControl.ToString(), ((int)userAccountControlFlags).ToString());
 
-                    //Create modification request to disable the account name by setting the userAccountControl attribute with the appropriate flags
+                    //Create modification request to disable the account by setting the userAccountControl attribute with the appropriate flags
                     var modification = ldapConnection.CreateModification(LdapModificationType.Replace, EntryAttribute.userAccountControl.ToString(),
                         ((int)userAccountControlFlags).ToString());
                     //var userAccountControlModification = new LdapModification(LdapModification.Replace, userAccountControlAttribute);

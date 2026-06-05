@@ -23,7 +23,7 @@ public partial class Program
 
         var domainAccountCredentialParts = domainAccountCredential.Split(new char[] { '\\' });
 
-        Log.Information("Authenticating account name...");
+        Log.Information("Authenticating domain username...");
         var authenticationResult = await authenticator.AuthenticateAsync(
             new LDAPDomainAccountCredential(domainAccountCredentialParts[0], domainAccountCredentialParts[1], accountPassword), 
             context.RequestLabel);
@@ -33,9 +33,9 @@ public partial class Program
             Log.Information("{@model}", authenticationResult);
 
             if (authenticationResult.IsAuthenticated)
-                Log.Information("Account name authenticated.");
+                Log.Information("Username authenticated.");
             else
-                Log.Warning("Account name NOT authenticated.");
+                Log.Warning("Username NOT authenticated.");
         }
         else
         {
@@ -58,7 +58,7 @@ public partial class Program
 
         var domainAccountCredentialParts = domainAccountCredential.Split(new char[] { '\\' });
 
-        Log.Information("Authenticating account name with account validation...");
+        Log.Information("Authenticating username with account validation...");
         var authenticationResult = await authenticator.AuthenticateAsync(
             new LDAPDomainAccountCredential(domainAccountCredentialParts[0], domainAccountCredentialParts[1], accountPassword),
             context.GetSearchLimits(),
@@ -70,9 +70,9 @@ public partial class Program
             Log.Information("{@model}", authenticationResult);
 
             if (authenticationResult.IsAuthenticated)
-                Log.Information("Account name authenticated.");
+                Log.Information("Username authenticated.");
             else
-                Log.Warning("Account name NOT authenticated.");
+                Log.Warning("Username NOT authenticated.");
         }
         else
         {

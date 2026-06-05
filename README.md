@@ -18,10 +18,10 @@ Enables quick and secure validation of user credentials on the LDAP/AD server.
 
 ### 👤 2. Account Management (`AccountManager`)
 Simplifies user provisioning and lifecycle management within Active Directory.
-- **Create User Accounts** (`CreateUserAccountForMsAD`): Provision new Active Directory entries (`LDAPMsADUserAccount`) with extensive attribute mappings (such as UPN, sAMAccountName, unicodePwd, department, memberOf, object classes, and user control flags).
+- **Create MS AD User Accounts** (`CreateUserAccountForMsAD`): Provision new Active Directory entries (`LDAPMsADUserAccount`) with extensive attribute mappings (such as UPN, sAMAccountName, unicodePwd, department, memberOf, object classes, and user control flags).
 - **Set/Change Passwords** (`SetUserAccountPasswordForMsAD`): Safe password replacement utilizing secure Unicode encoding. It can optionally test immediate post-update authentication.
-- **Disable Accounts** (`DisableUserAccountForMsAD`): Securely disables accounts by updating the `userAccountControl` attribute with the `ACCOUNTDISABLE` flag, dynamically preserving all other existing account name flags to prevent unintended configuration loss.
-- **Remove Accounts** (`RemoveUserAccountForMsAD`): Permanently deletes user entries from the directory service.
+- **Disable MS AD Accounts** (`DisableUserAccountForMsAD`): Securely disables accounts by updating the `userAccountControl` attribute with the `ACCOUNTDISABLE` flag, dynamically preserving all other existing account flags to prevent unintended configuration loss.
+- **Remove MS AD Accounts** (`RemoveUserAccountForMsAD`): Permanently deletes user entries from the directory service.
 
 ### 🔍 3. Directory Searching (`Searcher`)
 Facilitates fast, flexible searching using highly customizable LDAP search configurations.

@@ -178,7 +178,7 @@ namespace Bitai.LDAPHelper
                 if (authenticated.Value)
                     result.SetSuccessfulOperation($"The account with DN: {credential.DistinguishedName} has been successfully authenticated.");
                 else
-                    result.SetSuccessfulOperation("Authentication failed: incorrect account name or password.");
+                    result.SetSuccessfulOperation("Authentication failed: incorrect username or password.");
 
                 return result;
             }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -32,7 +32,7 @@ namespace Bitai.LDAPHelper.DTO
 		public LDAPDistinguishedNameCredential(string distinguishedName, string password)
 		{
 			if (string.IsNullOrEmpty(distinguishedName))
-				throw new InvalidOperationException("The account name must be specified.");
+				throw new InvalidOperationException("A distinguished name is required: the account’s DN must be specified.");
 
 			DistinguishedName = distinguishedName;
 			Password = password;

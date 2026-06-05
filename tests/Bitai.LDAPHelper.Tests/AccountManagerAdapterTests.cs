@@ -35,7 +35,7 @@ namespace Bitai.LDAPHelper.Tests
 
             // Assert
             Assert.True(result.IsSuccessfulOperation);
-            Assert.Contains("account nameX created at", result.OperationMessage.ToLower());
+            Assert.Contains("ms ad user account created at", result.OperationMessage.ToLower());
         }
 
         [Fact]
