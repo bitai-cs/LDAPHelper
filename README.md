@@ -1,6 +1,6 @@
 # Bitai.LDAPHelper ![Logo](resources/hierarchy_32.png)
 
-A high-performance **.NET 8.0** library wrapping **Novell.Directory.Ldap.NETStandard** functionality to interact with LDAP-compliant Directory Services (such as Microsoft Active Directory). It simplifies operations like searching, authenticating users, and creating, modifying, disabling, or deleting accounts.
+A high-performance library wrapping **Novell.Directory.Ldap.NETStandard** functionality to interact with LDAP-compliant Directory Services (such as Microsoft Active Directory). It simplifies operations like searching, authenticating users, and creating, modifying, disabling, or deleting accounts.
 
 This library is a key component of the [Bitai.LDAPWebApi](https://github.com/bitai-cs/LDAPWebApi) solution ecosystem.
 
@@ -12,7 +12,7 @@ The library is organized into specialized helper classes targeting specific dire
 
 ### 🛡️ 1. Authentication (`Authenticator`)
 Enables quick and secure validation of user credentials on the LDAP/AD server.
-- Supports both **User Distinguished Name (DN)** (`LDAPDistinguishedNameCredential`) and **Domain Account Name** (`LDAPDomainAccountCredential`) credential structures.
+- Supports both **User Distinguished Name (DN)** (`LDAPDistinguishedNameCredential`) and **Domain Username** (`LDAPDomainAccountCredential`) credential structures.
 - Provides a simple authentication bind check (`AuthenticateAsync(credential)`).
 - Provides a comprehensive, pre-validated authentication workflow that first searches the user entry in Active Directory to ensure uniqueness and validity before attempting the bind (`AuthenticateAsync(credential, searchLimits, searchCredential)`).
 
@@ -20,7 +20,7 @@ Enables quick and secure validation of user credentials on the LDAP/AD server.
 Simplifies user provisioning and lifecycle management within Active Directory.
 - **Create User Accounts** (`CreateUserAccountForMsAD`): Provision new Active Directory entries (`LDAPMsADUserAccount`) with extensive attribute mappings (such as UPN, sAMAccountName, unicodePwd, department, memberOf, object classes, and user control flags).
 - **Set/Change Passwords** (`SetUserAccountPasswordForMsAD`): Safe password replacement utilizing secure Unicode encoding. It can optionally test immediate post-update authentication.
-- **Disable Accounts** (`DisableUserAccountForMsAD`): Securely disables accounts by updating the `userAccountControl` attribute with the `ACCOUNTDISABLE` flag, dynamically preserving all other existing account flags to prevent unintended configuration loss.
+- **Disable Accounts** (`DisableUserAccountForMsAD`): Securely disables accounts by updating the `userAccountControl` attribute with the `ACCOUNTDISABLE` flag, dynamically preserving all other existing account name flags to prevent unintended configuration loss.
 - **Remove Accounts** (`RemoveUserAccountForMsAD`): Permanently deletes user entries from the directory service.
 
 ### 🔍 3. Directory Searching (`Searcher`)
@@ -49,7 +49,7 @@ The solution `LDAP Helper Libraries.sln` consists of the following projects:
 
 ## ⚙️ Requirements & Dependencies
 
-- **.NET 8.0 SDK** or higher.
+- **.NET 10 SDK** or higher.
 - **Novell.Directory.Ldap.NETStandard** (v4.0.0+) package dependency.
 
 ---

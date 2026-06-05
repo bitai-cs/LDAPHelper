@@ -1,0 +1,93 @@
+root = true
+
+# =========================================================
+# GLOBAL DEFAULTS (apply to all files)
+# =========================================================
+[*]
+indent_style = space
+indent_size = 4
+tab_width = 4
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# =========================================================
+# C# (Visual Studio, .NET APIs, microservices)
+# =========================================================
+[*.cs]
+indent_style = space
+indent_size = 4
+dotnet_sort_system_directives_first = true
+csharp_new_line_before_open_brace = all
+
+# =========================================================
+# Java (Spring Boot microservices, shared libs)
+# =========================================================
+[*.java]
+indent_style = space
+indent_size = 4
+
+# =========================================================
+# Python (ML scripts, utilities, automation)
+# =========================================================
+[*.py]
+indent_style = space
+indent_size = 4
+max_line_length = 120
+
+# =========================================================
+# JavaScript / TypeScript (React, Angular)
+# =========================================================
+[*.js]
+indent_size = 2
+
+[*.jsx]
+indent_size = 2
+
+[*.ts]
+indent_size = 2
+
+[*.tsx]
+indent_size = 2
+
+# =========================================================
+# HTML / CSS / SCSS (UI templates)
+# =========================================================
+[*.html]
+indent_size = 2
+
+[*.css]
+indent_size = 2
+
+[*.scss]
+indent_size = 2
+
+# =========================================================
+# JSON / YAML / XML (configs, pipelines, manifests)
+# =========================================================
+[*.json]
+indent_size = 2
+
+[*.yml]
+indent_size = 2
+
+[*.yaml]
+indent_size = 2
+
+[*.xml]
+indent_size = 2
+
+# =========================================================
+# Dockerfiles
+# =========================================================
+[Dockerfile]
+indent_style = space
+indent_size = 4
+
+# =========================================================
+# Shell scripts
+# =========================================================
+[*.sh]
+indent_style = space
+indent_size = 2

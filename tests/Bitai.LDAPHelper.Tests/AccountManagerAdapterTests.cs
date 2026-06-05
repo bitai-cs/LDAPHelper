@@ -1,4 +1,4 @@
-﻿using Bitai.LDAPHelper.DTO;
+using Bitai.LDAPHelper.DTO;
 using Bitai.LDAPHelper.Tests.Mocks.LdapAdapters;
 
 namespace Bitai.LDAPHelper.Tests
@@ -35,7 +35,7 @@ namespace Bitai.LDAPHelper.Tests
 
             // Assert
             Assert.True(result.IsSuccessfulOperation);
-            Assert.Contains("user account created at", result.OperationMessage.ToLower());
+            Assert.Contains("account nameX created at", result.OperationMessage.ToLower());
         }
 
         [Fact]

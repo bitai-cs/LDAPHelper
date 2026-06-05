@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.4.33213.308
+# Visual Studio Version 18
+VisualStudioVersion = 18.6.11822.322 stable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bitai.LDAPHelper.DTO", "src\Bitai.LDAPHelper.DTO\Bitai.LDAPHelper.DTO.csproj", "{2386A126-F237-43FD-9A7C-FDF6718ACAD7}"
 EndProject
