@@ -1,4 +1,4 @@
-﻿using Bitai.LDAPHelper.LdapAdapters;
+using Bitai.LDAPHelper.LdapAdapters;
 using Bitai.LDAPHelper.DTO;
 using Bitai.LDAPHelper.QueryFilters;
 using System;
@@ -42,7 +42,7 @@ namespace Bitai.LDAPHelper
                 else {
                     if (searchResult.Entries.Count() == 0) {
                         authenticationResult = new LDAPDomainAccountAuthenticationResult(credential.SecureClone(), false, requestLabel);
-                        authenticationResult.SetSuccessfulOperation($"The domain user account {credential.DomainName}\\{credential.AccountName} could not be found.");
+                        authenticationResult.SetSuccessfulOperation($"The domain username {credential.DomainName}\\{credential.AccountName} could not be found.");
 
                         return authenticationResult;
                     }
@@ -64,7 +64,7 @@ namespace Bitai.LDAPHelper
 
                 authenticationResult = new DTO.LDAPDomainAccountAuthenticationResult(credential.SecureClone(), authenticated.Value, requestLabel);
                 if (authenticated.Value)
-                    authenticationResult.SetSuccessfulOperation($"The domain user account {credential.DomainName}\\{credential.AccountName} has been successfully authenticated.");
+                    authenticationResult.SetSuccessfulOperation($"The domain username {credential.DomainName}\\{credential.AccountName} has been successfully authenticated.");
                 else
                     authenticationResult.SetSuccessfulOperation("The password is wrong");
 
@@ -93,9 +93,9 @@ namespace Bitai.LDAPHelper
                 var result = new DTO.LDAPDomainAccountAuthenticationResult(credential.SecureClone(), authenticated.Value, requestLabel);
 
                 if (authenticated.Value)
-                    result.SetSuccessfulOperation($"The domain user account {credential.DomainAccountName} has been successfully authenticated.");
+                    result.SetSuccessfulOperation($"The domain username {credential.DomainAccountName} has been successfully authenticated.");
                 else
-                    result.SetSuccessfulOperation("Wrong user account and/or password.");
+                    result.SetSuccessfulOperation("Wrong username and/or password.");
 
                 return result;
             }
@@ -130,7 +130,7 @@ namespace Bitai.LDAPHelper
                 else {
                     if (searchResult.Entries.Count() == 0) {
                         authenticationResult = new LDAPDistinguishedNameAuthenticationResult(credential.SecureClone(), false, requestLabel);
-                        authenticationResult.SetSuccessfulOperation($"The account {credential.DistinguishedName} could not be found.");
+                        authenticationResult.SetSuccessfulOperation($"Unable to locate the account's DN: {credential.DistinguishedName}");
 
                         return authenticationResult;
                     }
@@ -152,9 +152,9 @@ namespace Bitai.LDAPHelper
 
                 authenticationResult = new DTO.LDAPDistinguishedNameAuthenticationResult(credential.SecureClone(), authenticated.Value, requestLabel);
                 if (authenticated.Value)
-                    authenticationResult.SetSuccessfulOperation($"The account {credential.DistinguishedName} has been successfully authenticated.");
+                    authenticationResult.SetSuccessfulOperation($"The account with DN: {credential.DistinguishedName} has been successfully authenticated.");
                 else
-                    authenticationResult.SetSuccessfulOperation("The password is wrong");
+                    authenticationResult.SetSuccessfulOperation("Authentication failed: incorrect password.");
 
                 return authenticationResult;
             }
@@ -176,9 +176,9 @@ namespace Bitai.LDAPHelper
                 var result = new DTO.LDAPDistinguishedNameAuthenticationResult(credential.SecureClone(), authenticated.Value, requestLabel);
 
                 if (authenticated.Value)
-                    result.SetSuccessfulOperation($"The account {credential.DistinguishedName} has been successfully authenticated.");
+                    result.SetSuccessfulOperation($"The account with DN: {credential.DistinguishedName} has been successfully authenticated.");
                 else
-                    result.SetSuccessfulOperation("Wrong account and/or password.");
+                    result.SetSuccessfulOperation("Authentication failed: incorrect username or password.");
 
                 return result;
             }

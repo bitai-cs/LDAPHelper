@@ -1,10 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <AssemblyVersion>8.6.0.0</AssemblyVersion>
-    <FileVersion>8.6.0.0</FileVersion>
-    <Version>8.6.0</Version>
+    <TargetFramework>net10.0</TargetFramework>
+    <AssemblyVersion>10.0.0</AssemblyVersion>
+    <FileVersion>10.0.0</FileVersion>
+    <Version>10.0.0</Version>
     <AssemblyName>Bitai.LDAPHelper.DTO</AssemblyName>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Viko Bastidas (BITAI)</Authors>
@@ -21,7 +21,7 @@
     <RepositoryType>GitHub</RepositoryType>
     <PackageTags>ldap, authentication, directory, helper</PackageTags>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageReleaseNotes>.NET 8 ready</PackageReleaseNotes>
+    <PackageReleaseNotes>.NET 10 ready</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
