@@ -12,7 +12,7 @@ public class MockLdapPersistentConnectionFactoryAdapter : ILdapConnectionFactory
     }
 
     public Task<ILdapConnectionAdapter> CreateConnectionAsync(
-        ConnectionInfo connectionInfo,
+        IConnectionInfo connectionInfo,
         string userAccount,
         string password,
         bool bindRequired = true)

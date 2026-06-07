@@ -141,7 +141,7 @@ public class MockLdapPersistenConnectionAdapter : MockLdapConnectionAdapter
     }
 
     public override Task<ILdapSearchQueueAdapter> SearchAsync(
-        SearchLimits searchLimits,
+        ISearchLimits searchLimits,
         string searchFilter,
         string[] attributeNames,
         bool typesOnly)

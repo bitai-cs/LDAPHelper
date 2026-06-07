@@ -17,6 +17,7 @@
 	 <Product>LDAP Services Wrappers</Product>
 	 <Description>Mocks for testing BITAI.LDAPHelper library.</Description>
 	 <PackageProjectUrl>https://github.com/bitai-cs/LDAPHelper</PackageProjectUrl>
+	 <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>

@@ -16,7 +16,7 @@ public interface ILdapConnectionAdapter : IDisposable
     void ServerCertificateValidationByPass(); 
     Task ConnectAsync(string host, int port);
     Task BindAsync(string userDN, string password);
-    Task<ILdapSearchQueueAdapter> SearchAsync(SearchLimits searchLimits, string searchFilter, string[] attributeNames, bool typesOnly);
+    Task<ILdapSearchQueueAdapter> SearchAsync(ISearchLimits searchLimits, string searchFilter, string[] attributeNames, bool typesOnly);
     ILdapAttributeSetAdapter CreateAttributeSet();
     Task AddEntryAsync(string distinguishedName, ILdapAttributeSetAdapter attributes);
     ILdapModificationAdapter CreateModification(LdapModificationType type, string attributeName, object value);
