@@ -1,15 +1,14 @@
-using System.Threading.Tasks;
 using Bitai.LDAPHelper.LdapAdapters;
 
-namespace Bitai.LDAPHelper.Demo.Mocks.LdapAdapters;
+namespace Bitai.LDAPHelper.Tests.Mocks.LdapAdapters;
 
-public class PersistentMockLdapConnectionFactoryAdapter : ILdapConnectionFactoryAdapter
+public class MockLdapPersistentConnectionFactoryAdapter : ILdapConnectionFactoryAdapter
 {
-    private readonly PersistentMockLdapConnectionAdapter _connection;
+    private readonly MockLdapPersistenConnectionAdapter _connection;
 
-    public PersistentMockLdapConnectionFactoryAdapter()
+    public MockLdapPersistentConnectionFactoryAdapter()
     {
-        _connection = new PersistentMockLdapConnectionAdapter();
+        _connection = new MockLdapPersistenConnectionAdapter();
     }
 
     public Task<ILdapConnectionAdapter> CreateConnectionAsync(

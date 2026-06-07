@@ -1,13 +1,14 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using Serilog;
 using System.Linq;
 using System.Collections.Generic;
-using Bitai.LDAPHelper.Demo.Mocks.LdapAdapters;
 using Bitai.LDAPHelper.DTO;
 using Microsoft.Extensions.Configuration;
-using Bitai.LDAPHelper.Demo.Mocks.LdapData;
 using Bitai.LDAPHelper.LdapAdapters.Novell;
+using Bitai.LDAPHelper.Tests.Mocks.LdapAdapters;
+using Bitai.LDAPHelper.Tests.Mocks.LdapData;
+using Microsoft.Extensions.Logging;
 
 namespace Bitai.LDAPHelper.Demo;
 
@@ -116,14 +117,20 @@ public partial class Program
             if (implementation == ImplementationType.Mock)
             {
                 Log.Information("Initializing Mock Implementation...");
-                _context.ConnectionFactory = new PersistentMockLdapConnectionFactoryAdapter();
-                
+                _context.ConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter();
+
+                // Create logger for MockLdapDataSeeder
+                using var loggerFactory = LoggerFactory.Create(builder => {
+                    builder.ClearProviders();
+                    builder.AddSerilog(Log.Logger);
+                });
+                var logger = loggerFactory.CreateLogger<MockLdapDataSeeder>();
+
                 // Seed mock data
-                var seeder = new MockDataSeeder(_context);
+                var seeder = new MockLdapDataSeeder(logger);
                 seeder.SeedAllData();
 
-                //seeder.ExportGroupMembershipDataHierarchyToConsole(true);
-                //Console.ReadKey();
+                seeder.PrintAllData();
 
                 // Set mock connection info (dummy values)
                 _context.SelectedLdapServer = "mock-server";

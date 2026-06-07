@@ -8,10 +8,15 @@
     <AssemblyVersion>10.0.0</AssemblyVersion>
 	 <FileVersion>10.0.0</FileVersion> 
 	 <Authors>Viko Bastidas (BITAI)</Authors>
-	 <Copyright>© 2026 BITAI. All rights reserved.</Copyright>
+	 <Copyright>© 2026 BITAI. MIT License.</Copyright>
 	 <RepositoryUrl>https://github.com/bitai-cs/LDAPHelper.git</RepositoryUrl>
 	 <RepositoryType>GitHub</RepositoryType>
-	 <PackageTags>ldap, authentication, directory, helper</PackageTags>
+	 <PackageTags>ldap;authentication;authorization;directory;helper;oauth;openid;ad;security;identity</PackageTags>
+	 <PackageId>Bitai.LDAPHelper.Tests.Mocks</PackageId>
+	 <Company>BITAI</Company>
+	 <Product>LDAP Services Wrappers</Product>
+	 <Description>Mocks for testing BITAI.LDAPHelper library.</Description>
+	 <PackageProjectUrl>https://github.com/bitai-cs/LDAPHelper</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>
