@@ -15,6 +15,19 @@
     <RepositoryUrl>https://github.com/bitai-cs/LDAPHelper.git</RepositoryUrl>
     <PackageTags>ldap;authentication;authorization;directory;helper;oauth;openid;ad;security;identity</PackageTags>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+      <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+      <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Update="LICENSE.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Update="README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
 </Project>
