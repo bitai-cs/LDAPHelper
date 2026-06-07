@@ -40,7 +40,7 @@ public class MockLdapConnectionAdapter : ILdapConnectionAdapter
         return Task.CompletedTask;
     }        
 
-    public virtual Task<ILdapSearchQueueAdapter> SearchAsync(SearchLimits searchLimits, string searchFilter, string[] attributeNames, bool typesOnly) {
+    public virtual Task<ILdapSearchQueueAdapter> SearchAsync(ISearchLimits searchLimits, string searchFilter, string[] attributeNames, bool typesOnly) {
         var matchingEntries = new List<MockLdapEntryAdapter>();
 
         // Find matching results based on filter

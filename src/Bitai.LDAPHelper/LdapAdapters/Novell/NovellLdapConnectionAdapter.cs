@@ -91,7 +91,7 @@ public class NovellLdapConnectionAdapter : ILdapConnectionAdapter
     /// <param name="typesOnly">Whether to return only attribute types (no values).</param>
     /// <param name="constraints">Optional search constraints adapter which will be translated to the Novell constraints type.</param>
     /// <returns>A task that produces an <see cref="ILdapSearchQueueAdapter"/> wrapping the resulting <see cref="LdapSearchQueue"/>.</returns>
-    public async Task<ILdapSearchQueueAdapter> SearchAsync(SearchLimits searchLimits, string searchFilter, string[] attributeNames, bool typesOnly) {
+    public async Task<ILdapSearchQueueAdapter> SearchAsync(ISearchLimits searchLimits, string searchFilter, string[] attributeNames, bool typesOnly) {
         var novellConstraints = new LdapSearchConstraints() {
             ServerTimeLimit = searchLimits.MaxSearchTimeout,
             MaxResults = searchLimits.MaxSearchResults

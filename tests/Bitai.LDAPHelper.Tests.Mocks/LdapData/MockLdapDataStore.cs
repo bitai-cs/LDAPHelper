@@ -1,20 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
 using Bitai.LDAPHelper.Tests.Mocks.LdapAdapters;
 
-namespace Bitai.LDAPHelper.Demo.Mocks.LdapData;
+namespace Bitai.LDAPHelper.Tests.Mocks.LdapData;
 
-public class MockDataStore
+public class MockLdapDataStore
 {
-    private static readonly Lazy<MockDataStore> _instance = new Lazy<MockDataStore>(() => new MockDataStore());
-    public static MockDataStore Instance => _instance.Value;
+    private static readonly Lazy<MockLdapDataStore> _instance = new Lazy<MockLdapDataStore>(() => new MockLdapDataStore());
+    public static MockLdapDataStore Instance => _instance.Value;
 
     private readonly Dictionary<string, MockLdapEntryAdapter> _entries;
     private readonly ReaderWriterLockSlim _lock;
 
-    private MockDataStore() {
+    private MockLdapDataStore() {
         _entries = new Dictionary<string, MockLdapEntryAdapter>(StringComparer.OrdinalIgnoreCase);
         _lock = new ReaderWriterLockSlim();
     }

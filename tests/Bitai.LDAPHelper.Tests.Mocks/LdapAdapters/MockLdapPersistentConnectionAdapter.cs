@@ -1,20 +1,16 @@
-using System;
-using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
 using Bitai.LDAPHelper.LdapAdapters;
-using Bitai.LDAPHelper.Demo.Mocks.LdapData;
-using Bitai.LDAPHelper.Tests.Mocks.LdapAdapters;
+using Bitai.LDAPHelper.Tests.Mocks.LdapData;
 
-namespace Bitai.LDAPHelper.Demo.Mocks.LdapAdapters;
+namespace Bitai.LDAPHelper.Tests.Mocks.LdapAdapters;
 
-public class PersistentMockLdapConnectionAdapter : MockLdapConnectionAdapter
+public class MockLdapPersistentConnectionAdapter : MockLdapConnectionAdapter
 {
-    private readonly MockDataStore _dataStore;
+    private readonly MockLdapDataStore _dataStore;
 
-    public PersistentMockLdapConnectionAdapter() : base()
+    public MockLdapPersistentConnectionAdapter() : base()
     {
-        _dataStore = MockDataStore.Instance;
+        _dataStore = MockLdapDataStore.Instance;
     }
 
     public override Task AddEntryAsync(string distinguishedName, ILdapAttributeSetAdapter attributes)
@@ -145,7 +141,7 @@ public class PersistentMockLdapConnectionAdapter : MockLdapConnectionAdapter
     }
 
     public override Task<ILdapSearchQueueAdapter> SearchAsync(
-        SearchLimits searchLimits,
+        ISearchLimits searchLimits,
         string searchFilter,
         string[] attributeNames,
         bool typesOnly)

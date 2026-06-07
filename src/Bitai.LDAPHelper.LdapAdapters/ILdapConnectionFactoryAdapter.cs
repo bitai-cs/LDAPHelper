@@ -1,5 +1,3 @@
-using System.Threading.Tasks;
-
 namespace Bitai.LDAPHelper.LdapAdapters;
 
 /// <summary>
@@ -8,7 +6,7 @@ namespace Bitai.LDAPHelper.LdapAdapters;
 public interface ILdapConnectionFactoryAdapter
 {
     Task<ILdapConnectionAdapter> CreateConnectionAsync(
-        ConnectionInfo connectionInfo,
+        IConnectionInfo connectionInfo,
         string userAccount,
         string password,
         bool bindRequired = true);

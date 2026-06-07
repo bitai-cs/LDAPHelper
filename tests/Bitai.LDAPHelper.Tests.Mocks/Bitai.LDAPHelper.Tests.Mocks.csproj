@@ -4,18 +4,37 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-	 <Version>10.0.0</Version>
-    <AssemblyVersion>10.0.0</AssemblyVersion>
-	 <FileVersion>10.0.0</FileVersion> 
+	 <Version>10.1.0</Version>
+    <AssemblyVersion>10.1.0</AssemblyVersion>
+	 <FileVersion>10.1.0</FileVersion> 
 	 <Authors>Viko Bastidas (BITAI)</Authors>
-	 <Copyright>© 2026 BITAI. All rights reserved.</Copyright>
+	 <Copyright>© 2026 BITAI. MIT License.</Copyright>
 	 <RepositoryUrl>https://github.com/bitai-cs/LDAPHelper.git</RepositoryUrl>
 	 <RepositoryType>GitHub</RepositoryType>
-	 <PackageTags>ldap, authentication, directory, helper</PackageTags>
+	 <PackageTags>ldap;authentication;authorization;directory;helper;oauth;openid;ad;security;identity</PackageTags>
+	 <PackageId>Bitai.LDAPHelper.Tests.Mocks</PackageId>
+	 <Company>BITAI</Company>
+	 <Product>LDAP Services Wrappers</Product>
+	 <Description>Mocks for testing BITAI.LDAPHelper library.</Description>
+	 <PackageProjectUrl>https://github.com/bitai-cs/LDAPHelper</PackageProjectUrl>
+	 <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+      <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+      <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Bitai.LDAPHelper\Bitai.LDAPHelper.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="LICENSE.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Update="README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>

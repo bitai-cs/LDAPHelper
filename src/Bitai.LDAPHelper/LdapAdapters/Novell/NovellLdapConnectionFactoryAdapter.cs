@@ -10,7 +10,7 @@ namespace Bitai.LDAPHelper.LdapAdapters.Novell;
 public class NovellLdapConnectionFactoryAdapter : ILdapConnectionFactoryAdapter
 {
     public async Task<ILdapConnectionAdapter> CreateConnectionAsync(
-        ConnectionInfo connectionInfo,
+        IConnectionInfo connectionInfo,
         string userAccount,
         string password,
         bool bindRequired = true) {

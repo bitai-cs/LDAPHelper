@@ -1,11 +1,13 @@
-﻿namespace Bitai.LDAPHelper
+using Bitai.LDAPHelper.LdapAdapters;
+
+namespace Bitai.LDAPHelper
 {
-	public class SearchLimits
-	{
-		/// <summary>
-		/// The base distinguished name (DN) to search from.
-		/// </summary>
-		public string BaseDN { get; set; } = "DC=com";
+    public class SearchLimits : ISearchLimits
+    {
+        /// <summary>
+        /// The base distinguished name (DN) to search from.
+        /// </summary>
+        public string BaseDN { get; set; } = "DC=com";
 
         /// <summary>
         /// The scope of the search operation, which determines how deep the search will 
@@ -20,14 +22,15 @@
         /// </summary>
         public int MaxSearchResults { get; set; } = 1000;
 
-		/// <summary>
-		///  Maximum number of seconds that the server waits when returning search results. 
-		///  The search operation will be terminated with an LdapException.TIME_LIMIT_EXCEEDED if the operation exceeds the time limit.
-		/// </summary>
-		public int MaxSearchTimeout { get; set; } = 60;
+        /// <summary>
+        ///  Maximum number of seconds that the server waits when returning search results. 
+        ///  The search operation will be terminated with an LdapException.TIME_LIMIT_EXCEEDED if the operation exceeds the time limit.
+        /// </summary>
+        public int MaxSearchTimeout { get; set; } = 60;
 
-		public SearchLimits(string baseDN) {
-			this.BaseDN = baseDN;
-		}
-	}
+        public SearchLimits(string baseDN)
+        {
+            this.BaseDN = baseDN;
+        }
+    }
 }

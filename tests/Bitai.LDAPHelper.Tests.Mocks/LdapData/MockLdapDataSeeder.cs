@@ -1,17 +1,13 @@
-﻿using Bitai.LDAPHelper.Tests.Mocks.LdapAdapters;
-using Serilog;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
+using Bitai.LDAPHelper.Tests.Mocks.LdapAdapters;
+using Microsoft.Extensions.Logging;
 
-namespace Bitai.LDAPHelper.Demo.Mocks.LdapData;
+namespace Bitai.LDAPHelper.Tests.Mocks.LdapData;
 
-public class MockDataSeeder
+public class MockLdapDataSeeder
 {
-    private readonly DemoContext _context;
-    private readonly MockDataStore _dataStore;
+    private readonly MockLdapDataStore _dataStore;
     private readonly Random _random;
+    private readonly ILogger<MockLdapDataSeeder> _logger;
 
     // Progressive RID counters (thread-safe)
     private static int _nextUserRid = 1000;     // Users start from 1000
@@ -19,20 +15,20 @@ public class MockDataSeeder
     private static int _nextComputerRid = 3000;  // Computers start from 3000
     private static int _nextOtherRid = 4000;     // Other objects start from 4000
 
-    public MockDataSeeder(DemoContext context) {
-        _context = context;
-        _dataStore = MockDataStore.Instance;
+    public MockLdapDataSeeder(ILogger<MockLdapDataSeeder> logger) {
+        _dataStore = MockLdapDataStore.Instance;
         _random = new Random();
+        _logger = logger;
     }
 
     public void SeedAllData() {
         _dataStore.Clear();
 
-        Log.Information("=".PadRight(60, '='));
-        Log.Information("MOCK DATA SEEDING STARTED");
-        Log.Information("=".PadRight(60, '='));
-        Log.Information($"RID counters initialized - Users: {_nextUserRid}, Groups: {_nextGroupRid}, Computers: {_nextComputerRid}");
-        Log.Information("=".PadRight(60, '='));
+        _logger.LogInformation("=".PadRight(60, '='));
+        _logger.LogInformation("MOCK DATA SEEDING STARTED");
+        _logger.LogInformation("=".PadRight(60, '='));
+        _logger.LogInformation($"RID counters initialized - Users: {_nextUserRid}, Groups: {_nextGroupRid}, Computers: {_nextComputerRid}");
+        _logger.LogInformation("=".PadRight(60, '='));
 
         // Create domain structure
         SeedDomainStructure();
@@ -61,15 +57,25 @@ public class MockDataSeeder
         // Create additional relationships
         SeedAdditionalRelationships();
 
-        Log.Information("=".PadRight(60, '='));
-        Log.Information($"MOCK DATA SEEDING COMPLETED");
-        Log.Information($"Total Entries Created: {_dataStore.Count}");
-        Log.Information($"Users: {CountEntriesByObjectClass("user")}");
-        Log.Information($"Groups: {CountEntriesByObjectClass("group")}");
-        Log.Information($"Computers: {CountEntriesByObjectClass("computer")}");
-        Log.Information($"OUs: {CountEntriesByObjectClass("organizationalUnit")}");
-        Log.Information($"Final RID counters - Users: {_nextUserRid}, Groups: {_nextGroupRid}, Computers: {_nextComputerRid}");
-        Log.Information("=".PadRight(60, '='));
+        _logger.LogInformation("=".PadRight(60, '='));
+        _logger.LogInformation($"MOCK DATA SEEDING COMPLETED");
+        _logger.LogInformation($"Total Entries Created: {_dataStore.Count}");
+        _logger.LogInformation($"Users: {CountEntriesByObjectClass("user")}");
+        _logger.LogInformation($"Groups: {CountEntriesByObjectClass("group")}");
+        _logger.LogInformation($"Computers: {CountEntriesByObjectClass("computer")}");
+        _logger.LogInformation($"OUs: {CountEntriesByObjectClass("organizationalUnit")}");
+        _logger.LogInformation($"Final RID counters - Users: {_nextUserRid}, Groups: {_nextGroupRid}, Computers: {_nextComputerRid}");
+        _logger.LogInformation("=".PadRight(60, '='));
+    }
+
+    public void PrintAllData() {
+        _logger.LogInformation("=".PadRight(60, '='));
+        _logger.LogInformation($"LISTING ALL ENTRIES: {_dataStore.Count}");
+        foreach (var entry in _dataStore.GetAllEntries())
+        {
+            _logger.LogInformation(entry.DistinguishedName);
+        }
+        _logger.LogInformation("=".PadRight(60, '='));
     }
 
     #region Domain Structure
@@ -196,16 +202,16 @@ public class MockDataSeeder
     }
 
     private void SeedDemoSpecificUsers() {
-        //// Create user for CreateUserAccount demo
-        //var newUser = new UserData(
-        //    "Victor",
-        //    "Bastidas",
-        //    "victor.bastidas",
-        //    "HOLDING",
-        //    "OU=Seniors,OU=DevOps,OU=IT,DC=holding,DC=latam,DC=com",
-        //    "Senior DevOps Engineer"
-        //);
-        //CreateMockUser(newUser);
+        // Create user for CreateUserAccount demo
+        var newUser = new UserData(
+            "Victor",
+            "Bastidas",
+            "victor.bastidas",
+            "HOLDING",
+            "OU=Seniors,OU=DevOps,OU=IT,DC=holding,DC=latam,DC=com",
+            "Senior DevOps Engineer"
+        );
+        CreateMockUser(newUser);
 
         // Create user for password reset demo
         var passwordResetUser = new UserData(
@@ -295,7 +301,7 @@ public class MockDataSeeder
         }
 
         _dataStore.AddOrUpdateEntry(userEntry);
-        Log.Debug($"Created user: {user.SAMAccountName} ({distinguishedName}) with RID: {rid}");
+        _logger.LogDebug($"Created user: {user.SAMAccountName} ({distinguishedName}) with RID: {rid}");
     }
 
     #endregion
@@ -378,7 +384,7 @@ public class MockDataSeeder
         groupEntry.AddAttribute("distinguishedName", groupDistinguishedName);
 
         _dataStore.AddOrUpdateEntry(groupEntry);
-        Log.Debug($"Created group: {group.SAMAccountName} ({groupDistinguishedName}) with RID: {rid}");
+        _logger.LogDebug($"Created group: {group.SAMAccountName} ({groupDistinguishedName}) with RID: {rid}");
     }
 
     #endregion
@@ -438,7 +444,7 @@ public class MockDataSeeder
         computerEntry.AddAttribute("distinguishedName", distinguishedName);
 
         _dataStore.AddOrUpdateEntry(computerEntry);
-        Log.Debug($"Created computer: {computer.Name} ({distinguishedName}) with RID: {rid}");
+        _logger.LogDebug($"Created computer: {computer.Name} ({distinguishedName}) with RID: {rid}");
     }
 
     #endregion

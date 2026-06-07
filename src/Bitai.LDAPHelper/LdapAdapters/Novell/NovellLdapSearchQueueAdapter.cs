@@ -1,4 +1,4 @@
-﻿using Novell.Directory.Ldap;
+using Novell.Directory.Ldap;
 
 namespace Bitai.LDAPHelper.LdapAdapters.Novell;
 
