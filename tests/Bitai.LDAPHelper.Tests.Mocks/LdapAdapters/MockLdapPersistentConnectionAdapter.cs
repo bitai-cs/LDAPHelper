@@ -4,11 +4,11 @@ using Bitai.LDAPHelper.Tests.Mocks.LdapData;
 
 namespace Bitai.LDAPHelper.Tests.Mocks.LdapAdapters;
 
-public class MockLdapPersistenConnectionAdapter : MockLdapConnectionAdapter
+public class MockLdapPersistentConnectionAdapter : MockLdapConnectionAdapter
 {
     private readonly MockLdapDataStore _dataStore;
 
-    public MockLdapPersistenConnectionAdapter() : base()
+    public MockLdapPersistentConnectionAdapter() : base()
     {
         _dataStore = MockLdapDataStore.Instance;
     }
