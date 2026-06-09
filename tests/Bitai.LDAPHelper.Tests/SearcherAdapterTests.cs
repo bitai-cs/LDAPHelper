@@ -108,11 +108,12 @@ namespace Bitai.LDAPHelper.Tests
             var searcher = new Searcher(connectionInfo, searchLimits, credential, mockConnectionFactory);
 
             GenerateCommonUserSearchFilter("Dummiest", "User", searchLimits, out var expectedDummiestUserSearchFilter, out var _);
+
             var result = await searcher.SearchParentEntriesAsync(expectedDummiestUserSearchFilter, RequiredEntryAttributes.Minimun, "TestRequest");
 
             Assert.False(result.IsSuccessfulOperation);
-            Assert.Empty(result.Entries);
-            Assert.Contains("no one entry was found", result.OperationMessage.ToLower());
+            Assert.Null(result.Entries);
+            Assert.StartsWith("nonexistent entry", result.OperationMessage, StringComparison.OrdinalIgnoreCase);
         }
     }
 }

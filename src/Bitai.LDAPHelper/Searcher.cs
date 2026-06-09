@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Novell.Directory.Ldap;
 
 namespace Bitai.LDAPHelper
 {
@@ -154,8 +155,6 @@ namespace Bitai.LDAPHelper
 
 		private async Task<DTO.LDAPSearchResult> getSearchResultAsync(DTO.RequiredEntryAttributes requiredEntryAttributes, string searchFilter, string requestLabel)
 		{
-			DTO.LDAPSearchResult searchResult;
-
 			try {
 				var attributesToLoad = this.GetRequiredAttributeNames(requiredEntryAttributes);
 				var entries = new List<DTO.LDAPEntry>();
@@ -176,20 +175,25 @@ namespace Bitai.LDAPHelper
 					connection.Disconnect();
 				}
 
-				searchResult = new DTO.LDAPSearchResult(requestLabel, entries, $"The search returned {entries.Count} entries.");
-
-				return searchResult;
+				return new DTO.LDAPSearchResult(requestLabel, entries, $"The search returned {entries.Count} entries.");
 			}
-			catch (Exception ex) when (ex.GetType().Name == "LdapException") {
-				var ldapErrorMessageProp = ex.GetType().GetProperty("LdapErrorMessage");
-				string ldapErrorMessage = ldapErrorMessageProp?.GetValue(ex) as string ?? "";
-				string msg = string.IsNullOrEmpty(ldapErrorMessage) ? ex.Message : $"{ex.Message} ({ldapErrorMessage})";
-				searchResult = new DTO.LDAPSearchResult(msg, ex, requestLabel);
+            catch (LdapException ex)
+            {
+                string msg = string.IsNullOrEmpty(ex.LdapErrorMessage) ? ex.Message : (string.IsNullOrEmpty(ex.Message) ? ex.LdapErrorMessage : $"{ex.Message} ({ex.LdapErrorMessage})");
+                var searchResult = new DTO.LDAPSearchResult(msg, ex, requestLabel);
 
-				return searchResult;
-			}
+                return searchResult;
+            }
+            //// BITAI: Remain for future reference if we want to avoid direct dependency on Novell.Directory.Ldap in this class. The LdapException type is specific to the Novell library, so if we want to keep this class decoupled from that library, we can catch general Exception and check the type name as done in other parts of the code. However, if we are okay with referencing Novell.Directory.Ldap directly, catching LdapException is more straightforward and type-safe.
+            //catch (Exception ex) when (ex.GetType().Name == "LdapException") {
+			//	var ldapErrorMessageProp = ex.GetType().GetProperty("LdapErrorMessage");
+			//	string ldapErrorMessage = ldapErrorMessageProp?.GetValue(ex) as string ?? "";
+			//	string msg = string.IsNullOrEmpty(ldapErrorMessage) ? ex.Message : $"{ex.Message} ({ldapErrorMessage})";
+			//	searchResult = new DTO.LDAPSearchResult(msg, ex, requestLabel);
+			//	return searchResult;
+			//}
 			catch (Exception ex) {
-				searchResult = new DTO.LDAPSearchResult($"Unexpected error performing search. {ex.Message}", ex, requestLabel);
+				var searchResult = new DTO.LDAPSearchResult($"Unexpected error encountered while performing search.", ex, requestLabel);
 
 				return searchResult;
 			}
@@ -263,9 +267,7 @@ namespace Bitai.LDAPHelper
                     return partialSearchResult;
                 }
                 else if (partialSearchResult.Entries.Count() == 0) {
-                    partialSearchResult.SetUnsuccessfulOperation("No one entry was found according to the search filter.");
-
-                    return partialSearchResult;
+                    throw new EntryNotFoundException("Unable to evaluate without an entry.");
                 }
 
                 var collectedEntries = partialSearchResult.Entries.SelectAllMemberOfEntriesRecursively();
@@ -284,15 +286,28 @@ namespace Bitai.LDAPHelper
 
                 return new DTO.LDAPSearchResult(requestLabel, resultEntries);
             }
-			catch (Exception ex) when (ex.GetType().Name == "LdapException") {
-				var ldapErrorMessageProp = ex.GetType().GetProperty("LdapErrorMessage");
-				string ldapErrorMessage = ldapErrorMessageProp?.GetValue(ex) as string ?? "";
-				string msg = string.IsNullOrEmpty(ldapErrorMessage) ? ex.Message : $"{ex.Message} ({ldapErrorMessage})";
-				var searchResult = new DTO.LDAPSearchResult(msg, ex, requestLabel);
+            catch (EntryNotFoundException ex)
+            {
+                var searchResult = new DTO.LDAPSearchResult("Nonexistent entry.", ex, requestLabel);
 
-				return searchResult;
-			}
-			catch (Exception ex) {
+                return searchResult;
+            }
+            catch (LdapException ex)
+            {
+                string msg = string.IsNullOrEmpty(ex.LdapErrorMessage) ? ex.Message : (string.IsNullOrEmpty(ex.Message) ? ex.LdapErrorMessage : $"{ex.Message} ({ex.LdapErrorMessage})");
+                var searchResult = new DTO.LDAPSearchResult(msg, ex, requestLabel);
+
+                return searchResult;
+            }
+            //// BITAI: Remain for future reference if we want to avoid direct dependency on Novell.Directory.Ldap in this class. The LdapException type is specific to the Novell library, so if we want to keep this class decoupled from that library, we can catch general Exception and check the type name as done in other parts of the code. However, if we are okay with referencing Novell.Directory.Ldap directly, catching LdapException is more straightforward and type-safe.
+            //catch (Exception ex) when (ex.GetType().Name == "LdapException") {
+            //	var ldapErrorMessageProp = ex.GetType().GetProperty("LdapErrorMessage");
+            //	string ldapErrorMessage = ldapErrorMessageProp?.GetValue(ex) as string ?? "";
+            //	string msg = string.IsNullOrEmpty(ldapErrorMessage) ? ex.Message : $"{ex.Message} ({ldapErrorMessage})";
+            //	var searchResult = new DTO.LDAPSearchResult(msg, ex, requestLabel);
+            //	return searchResult;
+            //}
+            catch (Exception ex) {
 				var searchResult = new DTO.LDAPSearchResult($"Unexpected error performing search. {ex.Message}", ex, requestLabel);
 
 				return searchResult;

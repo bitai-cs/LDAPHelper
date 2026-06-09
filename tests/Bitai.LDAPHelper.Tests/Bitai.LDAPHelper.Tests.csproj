@@ -7,9 +7,9 @@
 
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
-    <AssemblyVersion>10.0.0</AssemblyVersion>
-    <FileVersion>10.0.0</FileVersion>
-    <Version>10.0.0</Version>
+    <AssemblyVersion>10.0.1</AssemblyVersion>
+    <FileVersion>10.0.1</FileVersion>
+    <Version>10.0.1</Version>
     <UserSecretsId>5981b6a0-6b9e-439d-8324-a0ef8bfd0f11</UserSecretsId>
   </PropertyGroup>
 

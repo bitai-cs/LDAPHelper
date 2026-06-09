@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Data;
 
 namespace Bitai.LDAPHelper
 {
@@ -29,37 +30,67 @@ namespace Bitai.LDAPHelper
 				userAccount.DistinguishedName = $"CN={userAccount.Cn},{userAccount.DistinguishedNameOfContainer}";
 		}
 
-		/// <summary>
-		/// Create a username in MS Active Directory service
-		/// https://www.rlmueller.net/Name_Attributes.htm
-		/// </summary>
-		/// <param name="newUserAccount"><see cref="LDAPMsADUserAccount"/></param>
-		/// <param name="distinguishedNameOfContainer">DN of the container in which the username will be created.</param>
-		/// <param name="requestLabel">Optional tag to mark the request and/or response.</param>
-		/// <returns>A Task of <see cref="LDAPCreateMsADUserAccountResult"/></returns>
-		public async Task<LDAPCreateMsADUserAccountResult> CreateUserAccountForMsAD(LDAPMsADUserAccount newUserAccount, string requestLabel = null)
-		{
-			try
-			{
-				#region Validate minimally required properties
-				if (string.IsNullOrEmpty(newUserAccount.DistinguishedNameOfContainer))
-					throw new InvalidOperationException($"{nameof(newUserAccount.DistinguishedNameOfContainer)} is required.");
+        /// <summary>
+        /// Create a username in MS Active Directory service
+        /// https://www.rlmueller.net/Name_Attributes.htm
+        /// </summary>
+        /// <param name="newUserAccount"><see cref="LDAPMsADUserAccount"/></param>
+        /// <param name="distinguishedNameOfContainer">DN of the container in which the username will be created.</param>
+        /// <param name="requestLabel">Optional tag to mark the request and/or response.</param>
+        /// <returns>A Task of <see cref="LDAPCreateMsADUserAccountResult"/></returns>
+        public async Task<LDAPCreateMsADUserAccountResult> CreateUserAccountForMsAD(LDAPMsADUserAccount newUserAccount, string requestLabel = null)
+        {
+            try
+            {
+                #region Validate minimally required properties
+                if (string.IsNullOrEmpty(newUserAccount.DistinguishedNameOfContainer))
+                    throw new DataValidationException($"{nameof(newUserAccount.DistinguishedNameOfContainer)} is required.");
 
-				if (string.IsNullOrEmpty(newUserAccount.Cn))
-					throw new InvalidOperationException($"{nameof(newUserAccount.Cn)} is required.");
+                if (string.IsNullOrEmpty(newUserAccount.Cn))
+                    throw new DataValidationException($"{nameof(newUserAccount.Cn)} is required.");
 
-				if (string.IsNullOrEmpty(newUserAccount.DisplayName))
-					throw new InvalidOperationException($"{nameof(newUserAccount.DisplayName)} is required.");
+                if (string.IsNullOrEmpty(newUserAccount.DisplayName))
+                    throw new DataValidationException($"{nameof(newUserAccount.DisplayName)} is required.");
 
-				if (string.IsNullOrEmpty(newUserAccount.SAMAccountName))
-					throw new InvalidOperationException($"{nameof(newUserAccount.SAMAccountName)} is required.");
+                if (string.IsNullOrEmpty(newUserAccount.SAMAccountName))
+                    throw new DataValidationException($"{nameof(newUserAccount.SAMAccountName)} is required.");
 
-				if (newUserAccount.ObjectClass == null || newUserAccount.ObjectClass.Length == 0)
-					throw new InvalidOperationException($"{nameof(newUserAccount.ObjectClass)} is required.");
-				#endregion
+                if (newUserAccount.ObjectClass == null || newUserAccount.ObjectClass.Length == 0)
+                    throw new DataValidationException($"{nameof(newUserAccount.ObjectClass)} is required.");
+                #endregion
 
-				//Generate username DistinguishedName LDAP attribute
-				InitializeMissingMsADUserAccountDN(newUserAccount);
+                //Generate username DistinguishedName LDAP attribute
+                InitializeMissingMsADUserAccountDN(newUserAccount);
+
+                LDAPEntry checkUserAccount = null;
+                // Check whether an entry with the same distinguished name already exists in the directory before creating a new user. Since the distinguished name must be unique, a duplicate entry cannot be created. If one already exists, return an error or ask for a different name.
+                try
+                {
+                    checkUserAccount = await verifyMsADEntryAccountAuthenticity(EntryAttribute.distinguishedName, newUserAccount.DistinguishedName, false, requestLabel);
+                }
+                catch (Exception)
+                {
+                    // Do nothing
+                }
+                finally
+                {
+                    if (checkUserAccount != null)
+                        throw new DuplicateNameException($"The {EntryAttribute.displayName}: {newUserAccount.DistinguishedName} already exists in the directory.");
+                }
+                // Check whether an entry with the same sAMAccountName already exists in the directory before creating a new user. Since the sAMAccountName must be unique, a duplicate entry cannot be created. If one already exists, return an error or ask for a different name.
+                try
+                {
+                    checkUserAccount = await verifyMsADEntryAccountAuthenticity(EntryAttribute.sAMAccountName, newUserAccount.SAMAccountName, false, requestLabel);
+                }
+                catch (Exception)
+                {
+                    // Do nothing
+                }
+                finally
+                {
+                    if (checkUserAccount != null)
+                        throw new DuplicateNameException($"The {EntryAttribute.sAMAccountName}: {newUserAccount.SAMAccountName} already exists in the directory.");
+                }
 
                 using (var ldapConnection = await GetLdapConnection(this.ConnectionInfo, this.DomainAccountCredential)) {
                     #region Initialize and populate LDAP attribute set
@@ -110,21 +141,28 @@ namespace Bitai.LDAPHelper
                     if (!string.IsNullOrEmpty(newUserAccount.Password)) {
                         byte[] encodedNewPasswordBytes = Encoding.Unicode.GetBytes($"\"{newUserAccount.Password}\"");
                         attributeSet.AddAttribute(EntryAttribute.unicodePwd.ToString(), encodedNewPasswordBytes);
-                    }                   
+                    }
                     #endregion
 
                     //Add new username entry to the directory
-                    await ldapConnection.AddEntryAsync(newUserAccount.DistinguishedName, attributeSet);                    
+                    await ldapConnection.AddEntryAsync(newUserAccount.DistinguishedName, attributeSet);
                 }
 
-				return new LDAPCreateMsADUserAccountResult(newUserAccount.SecureClone(), requestLabel)
-				{
-					OperationMessage = $"MS AD user account created at {newUserAccount.DistinguishedName} with {EntryAttribute.sAMAccountName.ToString()}: {newUserAccount.SAMAccountName}"
-				};
-			}
-			catch (Exception ex)
+                return new LDAPCreateMsADUserAccountResult(newUserAccount.SecureClone(), requestLabel)
+                {
+                    OperationMessage = $"MS AD user account created at {newUserAccount.DistinguishedName} with {EntryAttribute.sAMAccountName.ToString()}: {newUserAccount.SAMAccountName}"
+                };
+            }
+            catch (DataValidationException ex)
+            {
+                return new LDAPCreateMsADUserAccountResult("Unable to create user account.", ex, requestLabel)
+                {
+                    UserAccount = newUserAccount.SecureClone()
+                };
+            }
+            catch (Exception ex)
 			{
-				return new LDAPCreateMsADUserAccountResult("Error creating username.", ex, requestLabel)
+				return new LDAPCreateMsADUserAccountResult("Unexpected error while attempting to create user account.", ex, requestLabel)
 				{
 					UserAccount = newUserAccount.SecureClone()
 				};
@@ -138,7 +176,7 @@ namespace Bitai.LDAPHelper
         /// <param name="requestLabel">Optional tag to mark the request and/or response.</param>
         /// <param name="postUpdateTestAuthentication">True if the MS AD user account will be tested to verify authentication with the new password. False if the password will simply be assigned and authentication will not be tested.</param>
         /// <returns></returns>
-        public async Task<LDAPPasswordUpdateResult> SetUserAccountPasswordForMsAD(DTO.LDAPDistinguishedNameCredential credential, string requestLabel = null, bool postUpdateTestAuthentication = true)
+        public async Task<LDAPPasswordUpdateResult> SetUserAccountPasswordForMsAD(LDAPDistinguishedNameCredential credential, string requestLabel = null, bool postUpdateTestAuthentication = true)
 		{
 			try
 			{
@@ -148,7 +186,7 @@ namespace Bitai.LDAPHelper
 				if (string.IsNullOrEmpty(credential.Password))
 					throw new ArgumentNullException($"The password to be assigned is required.");
 
-				var entry = await verifyUserAccountAuthenticity(credential.DistinguishedName, requestLabel);
+				var entry = await verifyMsADEntryAccountAuthenticity(EntryAttribute.distinguishedName, credential.DistinguishedName, true, requestLabel);
 
 				//Create password modification request
 				string newPassword = $"\"{credential.Password}\"";
@@ -163,7 +201,7 @@ namespace Bitai.LDAPHelper
 
                     //Send modification request to the directory
                     await ldapConnection.ModifyEntryAsync(entry.distinguishedName, new[] { modification });
-                    //await ldapConnection.ModifyAsync(entry.distinguishedName, pwdModification);
+                    //await ldapConnection.ModifyAsync(entry.identifierValue, pwdModification);
 
                     if (postUpdateTestAuthentication)
 					{
@@ -189,33 +227,40 @@ namespace Bitai.LDAPHelper
                         return createSuccessfulResult(requestLabel, entry.distinguishedName);
                 }
 			}
-			catch (Bitai.LDAPHelper.EntryNotFoundException ex) {
-                return new DTO.LDAPPasswordUpdateResult(ex.Message, ex, requestLabel);
+			catch (EntryNotFoundException ex) {
+                return new LDAPPasswordUpdateResult("User account not found.", ex, requestLabel);
             }
-			catch (Exception ex)
+            catch (DataValidationException ex)
+            {
+                return new LDAPPasswordUpdateResult("Invalid data found.", ex, requestLabel);
+            }
+            catch (Exception ex)
 			{
-				return new DTO.LDAPPasswordUpdateResult("Unexpected error trying to replace password.", ex, requestLabel);
+				return new LDAPPasswordUpdateResult("Unexpected error while attempting to replace password.", ex, requestLabel);
 			}
 
-            DTO.LDAPPasswordUpdateResult createSuccessfulResult(string label, string name) {
-                return new DTO.LDAPPasswordUpdateResult(label, $"Password set successfully for {name}");
+            LDAPPasswordUpdateResult createSuccessfulResult(string label, string name) {
+                return new LDAPPasswordUpdateResult(label, $"Password set successfully for {name}");
             }
         }
 
         /// <summary>
         /// Remove a username from MS Active Directory service. This method will verify the authenticity of the username by its distinguished name before trying to remove it. If the username is not valid, the operation will not be attempted and an error will be returned.
         /// </summary>
-        /// <param name="distinguishedName">Distinguished name of the username</param>
+        /// <param name="identifierValue">Distinguished name of the username</param>
         /// <param name="requestLabel">Optional tag to mark the request and/or response.</param>
         /// <returns><see cref="LDAPDisableUserAccountOperationResult"/></returns>
-        public async Task<LDAPDisableUserAccountOperationResult> DisableUserAccountForMsAD(string distinguishedName, string requestLabel)
+        public async Task<LDAPDisableUserAccountOperationResult> DisableUserAccountForMsAD(EntryAttribute identifierAttribute, string identifierValue, string requestLabel)
 		{
 			try
 			{
-				if (string.IsNullOrEmpty(distinguishedName))
-					throw new ArgumentNullException(nameof(distinguishedName));
+                if (EntryAttribute.sAMAccountName != identifierAttribute && EntryAttribute.distinguishedName != identifierAttribute)
+                    throw new ArgumentException($"The identifier attribute must be {EntryAttribute.sAMAccountName} or {EntryAttribute.distinguishedName} for disabling a user account.");
 
-				var entry = await verifyUserAccountAuthenticity(distinguishedName, requestLabel);
+                if (string.IsNullOrEmpty(identifierValue))
+					throw new ArgumentNullException($"The user account's {identifierAttribute} value is required.");
+
+                var entry = await verifyMsADEntryAccountAuthenticity(identifierAttribute, identifierValue, true, requestLabel);
 
                 using (var ldapConnection = await GetLdapConnection(this.ConnectionInfo, this.DomainAccountCredential)) {
                     //To disable a MS AD user account, the userAccountControl attribute needs to be set with the appropriate flags. The flag for disabling an account is ACCOUNTDISABLE (0x0002). However, when setting the userAccountControl attribute, it is important to preserve the existing flags that are set for the account, and only add the ACCOUNTDISABLE flag without removing any of the existing flags. This is because other flags may be set for the account that are necessary for its proper functioning, and removing them could cause unintended consequences. Therefore, when disabling a username, you should retrieve the current value of the userAccountControl attribute, add the ACCOUNTDISABLE flag to it, and then update the attribute with the new value that includes both the existing flags and the ACCOUNTDISABLE flag.
@@ -229,7 +274,7 @@ namespace Bitai.LDAPHelper
 
                     //Send modification request to the directory
                     await ldapConnection.ModifyEntryAsync(entry.distinguishedName, new[] { modification });
-                    //await ldapConnection.ModifyAsync(entry.distinguishedName, userAccountControlModification);
+                    //await ldapConnection.ModifyAsync(entry.identifierValue, userAccountControlModification);
                 }
 
 				return new DTO.LDAPDisableUserAccountOperationResult(requestLabel)
@@ -237,35 +282,43 @@ namespace Bitai.LDAPHelper
 					OperationMessage = $"Username {entry.samAccountName} has been disabled."
 				};
 			}
-            catch (Bitai.LDAPHelper.EntryNotFoundException ex) {
-                return new DTO.LDAPDisableUserAccountOperationResult(ex.Message, ex, requestLabel);
+            catch (EntryNotFoundException ex)
+            {
+                return new LDAPDisableUserAccountOperationResult("User account not found.", ex, requestLabel);
+            }
+            catch (DataValidationException ex)
+            {
+                return new LDAPDisableUserAccountOperationResult("Invalid data found.", ex, requestLabel);
             }
             catch (Exception ex)
 			{
-				return new LDAPDisableUserAccountOperationResult($"Error trying to disable username with DN: {distinguishedName}", ex, requestLabel);
+				return new LDAPDisableUserAccountOperationResult($"Error trying to disable username with DN: {identifierValue}", ex, requestLabel);
 			}
 		}
 
         /// <summary>
         /// Remove a username in MS Active Directory service. This operation will permanently delete the username entry from the directory, so it should be used with caution.
         /// </summary>
-        /// <param name="distinguishedName">Distinguished name of the username</param>
+        /// <param name="identifierValue">Distinguished name of the username</param>
         /// <param name="requestLabel">Optional tag to mark the request and/or response.</param>
         /// <returns><see cref="LDAPRemoveMsADUserAccountResult"/></returns>
-        public async Task<LDAPRemoveMsADUserAccountResult> RemoveUserAccountForMsAD(string distinguishedName, string requestLabel = null)
+        public async Task<LDAPRemoveMsADUserAccountResult> RemoveUserAccountForMsAD(EntryAttribute identifierAttribute, string identifierValue, string requestLabel = null)
 		{
 			try
 			{
-				if (string.IsNullOrEmpty(distinguishedName))
-					throw new ArgumentNullException("The distinguished name of the username to remove must be provided.");
+                if (identifierAttribute != EntryAttribute.sAMAccountName && identifierAttribute != EntryAttribute.distinguishedName)
+                    throw new ArgumentException($"The identifier attribute must be {EntryAttribute.sAMAccountName} or {EntryAttribute.distinguishedName} for removing a user account.");
 
-				var entry = await verifyUserAccountAuthenticity(distinguishedName, requestLabel);
+                if (string.IsNullOrEmpty(identifierValue))
+                    throw new ArgumentNullException($"The user account's {identifierAttribute} value is required.");
+
+                var entry = await verifyMsADEntryAccountAuthenticity(identifierAttribute, identifierValue, true, requestLabel);
 
 				using (var ldapConnection = await GetLdapConnection(this.ConnectionInfo, this.DomainAccountCredential))
 				{
                     //To remove a username from MS AD, the username entry needs to be deleted from the directory. This operation will permanently delete the username entry, so it should be used with caution.
                     await ldapConnection.DeleteEntryAsync(entry.distinguishedName);
-                    //await ldapConnection.DeleteAsync(entry.distinguishedName);
+                    //await ldapConnection.DeleteAsync(entry.identifierValue);
                 }
 
 				return new LDAPRemoveMsADUserAccountResult(requestLabel)
@@ -273,22 +326,30 @@ namespace Bitai.LDAPHelper
 					OperationMessage = $"The username {entry.samAccountName} has been successfully removed."
 				};
 			}
-            catch (Bitai.LDAPHelper.EntryNotFoundException ex) {
-                return new LDAPRemoveMsADUserAccountResult(ex.Message, ex, requestLabel);
+            catch (EntryNotFoundException ex)
+            {
+                return new LDAPRemoveMsADUserAccountResult("User account not found.", ex, requestLabel);
+            }
+            catch (DataValidationException ex)
+            {
+                return new LDAPRemoveMsADUserAccountResult("Invalid data found.", ex, requestLabel);
             }
             catch (Exception ex)
 			{
-				return new LDAPRemoveMsADUserAccountResult($"Error trying to remove username with DN: {distinguishedName}", ex, requestLabel);
+				return new LDAPRemoveMsADUserAccountResult($"Error trying to remove username with DN: {identifierValue}", ex, requestLabel);
 			}
 		}
 
 
 
 
-		private async Task<LDAPEntry> verifyUserAccountAuthenticity(string distinguishedName, string requestLabel = null)
+		private async Task<LDAPEntry> verifyMsADEntryAccountAuthenticity(EntryAttribute identifierAttribute, string identifierValue, bool validateObjectClass, string requestLabel = null)
 		{
-			var onlyUsersFilterCombiner = QueryFilters.AttributeFilterCombiner.CreateOnlyUsersFilterCombiner();
-			var attributeFilter = new QueryFilters.AttributeFilter(EntryAttribute.distinguishedName, new QueryFilters.FilterValue(distinguishedName));
+            if (identifierAttribute != EntryAttribute.sAMAccountName && identifierAttribute != EntryAttribute.distinguishedName)
+                throw new ArgumentException($"The identifier attribute must be {EntryAttribute.sAMAccountName} or {EntryAttribute.distinguishedName} for verifying the authenticity of a user account.");
+
+            var onlyUsersFilterCombiner = QueryFilters.AttributeFilterCombiner.CreateOnlyUsersFilterCombiner();
+			var attributeFilter = new QueryFilters.AttributeFilter(identifierAttribute, new QueryFilters.FilterValue(identifierValue));
 			var searchFilterCombiner = new QueryFilters.AttributeFilterCombiner(false, true, new List<QueryFilters.ICombinableFilter> { onlyUsersFilterCombiner, attributeFilter });
 
 			var searcher = new Searcher(this.ConnectionInfo, this.SearchLimits, this.DomainAccountCredential, ConnectionFactory);
@@ -302,12 +363,12 @@ namespace Bitai.LDAPHelper
 			}
 
 			if (searchResult.Entries.Count() == 0)
-				throw new EntryNotFoundException($"DN {distinguishedName} does not exist.");
+				throw new EntryNotFoundException($"{identifierAttribute} {identifierValue} does not exist.");
 
 			var entry = searchResult.Entries.Single();
 
-			if (!entry.objectClass.Contains("user"))
-				throw new InvalidOperationException($"DN {distinguishedName} is not a username.");
+			if (validateObjectClass && !entry.objectClass.Contains("user"))
+				throw new DataValidationException($"{identifierAttribute} {identifierValue} is not a user entry.");
 
 			return entry;
 		}

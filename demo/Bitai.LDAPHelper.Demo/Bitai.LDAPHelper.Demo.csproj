@@ -10,9 +10,9 @@
 		<Copyright>© 2026 BITAI. All rights reserved.</Copyright>
 		<PackageId>Bitai.Bitai.LDAPHelper.Demo</PackageId>
 		<PackageIcon>hierarchy_32.png</PackageIcon>
-		<Version>10.0.0</Version>
-		<AssemblyVersion>10.0.0</AssemblyVersion>
-		<FileVersion>10.0.0</FileVersion>
+		<Version>10.0.1</Version>
+		<AssemblyVersion>10.0.1</AssemblyVersion>
+		<FileVersion>10.0.1</FileVersion>
 		<PackageReleaseNotes>.NET 10 ready</PackageReleaseNotes>
 		<PackageTags>ldap-ad-identity-auth-openid-oauth-security</PackageTags>
 	</PropertyGroup>

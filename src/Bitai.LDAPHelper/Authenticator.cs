@@ -33,8 +33,10 @@ namespace Bitai.LDAPHelper
                         return new LDAPDomainAccountAuthenticationResult(credential, searchResult.OperationMessage, searchResult.ErrorObject, requestLabel);
                     }
                     else {
-                        authenticationResult = new LDAPDomainAccountAuthenticationResult(credential, false, requestLabel, false);
-                        authenticationResult.OperationMessage = searchResult.OperationMessage;
+                        authenticationResult = new LDAPDomainAccountAuthenticationResult(credential, false, requestLabel, false)
+                        {
+                            OperationMessage = searchResult.OperationMessage
+                        };
 
                         return authenticationResult;
                     }

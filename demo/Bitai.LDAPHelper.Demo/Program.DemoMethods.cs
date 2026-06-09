@@ -172,7 +172,7 @@ public partial class Program
         var accountManager = new AccountManager(context.GetClientConfiguration(), context.ConnectionFactory);
 
         Log.Information("Disabling user account {dn}", distinguishedName);
-        var result = await accountManager.DisableUserAccountForMsAD(distinguishedName, context.RequestLabel);
+        var result = await accountManager.DisableUserAccountForMsAD(EntryAttribute.distinguishedName, distinguishedName, context.RequestLabel);
 
         if (result.IsSuccessfulOperation)
         {
@@ -194,7 +194,7 @@ public partial class Program
         var accountManager = new AccountManager(context.GetClientConfiguration(), context.ConnectionFactory);
 
         Log.Information("Removing user account {dn}", distinguishedName);
-        var result = await accountManager.RemoveUserAccountForMsAD(distinguishedName, context.RequestLabel);
+        var result = await accountManager.RemoveUserAccountForMsAD(EntryAttribute.distinguishedName, distinguishedName, context.RequestLabel);
 
         if (result.IsSuccessfulOperation)
         {
