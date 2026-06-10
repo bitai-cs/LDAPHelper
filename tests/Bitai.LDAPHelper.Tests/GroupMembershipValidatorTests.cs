@@ -1,4 +1,4 @@
-﻿using Bitai.LDAPHelper.DTO;
+using Bitai.LDAPHelper.DTO;
 using Bitai.LDAPHelper.Tests.Mocks.LdapAdapters;
 
 namespace Bitai.LDAPHelper.Tests
@@ -700,7 +700,7 @@ namespace Bitai.LDAPHelper.Tests
             var exception = await Assert.ThrowsAsync<EntryNotFoundException>(
                 () => validator.GetAllGroupMembershipsAsync("john.doe"));
 
-            Assert.Contains("no one entry was found", exception.Message.ToLower());
+            Assert.StartsWith("unable to evaluate without an entry", exception.Message, StringComparison.OrdinalIgnoreCase);
         }
 
         [Fact]

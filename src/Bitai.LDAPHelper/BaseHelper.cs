@@ -1,8 +1,9 @@
-using Bitai.LDAPHelper.LdapAdapters;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Bitai.LDAPHelper.Extensions;
+using Bitai.LDAPHelper.LdapAdapters;
 
 namespace Bitai.LDAPHelper
 {
@@ -195,7 +196,7 @@ namespace Bitai.LDAPHelper
 				default:
 					throw new ArgumentOutOfRangeException("requiredEntryAttributes");
 			}
-		}
-		#endregion
-	}
+		}        
+        #endregion
+    }
 }
