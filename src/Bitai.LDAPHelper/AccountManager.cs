@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data;
+using Novell.Directory.Ldap;
 
 namespace Bitai.LDAPHelper
 {
@@ -70,7 +71,7 @@ namespace Bitai.LDAPHelper
                 }
                 catch (Exception)
                 {
-                    // Do nothing
+                    // Do nothing. Any exception thrown from the verifyMsADEntryAccountAuthenticity method can be ignored because if an entry with the same distinguished name does not exist, an exception will be thrown and we can simply ignore it and proceed to create the new user account. The only time we need to pay attention is when no exception is thrown and an entry is returned, which means an entry with the same distinguished name already exists and we should not create a new user account with the same distinguished name.
                 }
                 finally
                 {
@@ -84,7 +85,7 @@ namespace Bitai.LDAPHelper
                 }
                 catch (Exception)
                 {
-                    // Do nothing
+                    // Do nothing. Any exception thrown from the verifyMsADEntryAccountAuthenticity method can be ignored because if an entry with the same sAMAccountName does not exist, an exception will be thrown and we can simply ignore it and proceed to create the new user account. The only time we need to pay attention is when no exception is thrown and an entry is returned, which means an entry with the same sAMAccountName already exists and we should not create a new user account with the same sAMAccountName.
                 }
                 finally
                 {
@@ -176,20 +177,23 @@ namespace Bitai.LDAPHelper
         /// <param name="requestLabel">Optional tag to mark the request and/or response.</param>
         /// <param name="postUpdateTestAuthentication">True if the MS AD user account will be tested to verify authentication with the new password. False if the password will simply be assigned and authentication will not be tested.</param>
         /// <returns></returns>
-        public async Task<LDAPPasswordUpdateResult> SetUserAccountPasswordForMsAD(LDAPDistinguishedNameCredential credential, string requestLabel = null, bool postUpdateTestAuthentication = true)
+        public async Task<LDAPPasswordUpdateResult> SetMsADUserAccountPassword(EntryAttribute identifierAttribute, string identifierValue, string password, string requestLabel = null, bool postUpdateTestAuthentication = true)
 		{
 			try
 			{
-				if (string.IsNullOrEmpty(credential.DistinguishedName))
-					throw new ArgumentNullException("The distinguished name of the username is required.");
+                if (identifierAttribute != EntryAttribute.sAMAccountName && identifierAttribute != EntryAttribute.distinguishedName)
+                    throw new ArgumentException($"The identifier attribute must be {EntryAttribute.sAMAccountName} or {EntryAttribute.distinguishedName} for setting a user account password.");
 
-				if (string.IsNullOrEmpty(credential.Password))
-					throw new ArgumentNullException($"The password to be assigned is required.");
+                if (string.IsNullOrEmpty(identifierValue))
+					throw new DataValidationException("The user account identifier is required.");
 
-				var entry = await verifyMsADEntryAccountAuthenticity(EntryAttribute.distinguishedName, credential.DistinguishedName, true, requestLabel);
+                if (string.IsNullOrEmpty(password))
+					throw new DataValidationException("The user account password is required.");
+
+				var entry = await verifyMsADEntryAccountAuthenticity(identifierAttribute, identifierValue, true, requestLabel);
 
 				//Create password modification request
-				string newPassword = $"\"{credential.Password}\"";
+				string newPassword = $"\"{password}\"";
 				byte[] encodedNewPasswordBytes = Encoding.Unicode.GetBytes(newPassword);
 				//string newPasswordEncodedString = Convert.ToBase64String(encodedNewPasswordBytes);
 				//var pwdAttribute = new LdapAttribute(DTO.EntryAttribute.unicodePwd.ToString(), encodedNewPasswordBytes);
@@ -205,8 +209,9 @@ namespace Bitai.LDAPHelper
 
                     if (postUpdateTestAuthentication)
 					{
+                        var postValidationCredential = new LDAPDistinguishedNameCredential(entry.distinguishedName, password);
 						var authenticator = new Authenticator(ConnectionInfo, ConnectionFactory);
-						var authenticationResult = await authenticator.AuthenticateAsync(credential, requestLabel);
+						var authenticationResult = await authenticator.AuthenticateAsync(postValidationCredential, requestLabel);
 
 						if (authenticationResult.IsSuccessfulOperation)
 						{
@@ -250,7 +255,7 @@ namespace Bitai.LDAPHelper
         /// <param name="identifierValue">Distinguished name of the username</param>
         /// <param name="requestLabel">Optional tag to mark the request and/or response.</param>
         /// <returns><see cref="LDAPDisableUserAccountOperationResult"/></returns>
-        public async Task<LDAPDisableUserAccountOperationResult> DisableUserAccountForMsAD(EntryAttribute identifierAttribute, string identifierValue, string requestLabel)
+        public async Task<LDAPDisableUserAccountOperationResult> DisableMsADUserAccount(EntryAttribute identifierAttribute, string identifierValue, string requestLabel)
 		{
 			try
 			{
@@ -292,7 +297,7 @@ namespace Bitai.LDAPHelper
             }
             catch (Exception ex)
 			{
-				return new LDAPDisableUserAccountOperationResult($"Error trying to disable username with DN: {identifierValue}", ex, requestLabel);
+				return new LDAPDisableUserAccountOperationResult($"Error trying to disable user account with {identifierAttribute}: {identifierValue}", ex, requestLabel);
 			}
 		}
 
@@ -302,7 +307,7 @@ namespace Bitai.LDAPHelper
         /// <param name="identifierValue">Distinguished name of the username</param>
         /// <param name="requestLabel">Optional tag to mark the request and/or response.</param>
         /// <returns><see cref="LDAPRemoveMsADUserAccountResult"/></returns>
-        public async Task<LDAPRemoveMsADUserAccountResult> RemoveUserAccountForMsAD(EntryAttribute identifierAttribute, string identifierValue, string requestLabel = null)
+        public async Task<LDAPRemoveMsADUserAccountResult> RemoveMsADUserAccount(EntryAttribute identifierAttribute, string identifierValue, string requestLabel = null)
 		{
 			try
 			{
@@ -336,7 +341,7 @@ namespace Bitai.LDAPHelper
             }
             catch (Exception ex)
 			{
-				return new LDAPRemoveMsADUserAccountResult($"Error trying to remove username with DN: {identifierValue}", ex, requestLabel);
+				return new LDAPRemoveMsADUserAccountResult($"Error trying to remove username with {identifierAttribute}: {identifierValue}", ex, requestLabel);
 			}
 		}
 
@@ -356,10 +361,17 @@ namespace Bitai.LDAPHelper
 			var searchResult = await searcher.SearchEntriesAsync(searchFilterCombiner, RequiredEntryAttributes.Few, requestLabel);
 			if (!searchResult.IsSuccessfulOperation)
 			{
-				if (searchResult.HasErrorObject)
-					throw searchResult.ErrorObject;
-				else
-					throw new Exception(searchResult.OperationMessage);
+                if (searchResult.HasErrorObject) {
+                    if (searchResult.ErrorObject is LdapException) {
+                        var unwrappedLdapException = (LdapException)searchResult.ErrorObject;
+
+                        throw new LdapException(searchResult.OperationMessage, unwrappedLdapException.ResultCode, unwrappedLdapException.LdapErrorMessage, unwrappedLdapException);
+                    }
+                    else
+                        throw new Exception(searchResult.OperationMessage, searchResult.ErrorObject);
+                }
+                else
+                    throw new Exception(searchResult.OperationMessage);
 			}
 
 			if (searchResult.Entries.Count() == 0)

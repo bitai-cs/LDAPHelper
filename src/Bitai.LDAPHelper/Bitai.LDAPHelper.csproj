@@ -7,9 +7,9 @@
     <Product>LDAP Services Wrappers</Product>
     <Description>Library to wrap Novell.Directory.Ldap.NETStandard functionality to make LDAP common queries to search accounts and objects in a Directory Service.</Description>
     <Copyright>© 2026 BITAI. All rights reserved.</Copyright>
-    <Version>10.1.1</Version>
-    <AssemblyVersion>10.1.1</AssemblyVersion>
-    <FileVersion>10.1.1</FileVersion>
+    <Version>10.1.2</Version>
+    <AssemblyVersion>10.1.2</AssemblyVersion>
+    <FileVersion>10.1.2</FileVersion>
     <PackageIcon>hierarchy_32.png</PackageIcon>    
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>Bitai.LDAPHelper</PackageId>

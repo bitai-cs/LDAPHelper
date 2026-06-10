@@ -3,7 +3,7 @@ using System;
 namespace Bitai.LDAPHelper
 {
     [Serializable]
-    internal class DataValidationException : Exception
+    public class DataValidationException : Exception
     {
         public DataValidationException()
         {

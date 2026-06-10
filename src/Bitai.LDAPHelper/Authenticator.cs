@@ -16,7 +16,7 @@ namespace Bitai.LDAPHelper
 
 
         #region Public methods
-        public async Task<DTO.LDAPDomainAccountAuthenticationResult> AuthenticateAsync(DTO.LDAPDomainAccountCredential credential, SearchLimits searchLimits, LDAPDomainAccountCredential credentialForSearching, string requestLabel = null) {
+        public async Task<LDAPDomainAccountAuthenticationResult> AuthenticateAsync(LDAPDomainAccountCredential credential, SearchLimits searchLimits, LDAPDomainAccountCredential credentialForSearching, string requestLabel = null) {
             LDAPDomainAccountAuthenticationResult authenticationResult;
 
             try {
@@ -64,7 +64,7 @@ namespace Bitai.LDAPHelper
                         authenticated = false;
                 }
 
-                authenticationResult = new DTO.LDAPDomainAccountAuthenticationResult(credential.SecureClone(), authenticated.Value, requestLabel);
+                authenticationResult = new LDAPDomainAccountAuthenticationResult(credential.SecureClone(), authenticated.Value, requestLabel);
                 if (authenticated.Value)
                     authenticationResult.SetSuccessfulOperation($"The domain username {credential.DomainName}\\{credential.AccountName} has been successfully authenticated.");
                 else
@@ -73,7 +73,7 @@ namespace Bitai.LDAPHelper
                 return authenticationResult;
             }
             catch (Exception ex) {
-                return new DTO.LDAPDomainAccountAuthenticationResult(credential.SecureClone(), $"Failed to authenticate {credential.DomainAccountName}", ex, requestLabel);
+                return new LDAPDomainAccountAuthenticationResult(credential.SecureClone(), $"Failed to authenticate {credential.DomainAccountName}", ex, requestLabel);
             }
         }
 
@@ -82,7 +82,7 @@ namespace Bitai.LDAPHelper
         /// </summary>
         /// <param name="credential"><see cref="Credentials"/> to connect and authenticate on the LDAP Server.</param>
         /// <returns>True or false, if authenticated or no.</returns>
-        public async Task<DTO.LDAPDomainAccountAuthenticationResult> AuthenticateAsync(DTO.LDAPDomainAccountCredential credential, string requestLabel = null) {
+        public async Task<LDAPDomainAccountAuthenticationResult> AuthenticateAsync(LDAPDomainAccountCredential credential, string requestLabel = null) {
             try {
                 bool? authenticated;
                 using (var connection = await GetLdapConnection(this.ConnectionInfo, credential, false)) {
@@ -92,7 +92,7 @@ namespace Bitai.LDAPHelper
                         authenticated = false;
                 }
 
-                var result = new DTO.LDAPDomainAccountAuthenticationResult(credential.SecureClone(), authenticated.Value, requestLabel);
+                var result = new LDAPDomainAccountAuthenticationResult(credential.SecureClone(), authenticated.Value, requestLabel);
 
                 if (authenticated.Value)
                     result.SetSuccessfulOperation($"The domain username {credential.DomainAccountName} has been successfully authenticated.");
@@ -102,11 +102,11 @@ namespace Bitai.LDAPHelper
                 return result;
             }
             catch (Exception ex) {
-                return new DTO.LDAPDomainAccountAuthenticationResult(credential.SecureClone(), $"Failed to authenticate {credential.DomainAccountName}", ex, requestLabel);
+                return new LDAPDomainAccountAuthenticationResult(credential.SecureClone(), $"Failed to authenticate {credential.DomainAccountName}", ex, requestLabel);
             }
         }
 
-        public async Task<DTO.LDAPDistinguishedNameAuthenticationResult> AuthenticateAsync(DTO.LDAPDistinguishedNameCredential credential, SearchLimits searchLimits, LDAPDomainAccountCredential credentialForSearching, string requestLabel = null) {
+        public async Task<LDAPDistinguishedNameAuthenticationResult> AuthenticateAsync(LDAPDistinguishedNameCredential credential, SearchLimits searchLimits, LDAPDomainAccountCredential credentialForSearching, string requestLabel = null) {
             LDAPDistinguishedNameAuthenticationResult authenticationResult;
 
             try {
@@ -152,7 +152,7 @@ namespace Bitai.LDAPHelper
                         authenticated = false;
                 }
 
-                authenticationResult = new DTO.LDAPDistinguishedNameAuthenticationResult(credential.SecureClone(), authenticated.Value, requestLabel);
+                authenticationResult = new LDAPDistinguishedNameAuthenticationResult(credential.SecureClone(), authenticated.Value, requestLabel);
                 if (authenticated.Value)
                     authenticationResult.SetSuccessfulOperation($"The account with DN: {credential.DistinguishedName} has been successfully authenticated.");
                 else
@@ -161,11 +161,11 @@ namespace Bitai.LDAPHelper
                 return authenticationResult;
             }
             catch (Exception ex) {
-                return new DTO.LDAPDistinguishedNameAuthenticationResult(credential.SecureClone(), $"Failed to authenticate {credential.DistinguishedName}", ex, requestLabel);
+                return new LDAPDistinguishedNameAuthenticationResult(credential.SecureClone(), $"Failed to authenticate {credential.DistinguishedName}", ex, requestLabel);
             }
         }
 
-        public async Task<DTO.LDAPDistinguishedNameAuthenticationResult> AuthenticateAsync(DTO.LDAPDistinguishedNameCredential credential, string requestLabel = null) {
+        public async Task<LDAPDistinguishedNameAuthenticationResult> AuthenticateAsync(LDAPDistinguishedNameCredential credential, string requestLabel = null) {
             try {
                 bool? authenticated;
                 using (var connection = await GetLdapConnection(this.ConnectionInfo, credential, false)) {
@@ -175,7 +175,7 @@ namespace Bitai.LDAPHelper
                         authenticated = false;
                 }
 
-                var result = new DTO.LDAPDistinguishedNameAuthenticationResult(credential.SecureClone(), authenticated.Value, requestLabel);
+                var result = new LDAPDistinguishedNameAuthenticationResult(credential.SecureClone(), authenticated.Value, requestLabel);
 
                 if (authenticated.Value)
                     result.SetSuccessfulOperation($"The account with DN: {credential.DistinguishedName} has been successfully authenticated.");
@@ -185,7 +185,7 @@ namespace Bitai.LDAPHelper
                 return result;
             }
             catch (Exception ex) {
-                return new DTO.LDAPDistinguishedNameAuthenticationResult(credential.SecureClone(), $"Failed to authenticate {credential.DistinguishedName}", ex, requestLabel);
+                return new LDAPDistinguishedNameAuthenticationResult(credential.SecureClone(), $"Failed to authenticate {credential.DistinguishedName}", ex, requestLabel);
             }
         }
         #endregion

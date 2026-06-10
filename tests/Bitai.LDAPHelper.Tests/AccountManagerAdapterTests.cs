@@ -96,9 +96,7 @@ namespace Bitai.LDAPHelper.Tests
             mockConnection.AddSearchResult(groupSearchFilter2.ToString(), new List<MockLdapEntryAdapter> { mockGroupEntry2 });
             mockConnection.AddSearchResult(userSearchFilter.ToString(), new List<MockLdapEntryAdapter> { mockUserEntry });
 
-            var userCredential = new LDAPDistinguishedNameCredential(mockUserEntry.DistinguishedName, "NewP@ssw0rd");
-
-            var result = await accountManager.SetUserAccountPasswordForMsAD(userCredential, "TestPassword", postUpdateTestAuthentication: true);
+            var result = await accountManager.SetMsADUserAccountPassword(EntryAttribute.distinguishedName, mockUserEntry.DistinguishedName, "TestPassword", postUpdateTestAuthentication: true);
 
             // Assert
             Assert.True(result.IsSuccessfulOperation);
@@ -133,7 +131,7 @@ namespace Bitai.LDAPHelper.Tests
 
             var userCredential = new LDAPDistinguishedNameCredential(mockUserEntry.DistinguishedName, "NewP@ssw0rd");
 
-            var result = await accountManager.SetUserAccountPasswordForMsAD(userCredential, "TestPassword", postUpdateTestAuthentication: true);
+            var result = await accountManager.SetMsADUserAccountPassword(EntryAttribute.distinguishedName, mockUserEntry.DistinguishedName, "TestPassword", postUpdateTestAuthentication: true);
 
             Assert.False(result.IsSuccessfulOperation);
             Assert.StartsWith("user account not found", result.OperationMessage, StringComparison.OrdinalIgnoreCase);
@@ -163,7 +161,7 @@ namespace Bitai.LDAPHelper.Tests
             mockConnection.AddSearchResult(groupSearchFilter2.ToString(), new List<MockLdapEntryAdapter> { mockGroupEntry2 });
             mockConnection.AddSearchResult(userSearchFilter.ToString(), new List<MockLdapEntryAdapter> { mockUserEntry });
 
-            var result = await accountManager.DisableUserAccountForMsAD(EntryAttribute.distinguishedName, mockUserEntry.DistinguishedName, "TestDisable");
+            var result = await accountManager.DisableMsADUserAccount(EntryAttribute.distinguishedName, mockUserEntry.DistinguishedName, "TestDisable");
 
             // Assert
             Assert.True(result.IsSuccessfulOperation);          
@@ -195,7 +193,7 @@ namespace Bitai.LDAPHelper.Tests
             //Do not add user account in order to trigger user not found validation.
             //mockConnection.AddSearchResult(userSearchFilter.ToString(), new List<MockLdapEntryAdapter> { mockUserEntry });
 
-            var result = await accountManager.DisableUserAccountForMsAD(EntryAttribute.distinguishedName, mockUserEntry.DistinguishedName, "TestDisable");
+            var result = await accountManager.DisableMsADUserAccount(EntryAttribute.distinguishedName, mockUserEntry.DistinguishedName, "TestDisable");
 
             // Assert
             Assert.False(result.IsSuccessfulOperation);
@@ -226,7 +224,7 @@ namespace Bitai.LDAPHelper.Tests
 
             var accountManager = new AccountManager(connectionInfo, searchLimits, credential, mockConnectionFactory);
             
-            var result = await accountManager.RemoveUserAccountForMsAD(EntryAttribute.distinguishedName, mockUserEntry.DistinguishedName, "TestDelete");
+            var result = await accountManager.RemoveMsADUserAccount(EntryAttribute.distinguishedName, mockUserEntry.DistinguishedName, "TestDelete");
 
             Assert.True(result.IsSuccessfulOperation);
             Assert.Contains("successfully removed", result.OperationMessage.ToLower());
@@ -257,7 +255,7 @@ namespace Bitai.LDAPHelper.Tests
 
             var accountManager = new AccountManager(connectionInfo, searchLimits, credential, mockConnectionFactory);
 
-            var result = await accountManager.RemoveUserAccountForMsAD(EntryAttribute.distinguishedName, mockUserEntry.DistinguishedName, "TestDelete");
+            var result = await accountManager.RemoveMsADUserAccount(EntryAttribute.distinguishedName, mockUserEntry.DistinguishedName, "TestDelete");
 
             Assert.False(result.IsSuccessfulOperation);
             Assert.Contains("user account not found", result.OperationMessage, StringComparison.OrdinalIgnoreCase);

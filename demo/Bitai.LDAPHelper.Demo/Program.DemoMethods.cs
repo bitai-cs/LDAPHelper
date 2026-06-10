@@ -143,11 +143,11 @@ public partial class Program
         Log.Information($"Enter new password for {distinguishedName}");
 
         var password = requestAccountPassword(distinguishedName);
-        var credential = new LDAPDistinguishedNameCredential(distinguishedName, password);
+
         var accountManager = new AccountManager(context.GetClientConfiguration(), context.ConnectionFactory);
 
         Log.Information("Setting account password...");
-        var result = await accountManager.SetUserAccountPasswordForMsAD(credential, context.RequestLabel);
+        var result = await accountManager.SetMsADUserAccountPassword(EntryAttribute.distinguishedName, distinguishedName, password, context.RequestLabel);
 
         if (result.IsSuccessfulOperation)
         {
@@ -172,7 +172,7 @@ public partial class Program
         var accountManager = new AccountManager(context.GetClientConfiguration(), context.ConnectionFactory);
 
         Log.Information("Disabling user account {dn}", distinguishedName);
-        var result = await accountManager.DisableUserAccountForMsAD(EntryAttribute.distinguishedName, distinguishedName, context.RequestLabel);
+        var result = await accountManager.DisableMsADUserAccount(EntryAttribute.distinguishedName, distinguishedName, context.RequestLabel);
 
         if (result.IsSuccessfulOperation)
         {
@@ -194,7 +194,7 @@ public partial class Program
         var accountManager = new AccountManager(context.GetClientConfiguration(), context.ConnectionFactory);
 
         Log.Information("Removing user account {dn}", distinguishedName);
-        var result = await accountManager.RemoveUserAccountForMsAD(EntryAttribute.distinguishedName, distinguishedName, context.RequestLabel);
+        var result = await accountManager.RemoveMsADUserAccount(EntryAttribute.distinguishedName, distinguishedName, context.RequestLabel);
 
         if (result.IsSuccessfulOperation)
         {
