@@ -1,7 +1,7 @@
-﻿using System.Text;
+using System.Text;
 using Bitai.LDAPHelper.LdapAdapters;
 
-namespace Bitai.LDAPHelper.Tests.Mocks.LdapAdapters;
+namespace Bitai.LDAPHelper.LdapAdapters.LdapHelperMock;
 
 /// <summary>
 /// Mock implementation of ILdapAttributeAdapter that mimics Novell.Directory.Ldap.LdapAttribute behavior

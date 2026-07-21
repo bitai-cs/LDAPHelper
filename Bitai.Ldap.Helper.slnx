@@ -1,0 +1,24 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/adapters/">
+    <Project Path="adapters/Bitai.LDAPHelper.LdapAdapters.LdapHelperMock/Bitai.LDAPHelper.LdapAdapters.LdapHelperMock.csproj" />
+    <Project Path="adapters/Bitai.LDAPHelper.LdapAdapters.Novell/Bitai.LDAPHelper.LdapAdapters.Novell.csproj" />
+  </Folder>
+  <Folder Name="/demo/">
+    <Project Path="demo/Bitai.LDAPHelper.Demo/Bitai.LDAPHelper.Demo.csproj" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Bitai.LDAPHelper.DTO/Bitai.LDAPHelper.DTO.csproj" />
+    <Project Path="src/Bitai.LDAPHelper/Bitai.LDAPHelper.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Bitai.LDAPHelper.Tests/Bitai.LDAPHelper.Tests.csproj" />
+  </Folder>
+</Solution>

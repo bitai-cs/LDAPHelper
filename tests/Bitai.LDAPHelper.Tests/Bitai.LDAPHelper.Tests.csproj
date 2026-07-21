@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -29,9 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Bitai.LDAPHelper.DTO\Bitai.LDAPHelper.DTO.csproj" />
-    <ProjectReference Include="..\..\src\Bitai.LDAPHelper\Bitai.LDAPHelper.csproj" />
-    <ProjectReference Include="..\Bitai.LDAPHelper.Tests.Mocks\Bitai.LDAPHelper.Tests.Mocks.csproj" />
+    <ProjectReference Include="..\..\adapters\Bitai.LDAPHelper.LdapAdapters.LdapHelperMock\Bitai.LDAPHelper.LdapAdapters.LdapHelperMock.csproj" />
   </ItemGroup>
 
   <ItemGroup>

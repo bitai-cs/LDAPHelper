@@ -1,8 +1,8 @@
 using System.Text;
 using Bitai.LDAPHelper.LdapAdapters;
-using Bitai.LDAPHelper.Tests.Mocks.LdapData;
+using Bitai.LDAPHelper.LdapAdapters.LdapHelperMock.LdapData;
 
-namespace Bitai.LDAPHelper.Tests.Mocks.LdapAdapters;
+namespace Bitai.LDAPHelper.LdapAdapters.LdapHelperMock;
 
 /// <summary>
 /// Persistent mock connection backed by a shared in-memory LDAP data store.

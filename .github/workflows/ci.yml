@@ -38,10 +38,10 @@ jobs:
         run: dotnet --info
 
       - name: Restore
-        run: dotnet restore Bitai.Ldap.Helper.sln
+        run: dotnet restore Bitai.Ldap.Helper.slnx
 
       - name: Build
-        run: dotnet build Bitai.Ldap.Helper.sln --configuration Release --no-restore
+        run: dotnet build Bitai.Ldap.Helper.slnx --configuration Release --no-restore
 
       - name: Test
-        run: dotnet test Bitai.Ldap.Helper.sln --configuration Release --no-build --no-restore --verbosity normal
+        run: dotnet test Bitai.Ldap.Helper.slnx --configuration Release --no-build --no-restore --verbosity normal

@@ -1,6 +1,6 @@
-using Bitai.LDAPHelper.Tests.Mocks.LdapAdapters;
+using Bitai.LDAPHelper.LdapAdapters.LdapHelperMock;
 
-namespace Bitai.LDAPHelper.Tests.Mocks.LdapData;
+namespace Bitai.LDAPHelper.LdapAdapters.LdapHelperMock.LdapData;
 
 /// <summary>
 /// Thread-safe in-memory LDAP entry store used by persistent mock adapters.

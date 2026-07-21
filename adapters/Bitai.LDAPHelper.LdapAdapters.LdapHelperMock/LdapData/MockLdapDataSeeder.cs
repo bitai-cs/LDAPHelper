@@ -1,7 +1,7 @@
-using Bitai.LDAPHelper.Tests.Mocks.LdapAdapters;
+using Bitai.LDAPHelper.LdapAdapters.LdapHelperMock;
 using Microsoft.Extensions.Logging;
 
-namespace Bitai.LDAPHelper.Tests.Mocks.LdapData;
+namespace Bitai.LDAPHelper.LdapAdapters.LdapHelperMock.LdapData;
 
 /// <summary>
 /// Seeds deterministic mock LDAP data for integration-style tests and demos.
