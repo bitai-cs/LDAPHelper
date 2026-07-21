@@ -1,7 +1,10 @@
-﻿using Bitai.LDAPHelper.LdapAdapters;
+using Bitai.LDAPHelper.LdapAdapters;
 
 namespace Bitai.LDAPHelper.Tests.Mocks.LdapAdapters;
 
+/// <summary>
+/// In-memory mock implementation of <see cref="ILdapAttributeSetAdapter"/> for tests.
+/// </summary>
 public class MockLdapAttributeSetAdapter : ILdapAttributeSetAdapter
 {
     private Dictionary<string, MockLdapAttributeAdapter> _attributeDictionary = new();

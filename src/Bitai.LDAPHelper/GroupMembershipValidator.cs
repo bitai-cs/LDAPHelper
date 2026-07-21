@@ -1,17 +1,32 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Bitai.LDAPHelper.LdapAdapters;
 
 namespace Bitai.LDAPHelper
 {
+    /// <summary>
+    /// Validates group membership relationships for directory users.
+    /// </summary>
     public class GroupMembershipValidator : BaseHelper
     {
         #region Constructors
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GroupMembershipValidator"/> class.
+        /// </summary>
+        /// <param name="clientConfiguration">Client configuration containing connection, credential, and search settings.</param>
+        /// <param name="connectionFactory">LDAP connection factory abstraction.</param>
         public GroupMembershipValidator(ClientConfiguration clientConfiguration, ILdapConnectionFactoryAdapter connectionFactory)
             : base(clientConfiguration, connectionFactory) {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GroupMembershipValidator"/> class.
+        /// </summary>
+        /// <param name="connectionInfo">LDAP server connection settings.</param>
+        /// <param name="searchLimits">LDAP search limits.</param>
+        /// <param name="domainAccountCredential">Credential used to execute LDAP searches.</param>
+        /// <param name="connectionFactory">LDAP connection factory abstraction.</param>
         public GroupMembershipValidator(
             ConnectionInfo connectionInfo,
             SearchLimits searchLimits,

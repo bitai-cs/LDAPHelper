@@ -2,6 +2,9 @@ using Bitai.LDAPHelper.LdapAdapters;
 
 namespace Bitai.LDAPHelper.Tests.Mocks.LdapAdapters;
 
+/// <summary>
+/// Factory for creating persistent mock LDAP connections backed by shared in-memory data.
+/// </summary>
 public class MockLdapPersistentConnectionFactoryAdapter : ILdapConnectionFactoryAdapter
 {
     private readonly MockLdapPersistentConnectionAdapter _connection;

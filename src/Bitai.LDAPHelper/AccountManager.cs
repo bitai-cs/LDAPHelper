@@ -10,21 +10,37 @@ using Novell.Directory.Ldap;
 
 namespace Bitai.LDAPHelper
 {
+    /// <summary>
+    /// Provides account-management operations for LDAP/Active Directory entries.
+    /// </summary>
 	public class AccountManager : BaseHelper
 	{
         #region Constructors
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AccountManager"/> class.
+        /// </summary>
+        /// <param name="clientConfiguration">Client configuration containing connection, credential, and search settings.</param>
+        /// <param name="connectionFactory">LDAP connection factory abstraction.</param>
         public AccountManager(ClientConfiguration clientConfiguration, ILdapConnectionFactoryAdapter connectionFactory)
             : base(clientConfiguration, connectionFactory) {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AccountManager"/> class.
+        /// </summary>
+        /// <param name="connectionInfo">LDAP server connection settings.</param>
+        /// <param name="searchLimits">LDAP search limits.</param>
+        /// <param name="domainAccountCredential">Credential used for management operations.</param>
+        /// <param name="connectionFactory">LDAP connection factory abstraction.</param>
         public AccountManager(ConnectionInfo connectionInfo, SearchLimits searchLimits, DTO.LDAPDomainAccountCredential domainAccountCredential, ILdapConnectionFactoryAdapter connectionFactory)
             : base(connectionInfo, searchLimits, domainAccountCredential, connectionFactory) {
         }
         #endregion
 
-
-
-
+        /// <summary>
+        /// Initializes the account distinguished name when it is missing.
+        /// </summary>
+        /// <param name="userAccount">User-account model to normalize.</param>
         public void InitializeMissingMsADUserAccountDN(LDAPMsADUserAccount userAccount)
 		{
 			if (string.IsNullOrEmpty(userAccount.DistinguishedName))
@@ -36,7 +52,6 @@ namespace Bitai.LDAPHelper
         /// https://www.rlmueller.net/Name_Attributes.htm
         /// </summary>
         /// <param name="newUserAccount"><see cref="LDAPMsADUserAccount"/></param>
-        /// <param name="distinguishedNameOfContainer">DN of the container in which the username will be created.</param>
         /// <param name="requestLabel">Optional tag to mark the request and/or response.</param>
         /// <returns>A Task of <see cref="LDAPCreateMsADUserAccountResult"/></returns>
         public async Task<LDAPCreateMsADUserAccountResult> CreateUserAccountForMsAD(LDAPMsADUserAccount newUserAccount, string requestLabel = null)
@@ -173,10 +188,12 @@ namespace Bitai.LDAPHelper
         /// <summary>
         /// Set a password for a username in MS Active Directory service. This method will verify the authenticity of the username by its distinguished name before trying to set the password. If the username is not valid, the operation will not be attempted and an error will be returned.
         /// </summary>
-        /// <param name="credential"><see cref="LDAPDistinguishedNameCredential"/></param>
+        /// <param name="identifierAttribute">Identifier attribute used to resolve the user account (sAMAccountName or distinguishedName).</param>
+        /// <param name="identifierValue">Value of the identifier attribute.</param>
+        /// <param name="password">New account password.</param>
         /// <param name="requestLabel">Optional tag to mark the request and/or response.</param>
         /// <param name="postUpdateTestAuthentication">True if the MS AD user account will be tested to verify authentication with the new password. False if the password will simply be assigned and authentication will not be tested.</param>
-        /// <returns></returns>
+        /// <returns>A task with the password-update operation result.</returns>
         public async Task<LDAPPasswordUpdateResult> SetMsADUserAccountPassword(EntryAttribute identifierAttribute, string identifierValue, string password, string requestLabel = null, bool postUpdateTestAuthentication = true)
 		{
 			try
@@ -250,9 +267,10 @@ namespace Bitai.LDAPHelper
         }
 
         /// <summary>
-        /// Remove a username from MS Active Directory service. This method will verify the authenticity of the username by its distinguished name before trying to remove it. If the username is not valid, the operation will not be attempted and an error will be returned.
+        /// Disables a username in MS Active Directory. This method validates the target account first.
         /// </summary>
-        /// <param name="identifierValue">Distinguished name of the username</param>
+        /// <param name="identifierAttribute">Identifier attribute used to resolve the user account (sAMAccountName or distinguishedName).</param>
+        /// <param name="identifierValue">Value of the identifier attribute.</param>
         /// <param name="requestLabel">Optional tag to mark the request and/or response.</param>
         /// <returns><see cref="LDAPDisableUserAccountOperationResult"/></returns>
         public async Task<LDAPDisableUserAccountOperationResult> DisableMsADUserAccount(EntryAttribute identifierAttribute, string identifierValue, string requestLabel)
@@ -304,7 +322,8 @@ namespace Bitai.LDAPHelper
         /// <summary>
         /// Remove a username in MS Active Directory service. This operation will permanently delete the username entry from the directory, so it should be used with caution.
         /// </summary>
-        /// <param name="identifierValue">Distinguished name of the username</param>
+        /// <param name="identifierAttribute">Identifier attribute used to resolve the user account (sAMAccountName or distinguishedName).</param>
+        /// <param name="identifierValue">Value of the identifier attribute.</param>
         /// <param name="requestLabel">Optional tag to mark the request and/or response.</param>
         /// <returns><see cref="LDAPRemoveMsADUserAccountResult"/></returns>
         public async Task<LDAPRemoveMsADUserAccountResult> RemoveMsADUserAccount(EntryAttribute identifierAttribute, string identifierValue, string requestLabel = null)

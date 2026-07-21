@@ -3,6 +3,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Bitai.LDAPHelper.Tests.Mocks.LdapData;
 
+/// <summary>
+/// Seeds deterministic mock LDAP data for integration-style tests and demos.
+/// </summary>
 public class MockLdapDataSeeder
 {
     private readonly MockLdapDataStore _dataStore;

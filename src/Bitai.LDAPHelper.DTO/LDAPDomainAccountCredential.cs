@@ -7,12 +7,30 @@ using System.Threading.Tasks;
 
 namespace Bitai.LDAPHelper.DTO
 {
+	/// <summary>
+	/// Represents domain-account credentials in <c>Domain\\Account</c> format.
+	/// </summary>
 	public class LDAPDomainAccountCredential : ISecureCloningCredential<LDAPDomainAccountCredential>
 	{
+		/// <summary>
+		/// Gets or sets the domain name.
+		/// </summary>
 		public string DomainName { get; set; }
+
+		/// <summary>
+		/// Gets or sets the account (user) name.
+		/// </summary>
 		public string AccountName { get; set; }
+
+		/// <summary>
+		/// Gets the composite domain-account name in <c>Domain\\Account</c> format.
+		/// </summary>
 		[IgnoreDataMember]
 		public string DomainAccountName { get => $"{DomainName}\\{AccountName}"; }
+
+		/// <summary>
+		/// Gets or sets the account password.
+		/// </summary>
 		public string DomainAccountPassword { get; set; }
 
 
@@ -48,6 +66,10 @@ namespace Bitai.LDAPHelper.DTO
 
 
 
+		/// <summary>
+		/// Creates a clone with password removed.
+		/// </summary>
+		/// <returns>A cloned credential with sensitive information sanitized.</returns>
 		public LDAPDomainAccountCredential SecureClone()
 		{
 			return new LDAPDomainAccountCredential {

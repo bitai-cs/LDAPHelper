@@ -5,10 +5,11 @@ using Novell.Directory.Ldap;
 namespace Bitai.LDAPHelper.LdapAdapters.Novell;
 
 /// <summary>
-/// Factory for creating Novell LDAP connection adapters
+/// Factory for creating Novell LDAP connection adapters.
 /// </summary>
 public class NovellLdapConnectionFactoryAdapter : ILdapConnectionFactoryAdapter
 {
+    /// <inheritdoc/>
     public async Task<ILdapConnectionAdapter> CreateConnectionAsync(
         IConnectionInfo connectionInfo,
         string userAccount,

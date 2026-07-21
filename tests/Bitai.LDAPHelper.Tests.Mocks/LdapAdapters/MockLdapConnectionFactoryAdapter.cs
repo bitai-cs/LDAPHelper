@@ -2,6 +2,9 @@ using Bitai.LDAPHelper.LdapAdapters;
 
 namespace Bitai.LDAPHelper.Tests.Mocks.LdapAdapters;
 
+/// <summary>
+/// Mock implementation of <see cref="ILdapConnectionFactoryAdapter"/> that returns a provided mock connection.
+/// </summary>
 public class MockLdapConnectionFactoryAdapter : ILdapConnectionFactoryAdapter
 {
     private readonly MockLdapConnectionAdapter _connection;

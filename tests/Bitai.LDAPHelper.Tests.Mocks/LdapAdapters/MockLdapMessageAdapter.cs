@@ -1,7 +1,10 @@
-﻿using Bitai.LDAPHelper.LdapAdapters;
+using Bitai.LDAPHelper.LdapAdapters;
 
 namespace Bitai.LDAPHelper.Tests.Mocks.LdapAdapters;
 
+/// <summary>
+/// In-memory mock LDAP message wrapper used in search queue responses.
+/// </summary>
 public class MockLdapMessageAdapter : ILdapMessageAdapter
 {
     public MockLdapMessageAdapter(ILdapEntryAdapter entry) {

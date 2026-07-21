@@ -2,6 +2,9 @@ using Bitai.LDAPHelper.Tests.Mocks.LdapAdapters;
 
 namespace Bitai.LDAPHelper.Tests.Mocks.LdapData;
 
+/// <summary>
+/// Thread-safe in-memory LDAP entry store used by persistent mock adapters.
+/// </summary>
 public class MockLdapDataStore
 {
     private static readonly Lazy<MockLdapDataStore> _instance = new Lazy<MockLdapDataStore>(() => new MockLdapDataStore());

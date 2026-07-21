@@ -4,11 +4,20 @@ using Serilog;
 
 namespace Bitai.LDAPHelper.Demo;
 
+/// <summary>
+/// Collects and prints summary information for executed demo scenarios.
+/// </summary>
 public class DemoSummary
 {
     private readonly Dictionary<string, bool> _demoResults = new Dictionary<string, bool>();
     private readonly List<string> _errors = new List<string>();
 
+    /// <summary>
+    /// Records the result of one demo scenario.
+    /// </summary>
+    /// <param name="demoName">Scenario name.</param>
+    /// <param name="success">Whether the scenario succeeded.</param>
+    /// <param name="error">Optional error associated with failure.</param>
     public void RecordDemoResult(string demoName, bool success, Exception error = null)
     {
         _demoResults[demoName] = success;
@@ -18,6 +27,9 @@ public class DemoSummary
         }
     }
 
+    /// <summary>
+    /// Prints an aggregated summary for all recorded demo results.
+    /// </summary>
     public void PrintSummary()
     {
         Console.WriteLine();

@@ -7,17 +7,40 @@ using Bitai.LDAPHelper.LdapAdapters;
 
 namespace Bitai.LDAPHelper
 {
+	/// <summary>
+	/// Base class for LDAP helper services, providing shared connection and mapping utilities.
+	/// </summary>
 	public abstract partial class BaseHelper
 	{
 		#region Properties
+		/// <summary>
+		/// Gets or sets LDAP server connection settings.
+		/// </summary>
 		public ConnectionInfo ConnectionInfo { get; set; }
+
+		/// <summary>
+		/// Gets or sets the credential used for LDAP search/management operations.
+		/// </summary>
 		public DTO.LDAPDomainAccountCredential DomainAccountCredential { get; set; }
+
+		/// <summary>
+		/// Gets or sets default LDAP search limits.
+		/// </summary>
 		public SearchLimits SearchLimits { get; set; }
+
+		/// <summary>
+		/// Gets or sets the LDAP connection factory abstraction.
+		/// </summary>
         protected ILdapConnectionFactoryAdapter ConnectionFactory { get; set; }
         #endregion
 
 
         #region Protected constructors
+		/// <summary>
+		/// Initializes a new instance of the <see cref="BaseHelper"/> class.
+		/// </summary>
+		/// <param name="clientConfiguration">Client configuration containing connection, credential, and search settings.</param>
+		/// <param name="connectionFactory">LDAP connection factory abstraction.</param>
         protected BaseHelper(ClientConfiguration clientConfiguration, ILdapConnectionFactoryAdapter connectionFactory)
 		{
 			ConnectionInfo = clientConfiguration.ServerSettings;
@@ -26,6 +49,13 @@ namespace Bitai.LDAPHelper
 			ConnectionFactory = connectionFactory;
         }
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="BaseHelper"/> class.
+		/// </summary>
+		/// <param name="connectionInfo">LDAP server connection settings.</param>
+		/// <param name="searchLimits">LDAP search limits.</param>
+		/// <param name="domainAccountCredential">Credential used by LDAP operations.</param>
+		/// <param name="connectionFactory">LDAP connection factory abstraction.</param>
 		protected BaseHelper(ConnectionInfo connectionInfo, SearchLimits searchLimits, DTO.LDAPDomainAccountCredential domainAccountCredential, ILdapConnectionFactoryAdapter connectionFactory)
 		{
 			ConnectionInfo = connectionInfo;
@@ -36,9 +66,10 @@ namespace Bitai.LDAPHelper
         }
 
 		/// <summary>
-		/// Constructor used by <see cref="Authenticator"/>
+		/// Initializes a new instance of the <see cref="BaseHelper"/> class used by authentication-only services.
 		/// </summary>
-		/// <param name="connectionInfo"><see cref="LDAPHelper.ConnectionInfo"/></param>
+		/// <param name="connectionInfo">LDAP server connection settings.</param>
+		/// <param name="connectionFactory">LDAP connection factory abstraction.</param>
 		protected BaseHelper(ConnectionInfo connectionInfo, ILdapConnectionFactoryAdapter connectionFactory)
 		{
 			ConnectionInfo = connectionInfo;
@@ -48,6 +79,11 @@ namespace Bitai.LDAPHelper
 
 
 		#region Protected methods
+		/// <summary>
+		/// Converts a SAM account-type numeric code to a symbolic name.
+		/// </summary>
+		/// <param name="index">String representation of the SAM account type numeric value.</param>
+		/// <returns>A symbolic account type name when known; otherwise the original value.</returns>
 		protected string GetSAMAccountTypeName(string index)
 		{
 			switch (index)
@@ -78,12 +114,12 @@ namespace Bitai.LDAPHelper
 		}
 
 		/// <summary>
-		/// Get <see cref="LdapConnection"/>
+		/// Creates and optionally binds an LDAP connection using domain-account credentials.
 		/// </summary>
-		/// <param name="connectionInfo"><see cref="LDAPHelper.ConnectionInfo"/> to connect to the LDAP Server</param>
-		/// <param name="credential"><see cref="DomainAccountCredential"/>  to connect to the LDAP Server</param>
-		/// <param name="bindRequired">If <see cref="DomainAccountCredential"/> are required to be mandatorily authenticated on the LDAP Server</param>
-		/// <returns>Task of <see cref="LdapConnection"/></returns>
+		/// <param name="connectionInfo">LDAP server connection settings.</param>
+		/// <param name="credential">Domain-account credential used for bind.</param>
+		/// <param name="bindRequired">Whether bind/authentication is required.</param>
+		/// <returns>A task with an initialized LDAP connection adapter.</returns>
 		protected async Task<ILdapConnectionAdapter> GetLdapConnection(ConnectionInfo connectionInfo, DTO.LDAPDomainAccountCredential credential, bool bindRequired = true)
 		{
             //return getLdapConnection(connectionInfo, credential.DomainAccountName, credential.DomainAccountPassword, bindRequired);
@@ -95,6 +131,13 @@ namespace Bitai.LDAPHelper
                 bindRequired);
         }
 
+		/// <summary>
+		/// Creates and optionally binds an LDAP connection using distinguished-name credentials.
+		/// </summary>
+		/// <param name="connectionInfo">LDAP server connection settings.</param>
+		/// <param name="credential">Distinguished-name credential used for bind.</param>
+		/// <param name="bindRequired">Whether bind/authentication is required.</param>
+		/// <returns>A task with an initialized LDAP connection adapter.</returns>
 		protected async Task<ILdapConnectionAdapter> GetLdapConnection(ConnectionInfo connectionInfo, DTO.LDAPDistinguishedNameCredential credential, bool bindRequired = true)
 		{
             //return getLdapConnection(connectionInfo, credential.DistinguishedName, credential.Password, bindRequired);
@@ -106,6 +149,11 @@ namespace Bitai.LDAPHelper
                 bindRequired);
         }
 
+		/// <summary>
+		/// Converts a binary SID value into its canonical string representation.
+		/// </summary>
+		/// <param name="sidBytes">Binary SID value.</param>
+		/// <returns>Canonical SID string (for example, S-1-5-21-...).</returns>
 		protected string ConvertByteToStringSid(byte[] sidBytes)
 		{
 			short sSubAuthorityCount = 0;
@@ -153,6 +201,11 @@ namespace Bitai.LDAPHelper
 			return strSid.ToString();
 		}
 
+		/// <summary>
+		/// Resolves the LDAP attribute names to request based on a predefined attribute-set preset.
+		/// </summary>
+		/// <param name="requiredEntryAttributes">Preset indicating which attributes should be loaded.</param>
+		/// <returns>A sequence of attribute names to request in LDAP search operations.</returns>
 		protected IEnumerable<string> GetRequiredAttributeNames(DTO.RequiredEntryAttributes requiredEntryAttributes)
 		{
 			switch (requiredEntryAttributes)

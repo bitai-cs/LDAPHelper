@@ -6,10 +6,19 @@ using System.Threading.Tasks;
 
 namespace Bitai.LDAPHelper.DTO
 {
+	/// <summary>
+	/// Represents credentials based on a distinguished name and password.
+	/// </summary>
 	public class LDAPDistinguishedNameCredential : ISecureCloningCredential<LDAPDistinguishedNameCredential>
 	{
+		/// <summary>
+		/// Gets or sets the account distinguished name.
+		/// </summary>
 		public string DistinguishedName { get; set; }
 
+		/// <summary>
+		/// Gets or sets the account password.
+		/// </summary>
 		public string Password { get; set; }
 
 
@@ -41,6 +50,10 @@ namespace Bitai.LDAPHelper.DTO
 
 
 
+		/// <summary>
+		/// Creates a clone with password removed.
+		/// </summary>
+		/// <returns>A cloned credential with sensitive information sanitized.</returns>
 		public LDAPDistinguishedNameCredential SecureClone()
 		{
 			var clone = new LDAPDistinguishedNameCredential
