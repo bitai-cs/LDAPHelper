@@ -3,6 +3,9 @@ using Bitai.LDAPHelper.Tests.Mocks.LdapAdapters;
 
 namespace Bitai.LDAPHelper.Tests
 {
+    /// <summary>
+    /// Integration-style unit tests for <see cref="Searcher"/> using mock LDAP adapters.
+    /// </summary>
     public class SearcherAdapterTests : BaseTests
     {
         [Fact]

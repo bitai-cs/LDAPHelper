@@ -1,7 +1,10 @@
-﻿using Bitai.LDAPHelper.LdapAdapters;
+using Bitai.LDAPHelper.LdapAdapters;
 
 namespace Bitai.LDAPHelper.Tests.Mocks.LdapAdapters;
 
+/// <summary>
+/// In-memory mock implementation of <see cref="ILdapSearchQueueAdapter"/>.
+/// </summary>
 public class MockLdapSearchQueueAdapter : ILdapSearchQueueAdapter
 {
     private Queue<ILdapMessageAdapter> _messages = new();

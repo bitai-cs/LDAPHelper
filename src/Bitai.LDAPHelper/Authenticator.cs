@@ -7,15 +7,33 @@ using System.Threading.Tasks;
 
 namespace Bitai.LDAPHelper
 {
+    /// <summary>
+    /// Provides LDAP authentication workflows for domain-account and distinguished-name credentials.
+    /// </summary>
     public class Authenticator : BaseHelper
     {
         #region Constructors
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Authenticator"/> class.
+        /// </summary>
+        /// <param name="connectionInfo">LDAP server connection settings.</param>
+        /// <param name="connectionFactory">LDAP connection factory abstraction.</param>
         public Authenticator(ConnectionInfo connectionInfo, ILdapConnectionFactoryAdapter connectionFactory) : base(connectionInfo, connectionFactory) {
         }
         #endregion
 
 
         #region Public methods
+        /// <summary>
+        /// Authenticates a domain account and validates that exactly one matching LDAP user exists.
+        /// </summary>
+        /// <param name="credential">Credential to authenticate.</param>
+        /// <param name="searchLimits">Search limits used to locate the account before authentication.</param>
+        /// <param name="credentialForSearching">Credential used to perform the validation search.</param>
+        /// <param name="requestLabel">Optional label used to correlate request/response operations.</param>
+        /// <returns>
+        /// A result object containing operation status, authentication status, and optional error details.
+        /// </returns>
         public async Task<LDAPDomainAccountAuthenticationResult> AuthenticateAsync(LDAPDomainAccountCredential credential, SearchLimits searchLimits, LDAPDomainAccountCredential credentialForSearching, string requestLabel = null) {
             LDAPDomainAccountAuthenticationResult authenticationResult;
 
@@ -78,10 +96,13 @@ namespace Bitai.LDAPHelper
         }
 
         /// <summary>
-        /// Authenticate <see cref="Credentials"/> on the LDAP Server
+        /// Authenticates a domain account directly against the LDAP server.
         /// </summary>
-        /// <param name="credential"><see cref="Credentials"/> to connect and authenticate on the LDAP Server.</param>
-        /// <returns>True or false, if authenticated or no.</returns>
+        /// <param name="credential">Credential to authenticate.</param>
+        /// <param name="requestLabel">Optional label used to correlate request/response operations.</param>
+        /// <returns>
+        /// A result object containing operation status, authentication status, and optional error details.
+        /// </returns>
         public async Task<LDAPDomainAccountAuthenticationResult> AuthenticateAsync(LDAPDomainAccountCredential credential, string requestLabel = null) {
             try {
                 bool? authenticated;
@@ -106,6 +127,16 @@ namespace Bitai.LDAPHelper
             }
         }
 
+        /// <summary>
+        /// Authenticates a distinguished-name account and validates that exactly one matching LDAP user exists.
+        /// </summary>
+        /// <param name="credential">Credential to authenticate.</param>
+        /// <param name="searchLimits">Search limits used to locate the account before authentication.</param>
+        /// <param name="credentialForSearching">Credential used to perform the validation search.</param>
+        /// <param name="requestLabel">Optional label used to correlate request/response operations.</param>
+        /// <returns>
+        /// A result object containing operation status, authentication status, and optional error details.
+        /// </returns>
         public async Task<LDAPDistinguishedNameAuthenticationResult> AuthenticateAsync(LDAPDistinguishedNameCredential credential, SearchLimits searchLimits, LDAPDomainAccountCredential credentialForSearching, string requestLabel = null) {
             LDAPDistinguishedNameAuthenticationResult authenticationResult;
 
@@ -165,6 +196,14 @@ namespace Bitai.LDAPHelper
             }
         }
 
+        /// <summary>
+        /// Authenticates a distinguished-name account directly against the LDAP server.
+        /// </summary>
+        /// <param name="credential">Credential to authenticate.</param>
+        /// <param name="requestLabel">Optional label used to correlate request/response operations.</param>
+        /// <returns>
+        /// A result object containing operation status, authentication status, and optional error details.
+        /// </returns>
         public async Task<LDAPDistinguishedNameAuthenticationResult> AuthenticateAsync(LDAPDistinguishedNameCredential credential, string requestLabel = null) {
             try {
                 bool? authenticated;

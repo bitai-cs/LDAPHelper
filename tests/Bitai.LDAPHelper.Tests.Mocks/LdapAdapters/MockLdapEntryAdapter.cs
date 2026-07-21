@@ -1,7 +1,10 @@
-﻿using Bitai.LDAPHelper.LdapAdapters;
+using Bitai.LDAPHelper.LdapAdapters;
 
 namespace Bitai.LDAPHelper.Tests.Mocks.LdapAdapters;
 
+/// <summary>
+/// In-memory mock LDAP entry used by test scenarios.
+/// </summary>
 public class MockLdapEntryAdapter : ILdapEntryAdapter
 {
     private readonly MockLdapAttributeSetAdapter _attributeSet;

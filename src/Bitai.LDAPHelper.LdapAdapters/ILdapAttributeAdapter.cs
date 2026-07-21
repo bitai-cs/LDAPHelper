@@ -1,12 +1,27 @@
-﻿namespace Bitai.LDAPHelper.LdapAdapters; 
+namespace Bitai.LDAPHelper.LdapAdapters; 
 
 /// <summary>
-/// Target interface for LDAP attribute operations
+/// Defines read access to LDAP attribute values in multiple representations.
 /// </summary>
 public interface ILdapAttributeAdapter
 {
+    /// <summary>
+    /// Gets the first binary value of the attribute.
+    /// </summary>
     byte[] ByteValue { get; }
+
+    /// <summary>
+    /// Gets the first string value of the attribute.
+    /// </summary>
     string StringValue { get; }
+
+    /// <summary>
+    /// Gets all string values of the attribute.
+    /// </summary>
     string[] StringValueArray { get; }
-    public byte[][] ByteValueArray { get; }
+
+    /// <summary>
+    /// Gets all binary values of the attribute.
+    /// </summary>
+    byte[][] ByteValueArray { get; }
 }

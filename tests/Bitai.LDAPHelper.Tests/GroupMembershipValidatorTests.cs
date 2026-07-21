@@ -3,6 +3,9 @@ using Bitai.LDAPHelper.Tests.Mocks.LdapAdapters;
 
 namespace Bitai.LDAPHelper.Tests
 {
+    /// <summary>
+    /// Unit tests for <see cref="GroupMembershipValidator"/> using mock LDAP adapters.
+    /// </summary>
     public class GroupMembershipValidatorTests : BaseTests
     {
         private readonly ConnectionInfo _validConnectionInfo;

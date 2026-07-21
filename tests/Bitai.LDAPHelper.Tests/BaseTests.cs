@@ -1,7 +1,10 @@
-﻿using Bitai.LDAPHelper.Tests.Mocks.LdapAdapters;
+using Bitai.LDAPHelper.Tests.Mocks.LdapAdapters;
 
 namespace Bitai.LDAPHelper.Tests
 {
+    /// <summary>
+    /// Shared test-fixture helpers for LDAP helper test suites.
+    /// </summary>
     public class BaseTests
     {
         public MockLdapEntryAdapter CreateMockUserEntry(string firstName, string lastName, SearchLimits? searchLimits, out QueryFilters.AttributeFilter searchFilterSAMAccountName, out QueryFilters.AttributeFilter searchFilterDistinguishedName, string[] memberOfDistinguishedNames = null, string groupName = null, string groupContainerName = null) {

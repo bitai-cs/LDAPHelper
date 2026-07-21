@@ -8,13 +8,28 @@ using Novell.Directory.Ldap;
 
 namespace Bitai.LDAPHelper
 {
+    /// <summary>
+    /// Performs LDAP search operations and maps results into DTO models.
+    /// </summary>
 	public class Searcher : BaseHelper
 	{
 		#region Constructor 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Searcher"/> class.
+        /// </summary>
+        /// <param name="clientConfiguration">Client configuration containing connection, credential, and search settings.</param>
+        /// <param name="connectionFactory">LDAP connection factory abstraction.</param>
 		public Searcher(ClientConfiguration clientConfiguration, ILdapConnectionFactoryAdapter connectionFactory) : base(clientConfiguration, connectionFactory)
 		{
 		}
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Searcher"/> class.
+        /// </summary>
+        /// <param name="connectionInfo">LDAP server connection settings.</param>
+        /// <param name="searchLimits">LDAP search limits.</param>
+        /// <param name="domainAccountCredential">Credential used to execute LDAP searches.</param>
+        /// <param name="connectionFactory">LDAP connection factory abstraction.</param>
 		public Searcher(ConnectionInfo connectionInfo, SearchLimits searchLimits, DTO.LDAPDomainAccountCredential domainAccountCredential, ILdapConnectionFactoryAdapter connectionFactory) : base(connectionInfo, searchLimits, domainAccountCredential, connectionFactory)
 		{
 		}
@@ -27,7 +42,7 @@ namespace Bitai.LDAPHelper
 		/// <summary>
 		/// Searches for entries matching the provided LDAP filter and loads the requested attributes.
 		/// </summary>
-		/// <param name="searchFilter">
+        /// <param name="searchFilterObject">
 		/// A combinable LDAP filter that identifies the entries to search for. This filter will be converted 
 		/// to its string representation and used directly in the LDAP search operation.
 		/// </param>

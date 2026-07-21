@@ -1,9 +1,12 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Bitai.LDAPHelper.DTO
 {
+	/// <summary>
+	/// LDAP entry attributes that can be loaded or filtered.
+	/// </summary>
 	public enum EntryAttribute
 	{
 		/// <summary>
@@ -41,6 +44,9 @@ namespace Bitai.LDAPHelper.DTO
 		userAccountControl
 	}
 
+	/// <summary>
+	/// Predefined attribute sets used by search operations.
+	/// </summary>
 	public enum RequiredEntryAttributes
 	{
 		Minimun,

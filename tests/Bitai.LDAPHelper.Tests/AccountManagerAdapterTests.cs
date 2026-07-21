@@ -3,6 +3,9 @@ using Bitai.LDAPHelper.Tests.Mocks.LdapAdapters;
 
 namespace Bitai.LDAPHelper.Tests
 {
+    /// <summary>
+    /// Integration-style unit tests for <see cref="AccountManager"/> using mock LDAP adapters.
+    /// </summary>
     public class AccountManagerAdapterTests: BaseTests
     {
         [Fact]

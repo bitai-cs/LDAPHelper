@@ -3,6 +3,9 @@ using Bitai.LDAPHelper.DTO;
 
 namespace Bitai.LDAPHelper.Tests.Mocks.LdapAdapters;
 
+/// <summary>
+/// In-memory mock LDAP connection used by tests to simulate bind/search/add/modify/delete operations.
+/// </summary>
 public class MockLdapConnectionAdapter : ILdapConnectionAdapter
 {
     private bool _disposed = false;

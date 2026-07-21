@@ -2,6 +2,9 @@ using Bitai.LDAPHelper.LdapAdapters;
 
 namespace Bitai.LDAPHelper
 {
+    /// <summary>
+    /// Represents LDAP search boundaries and server limits.
+    /// </summary>
     public class SearchLimits : ISearchLimits
     {
         /// <summary>
@@ -28,6 +31,10 @@ namespace Bitai.LDAPHelper
         /// </summary>
         public int MaxSearchTimeout { get; set; } = 60;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SearchLimits"/> class.
+        /// </summary>
+        /// <param name="baseDN">Base distinguished name to use for searches.</param>
         public SearchLimits(string baseDN)
         {
             this.BaseDN = baseDN;

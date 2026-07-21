@@ -1,8 +1,11 @@
-﻿using Bitai.LDAPHelper.DTO;
+using Bitai.LDAPHelper.DTO;
 using Bitai.LDAPHelper.Tests.Mocks.LdapAdapters;
 
 namespace Bitai.LDAPHelper.Tests
 {
+    /// <summary>
+    /// Integration-style unit tests for <see cref="Authenticator"/> using mock LDAP adapters.
+    /// </summary>
     public class AuthenticatorAdapterTests : BaseTests
     {
         [Fact]

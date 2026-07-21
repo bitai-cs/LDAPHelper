@@ -1,16 +1,36 @@
-﻿namespace Bitai.LDAPHelper.Demo;
+namespace Bitai.LDAPHelper.Demo;
 
+/// <summary>
+/// Selects the LDAP implementation used by demo scenarios.
+/// </summary>
 public enum ImplementationType {
 	Novell,
 	Mock
 }
 
+/// <summary>
+/// Represents configuration values used by demo scenarios.
+/// </summary>
 public class DemoSetup
 {
+	/// <summary>
+	/// Gets or sets available LDAP server endpoints for selection.
+	/// </summary>
 	public Ldapserver[] LdapServers { get; set; }
+
+	/// <summary>
+	/// Gets or sets available Base DN values for selection.
+	/// </summary>
 	public Basedn[] BaseDNs { get; set; }
+
+	/// <summary>
+	/// Gets or sets default LDAP connection timeout in seconds.
+	/// </summary>
 	public short ConnectionTimeout { get; set; }
 
+	/// <summary>
+	/// Gets or sets the domain account used as operator account during demo execution.
+	/// </summary>
 	public string DomainUserAccountForRunTests { get; set; }
 
 	public bool Demo_AccountManager_CreateUserAccount_RunTest { get; set; }
@@ -57,12 +77,24 @@ public class DemoSetup
 	public string Demo_GroupMembershipValidator_CheckGroupmembership_Check_GroupName { get; set; }
 }
 
+/// <summary>
+/// Represents an LDAP server option in demo configuration.
+/// </summary>
 public class Ldapserver
 {
+	/// <summary>
+	/// Gets or sets the LDAP server address.
+	/// </summary>
 	public string Address { get; set; }
 }
 
+/// <summary>
+/// Represents a Base DN option in demo configuration.
+/// </summary>
 public class Basedn
 {
+	/// <summary>
+	/// Gets or sets the base distinguished name.
+	/// </summary>
 	public string DN { get; set; }
 }

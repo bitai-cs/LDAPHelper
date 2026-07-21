@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -57,18 +57,68 @@ namespace Bitai.LDAPHelper.DTO
 
 
 
+		/// <summary>
+		/// Gets or sets the distinguished name of the container where the user account should be created.
+		/// </summary>
 		public string DistinguishedNameOfContainer { get => distinguishedNameOfContainer; set => distinguishedNameOfContainer = value; }
+
+		/// <summary>
+		/// Gets or sets the user's given name.
+		/// </summary>
 		public string GivenName { get => givenName; set => givenName = value; }
+
+		/// <summary>
+		/// Gets or sets the user's surname.
+		/// </summary>
 		public string Sn { get => sn; set => sn = value; }
+
+		/// <summary>
+		/// Gets or sets the user common name (CN).
+		/// </summary>
 		public string Cn { get => cn; set => cn = value; }
+
+		/// <summary>
+		/// Gets or sets the LDAP <c>name</c> attribute.
+		/// </summary>
 		public string Name { get => name; set => name = value; }
+
+		/// <summary>
+		/// Gets or sets the display name.
+		/// </summary>
 		public string DisplayName { get => displayName; set => displayName = value; }
+
+		/// <summary>
+		/// Gets or sets the account description.
+		/// </summary>
 		public string Description { get => description; set => description = value; }
+
+		/// <summary>
+		/// Gets or sets the full distinguished name of the user account.
+		/// </summary>
 		public string DistinguishedName { get => distinguishedName; set => distinguishedName = value; }
+
+		/// <summary>
+		/// Gets or sets parent groups (distinguished names) this account belongs to.
+		/// </summary>
 		public string[] MemberOf { get => memberOf; set => memberOf = value; }
+
+		/// <summary>
+		/// Gets or sets LDAP object classes for this account.
+		/// </summary>
 		public string[] ObjectClass { get => objectClass; set => objectClass = value; }
+
+		/// <summary>
+		/// Gets or sets the sAMAccountName value.
+		/// </summary>
 		public string SAMAccountName { get => samAccountName; set => samAccountName = value; }
+
+		/// <summary>
+		/// Gets or sets the user principal name (UPN).
+		/// </summary>
 		public string UserPrincipalName { get => userPrincipalName; set => userPrincipalName = value; }
+		/// <summary>
+		/// Gets or sets user-account-control flags as a comma-separated list of <see cref="UserAccountControlFlagsForMsAD"/> names.
+		/// </summary>
 		public string UserAccountControl
 		{
 			get => userAccountControl;
@@ -100,14 +150,37 @@ namespace Bitai.LDAPHelper.DTO
 				}
 			}
 		}
+		/// <summary>
+		/// Gets or sets the department.
+		/// </summary>
 		public string Department { get => department; set => department = value; }
+
+		/// <summary>
+		/// Gets or sets the phone number.
+		/// </summary>
 		public string TelephoneNumber { get => telephoneNumber; set => telephoneNumber = value; }
+
+		/// <summary>
+		/// Gets or sets the email address.
+		/// </summary>
 		public string Mail { get => mail; set => mail = value; }
+
+		/// <summary>
+		/// Gets or sets the account password.
+		/// </summary>
 		public string Password { get => password; set => password = value; }
+
+		/// <summary>
+		/// Gets parsed account-control flags derived from <see cref="UserAccountControl"/>.
+		/// </summary>
 		public UserAccountControlFlagsForMsAD? UserAccountControlFlags { get => userAccountControlFlags; }
 
 
 
+		/// <summary>
+		/// Creates a secure clone with password masked.
+		/// </summary>
+		/// <returns>A cloned account suitable for logging/transport.</returns>
 		public LDAPMsADUserAccount SecureClone()
 		{
 			return new LDAPMsADUserAccount

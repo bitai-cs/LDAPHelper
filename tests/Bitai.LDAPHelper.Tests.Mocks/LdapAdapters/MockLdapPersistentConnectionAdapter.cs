@@ -4,6 +4,9 @@ using Bitai.LDAPHelper.Tests.Mocks.LdapData;
 
 namespace Bitai.LDAPHelper.Tests.Mocks.LdapAdapters;
 
+/// <summary>
+/// Persistent mock connection backed by a shared in-memory LDAP data store.
+/// </summary>
 public class MockLdapPersistentConnectionAdapter : MockLdapConnectionAdapter
 {
     private readonly MockLdapDataStore _dataStore;
