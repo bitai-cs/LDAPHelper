@@ -1,5 +1,5 @@
 using Bitai.LDAPHelper.DTO;
-using Bitai.LDAPHelper.Tests.Mocks.LdapAdapters;
+using Bitai.LDAPHelper.LdapAdapters.LdapHelperMock;
 
 namespace Bitai.LDAPHelper.Tests
 {

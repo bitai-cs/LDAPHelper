@@ -32,7 +32,7 @@
 		</None>
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\..\src\Bitai.LDAPHelper\Bitai.LDAPHelper.csproj" />
-		<ProjectReference Include="..\..\tests\Bitai.LDAPHelper.Tests\Bitai.LDAPHelper.Tests.csproj" />
+	  <ProjectReference Include="..\..\adapters\Bitai.LDAPHelper.LdapAdapters.LdapHelperMock\Bitai.LDAPHelper.LdapAdapters.LdapHelperMock.csproj" />
+	  <ProjectReference Include="..\..\adapters\Bitai.LDAPHelper.LdapAdapters.Novell\Bitai.LDAPHelper.LdapAdapters.Novell.csproj" />
 	</ItemGroup>
 </Project>

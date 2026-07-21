@@ -1,0 +1,46 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <Authors>Viko Bastidas (BITAI)</Authors>
+        <Company>BITAI</Company>
+        <Product>LDAP Services Wrappers</Product>
+        <Copyright>© 2026 BITAI. All rights reserved.</Copyright>
+        <AssemblyVersion>10.0.0</AssemblyVersion>
+        <FileVersion>10.0.0</FileVersion>
+        <Version>10.0.0</Version>
+        <PackageIcon>hierarchy_32.png</PackageIcon>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <PackageId>Bitai.LDAPHelper.LdapAdapters.Novell</PackageId>
+        <RepositoryUrl>https://github.com/bitai-cs/LDAPHelper.git</RepositoryUrl>
+        <RepositoryType>GitHub</RepositoryType>
+        <PackageTags>ldap;authentication;authorization;directory;helper;oauth;openid;ad;security;identity</PackageTags>
+        <PackageProjectUrl>https://github.com/bitai-cs/LDAPHelper</PackageProjectUrl>
+        <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <Description>Bitai.LDAPHelper adapter for wrapping Novell.Directory.Ldap.NETStandard.</Description>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <None Include="..\..\resources\hierarchy_32.png" Link="hierarchy_32.png">
+        <PackagePath></PackagePath>
+        <Pack>True</Pack>
+      </None>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Novell.Directory.Ldap.NETStandard" Version="4.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\Bitai.LDAPHelper\Bitai.LDAPHelper.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="LICENSE.md" Pack="True" PackagePath="\" />
+      <None Include="README.md" Pack="True" PackagePath="\" />
+    </ItemGroup>
+
+</Project>
