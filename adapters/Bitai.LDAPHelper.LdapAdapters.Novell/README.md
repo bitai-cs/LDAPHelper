@@ -153,7 +153,7 @@ using Bitai.LDAPHelper;
 using Bitai.LDAPHelper.DTO;
 using Bitai.LDAPHelper.LdapAdapters.Novell;
 
-// 1. Instanciate the Novell connection factory
+// 1. Instantiate the Novell connection factory
 var connectionFactory = new NovellLdapConnectionFactoryAdapter();
 
 // 2. Configure connection settings and service account credentials
