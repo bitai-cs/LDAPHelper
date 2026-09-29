@@ -1,4 +1,6 @@
 using Bitai.LDAPHelper.LdapAdapters;
+using Bitai.LDAPHelper.LdapAdapters.LdapHelperMock.LdapData;
+using Microsoft.Extensions.Logging;
 
 namespace Bitai.LDAPHelper.LdapAdapters.LdapHelperMock;
 
@@ -8,10 +10,16 @@ namespace Bitai.LDAPHelper.LdapAdapters.LdapHelperMock;
 public class MockLdapPersistentConnectionFactoryAdapter : ILdapConnectionFactoryAdapter
 {
     private readonly MockLdapPersistentConnectionAdapter _connection;
+    private readonly ILogger<MockLdapPersistentConnectionFactoryAdapter> _logger;
 
-    public MockLdapPersistentConnectionFactoryAdapter()
+    public MockLdapPersistentConnectionFactoryAdapter(ILogger<MockLdapPersistentConnectionFactoryAdapter> logger, ILogger<MockLdapDataSeeder> seederLogger)
     {
+        _logger = logger;
         _connection = new MockLdapPersistentConnectionAdapter();
+
+        var _seeder = new MockLdapDataSeeder(seederLogger);
+        _seeder.SeedAllData();
+        _seeder.PrintAllData();
     }
 
     public Task<ILdapConnectionAdapter> CreateConnectionAsync(

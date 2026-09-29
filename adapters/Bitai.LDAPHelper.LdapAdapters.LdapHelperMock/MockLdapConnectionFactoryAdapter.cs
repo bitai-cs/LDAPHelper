@@ -1,5 +1,3 @@
-using Bitai.LDAPHelper.LdapAdapters;
-
 namespace Bitai.LDAPHelper.LdapAdapters.LdapHelperMock;
 
 /// <summary>
@@ -7,11 +5,9 @@ namespace Bitai.LDAPHelper.LdapAdapters.LdapHelperMock;
 /// </summary>
 public class MockLdapConnectionFactoryAdapter : ILdapConnectionFactoryAdapter
 {
-    private readonly MockLdapConnectionAdapter _connection;
-
-    public MockLdapConnectionFactoryAdapter(MockLdapConnectionAdapter connection) {
-        _connection = connection;
-    }
+    //public MockLdapConnectionFactoryAdapter(MockLdapConnectionAdapter connection) {
+    //    connection = connection;
+    //}
 
     public async Task<ILdapConnectionAdapter> CreateConnectionAsync(
         IConnectionInfo connectionInfo,
@@ -19,13 +15,16 @@ public class MockLdapConnectionFactoryAdapter : ILdapConnectionFactoryAdapter
         string password,
         bool bindRequired = true) {
 
-        _connection.ConnectionTimeout = connectionInfo.ConnectionTimeout;
-        _connection.SecureSocketLayer = connectionInfo.UseSSL;
+        var connection = new MockLdapConnectionAdapter()
+        {
+            ConnectionTimeout = connectionInfo.ConnectionTimeout,
+            SecureSocketLayer = connectionInfo.UseSSL
+        };
 
-        await _connection.ConnectAsync(connectionInfo.Server, connectionInfo.ServerPort);
+        await connection.ConnectAsync(connectionInfo.Server, connectionInfo.ServerPort);
 
         try {
-            await _connection.BindAsync(userAccount, password);
+            await connection.BindAsync(userAccount, password);
         }
         catch (LdapOperationException) {
             if (bindRequired)
@@ -35,6 +34,6 @@ public class MockLdapConnectionFactoryAdapter : ILdapConnectionFactoryAdapter
             throw;
         }
 
-        return (ILdapConnectionAdapter)_connection;
+        return (ILdapConnectionAdapter)connection;
     }
 }

@@ -31,6 +31,8 @@ namespace Bitai.LDAPHelper
         /// </summary>
         public int MaxSearchTimeout { get; set; } = 60;
 
+
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SearchLimits"/> class.
         /// </summary>
@@ -39,5 +41,17 @@ namespace Bitai.LDAPHelper
         {
             this.BaseDN = baseDN;
         }
+
+
+
+        /// <summary>
+        /// Returns a string representation of the current search limits.
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return $"BaseDN={BaseDN}, Scope={LdapSearchScope}, MaxResults={MaxSearchResults}, MaxTimeout={MaxSearchTimeout}";
+        }
+
     }
 }

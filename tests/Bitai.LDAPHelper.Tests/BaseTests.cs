@@ -21,7 +21,7 @@ namespace Bitai.LDAPHelper.Tests
             mockLdapEntry.AddAttribute("objectSid", new byte[] { 1, 5, 0, 0, 0, 0, 0, 5, 21, 0, 0, 0, 134, 161, 247, 215, 208, 13, 248, 19, 35, 76, 31, 226, 79, 4, 0, 0 });
             mockLdapEntry.AddAttribute("objectGUID", new byte[] { 0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xF0, 0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xF0 });
             mockLdapEntry.AddAttribute("sAMAccountName", $"{firstName.ToLower()}.{lastName.ToLower()}");
-            mockLdapEntry.AddAttribute("cn", $"{firstName} {lastName}");
+            mockLdapEntry.AddAttribute("Name", $"{firstName} {lastName}");
             mockLdapEntry.AddAttribute("sn", $"{lastName}");
             mockLdapEntry.AddAttribute("givenName", $"{firstName}");
             mockLdapEntry.AddAttribute("mail", $"{firstName.ToLower()}.{lastName.ToLower()}@bitaitec.com");
@@ -70,7 +70,7 @@ namespace Bitai.LDAPHelper.Tests
             // GUID: f8e9d7c6-b5a4-4321-8765-43210fedcba9
             mockLdapEntry.AddAttribute("objectGUID", new byte[] { 0xC6, 0xD7, 0xE9, 0xF8, 0xA4, 0xB5, 0x21, 0x43, 0x87, 0x65, 0x43, 0x21, 0x0F, 0xED, 0xCB, 0xA9 });
             mockLdapEntry.AddAttribute("sAMAccountName", $"{groupName}");
-            mockLdapEntry.AddAttribute("cn", $"{groupName}");
+            mockLdapEntry.AddAttribute("Name", $"{groupName}");
             mockLdapEntry.AddAttribute("objectClass", new string[] { "top", "group" });
             mockLdapEntry.AddAttribute("sAMAccountType", "268435456");
             mockLdapEntry.AddAttribute("groupType", "-2147483640"); // Represents a Universal Security Group
@@ -97,7 +97,7 @@ namespace Bitai.LDAPHelper.Tests
         }
 
         public SearchLimits CreateValidSearchLimits() {
-            return new SearchLimits("DC=domain,DC=com") {
+            return new SearchLimits("DC=va,DC=bitai,DC=com") {
                 MaxSearchResults = 1000,
                 MaxSearchTimeout = 60
             };

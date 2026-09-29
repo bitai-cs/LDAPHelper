@@ -11,10 +11,14 @@ public class MockLdapPersistentConnectionAdapter : MockLdapConnectionAdapter
 {
     private readonly MockLdapDataStore _dataStore;
 
+
+
     public MockLdapPersistentConnectionAdapter() : base()
     {
-        _dataStore = MockLdapDataStore.Instance;
+        _dataStore = MockLdapDataStore.Instance;        
     }
+
+
 
     public override Task AddEntryAsync(string distinguishedName, ILdapAttributeSetAdapter attributes)
     {
@@ -170,6 +174,8 @@ public class MockLdapPersistentConnectionAdapter : MockLdapConnectionAdapter
         return Task.FromResult<ILdapSearchQueueAdapter>(mockQueue);
     }
 
+
+
     private bool MatchesFilter(MockLdapEntryAdapter entry, string filter)
     {
         // Simple wildcard matching for demo purposes
@@ -184,10 +190,10 @@ public class MockLdapPersistentConnectionAdapter : MockLdapConnectionAdapter
             var value = ExtractFilterValue(filter, "distinguishedName");
             return MatchWildcard(entry.DistinguishedName, value);
         }
-        else if (filter.Contains("(cn="))
+        else if (filter.Contains("(Name="))
         {
-            var value = ExtractFilterValue(filter, "cn");
-            var cn = entry.GetAttributeSet().GetAttribute("cn")?.StringValue;
+            var value = ExtractFilterValue(filter, "Name");
+            var cn = entry.GetAttributeSet().GetAttribute("Name")?.StringValue;
             return MatchWildcard(cn, value);
         }
         else if (filter.Contains("(objectSid="))
@@ -246,6 +252,8 @@ public class MockLdapPersistentConnectionAdapter : MockLdapConnectionAdapter
         
         return value.Equals(pattern, StringComparison.OrdinalIgnoreCase);
     }
+
+
 
     private static string ConvertByteToStringSid(byte[] sidBytes)
     {

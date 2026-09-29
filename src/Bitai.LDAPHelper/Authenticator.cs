@@ -47,13 +47,15 @@ namespace Bitai.LDAPHelper
                 var searchResult = await searcher.SearchEntriesAsync(searchFilter, RequiredEntryAttributes.OnlyObjectSid, requestLabel);
 
                 if (!searchResult.IsSuccessfulOperation) {
+                    string errorMessage = $"Failed to authenticate account '{credential.DomainAccountName}'.";
+
                     if (searchResult.HasErrorObject) {
-                        return new LDAPDomainAccountAuthenticationResult(credential, searchResult.OperationMessage, searchResult.ErrorObject, requestLabel);
+                        return new LDAPDomainAccountAuthenticationResult(credential, $"{errorMessage} {searchResult.OperationMessage}", searchResult.ErrorObject, requestLabel);
                     }
                     else {
                         authenticationResult = new LDAPDomainAccountAuthenticationResult(credential, false, requestLabel, false)
                         {
-                            OperationMessage = searchResult.OperationMessage
+                            OperationMessage = $"{errorMessage} {searchResult.OperationMessage}"
                         };
 
                         return authenticationResult;
