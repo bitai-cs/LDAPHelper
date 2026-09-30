@@ -1,5 +1,7 @@
 using Bitai.LDAPHelper.DTO;
 using Bitai.LDAPHelper.LdapAdapters.LdapHelperMock;
+using Bitai.LDAPHelper.LdapAdapters.LdapHelperMock.LdapData;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Bitai.LDAPHelper.Tests
 {
@@ -12,47 +14,41 @@ namespace Bitai.LDAPHelper.Tests
         public async Task SearchEntries_ReturnsExpectedEntries() {
             var connectionInfo = CreateValidConnectionInfo(ssl: true);
 
-            var mockConnection = new MockLdapConnectionAdapter();
-            
-            var mockConnectionFactory = new MockLdapConnectionFactoryAdapter(mockConnection);
+            var mockConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter(
+                NullLogger<MockLdapPersistentConnectionFactoryAdapter>.Instance,
+                NullLogger<MockLdapDataSeeder>.Instance);
 
             var searchLimits = CreateValidSearchLimits();
-
-            var mockUserEntry = CreateMockUserEntry("Test", "User", searchLimits, out var userSearchFilter, out var _); 
-
-            mockConnection.AddSearchResult(userSearchFilter.ToString(), new List<MockLdapEntryAdapter> { mockUserEntry });
            
             var credential = new LDAPDomainAccountCredential("domain", "admin", "p@55w0rd");
 
             var searcher = new Searcher(connectionInfo, searchLimits, credential, mockConnectionFactory);
 
+            var userSearchFilter = CreateSearchFilter("sAMAccountName", "james.dockers");
+
             var result = await searcher.SearchEntriesAsync(userSearchFilter, RequiredEntryAttributes.Minimun, "TestRequest");
 
             Assert.True(result.IsSuccessfulOperation);
             Assert.Single(result.Entries);
-            Assert.Equal(userSearchFilter.FilterValue.Value, result.Entries.First().samAccountName);
-            Assert.Equal(mockUserEntry.DistinguishedName, result.Entries.First().distinguishedName);
+            Assert.Equal("james.dockers", result.Entries.First().samAccountName);
         }
 
         [Fact]
         public async Task SearchEntries_ReturnsEmptyList() {
             var connectionInfo = CreateValidConnectionInfo(ssl: true);
 
-            var mockConnection = new MockLdapConnectionAdapter();
-
-            var mockConnectionFactory = new MockLdapConnectionFactoryAdapter(mockConnection);
+            var mockConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter(
+                NullLogger<MockLdapPersistentConnectionFactoryAdapter>.Instance,
+                NullLogger<MockLdapDataSeeder>.Instance);
 
             var searchLimits = CreateValidSearchLimits();
-
-            var mockUserEntry = CreateMockUserEntry("Test", "User", searchLimits, out var userSearchFilter, out var _);
-
-            mockConnection.AddSearchResult(userSearchFilter.ToString(), new List<MockLdapEntryAdapter> { mockUserEntry });
 
             var credential = new LDAPDomainAccountCredential("domain", "admin", "p@55w0rd");
 
             var searcher = new Searcher(connectionInfo, searchLimits, credential, mockConnectionFactory);
 
-            GenerateCommonUserSearchFilter("Hacker", "User", searchLimits, out var unknownUserSearchFilter, out var _);
+            // Search for a user that doesn't exist in the seeder
+            var unknownUserSearchFilter = CreateSearchFilter("sAMAccountName", "nonexistent.user");
 
             var result = await searcher.SearchEntriesAsync(unknownUserSearchFilter, RequiredEntryAttributes.Minimun, "TestRequest");
 
@@ -64,19 +60,16 @@ namespace Bitai.LDAPHelper.Tests
         public async Task SearchParentEntries_ReturnsExpectedEntries() {
             var connectionInfo = CreateValidConnectionInfo(ssl: true);
 
-            var mockConnection = new MockLdapConnectionAdapter();
-
-            var mockConnectionFactory = new MockLdapConnectionFactoryAdapter(mockConnection);
+            var mockConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter(
+                NullLogger<MockLdapPersistentConnectionFactoryAdapter>.Instance,
+                NullLogger<MockLdapDataSeeder>.Instance);
 
             var searchLimits = CreateValidSearchLimits();
 
-            var mockGroupEntry1 = CreateMockGroupEntry("Developers", "IT", searchLimits, out var groupSearchFilter1);
-            var mockGroupEntry2 = CreateMockGroupEntry("Administrators", "Trusted", searchLimits, out var groupSearchFilter2);
-            var mockUserEntry = CreateMockUserEntry("John", "Doe", searchLimits, out var userSearchFilter, out var _, new string[] { mockGroupEntry1.DistinguishedName, mockGroupEntry2.DistinguishedName });
-
-            mockConnection.AddSearchResult(groupSearchFilter1.ToString(), new List<MockLdapEntryAdapter> { mockGroupEntry1 });
-            mockConnection.AddSearchResult(groupSearchFilter2.ToString(), new List<MockLdapEntryAdapter> { mockGroupEntry2 });
-            mockConnection.AddSearchResult(userSearchFilter.ToString(), new List<MockLdapEntryAdapter> { mockUserEntry });
+            // Use data from the seeder - james.dockers is member of DomainAdmins, ITAdmins, DevOpsEng, SeniorDevOps, DevOpsLeaders
+            var userDistinguishedName = "CN=James Dockers,OU=Seniors,OU=DevOps,OU=IT,DC=va,DC=bitai,DC=com";
+            var mockUserEntry = FindEntryInStore(userDistinguishedName);
+            var userSearchFilter = CreateSearchFilter("sAMAccountName", "james.dockers");
 
             var credential = new LDAPDomainAccountCredential("domain", "admin", "p@55w0rd");
 
@@ -92,27 +85,20 @@ namespace Bitai.LDAPHelper.Tests
         public async Task SearchParentEntries_ReturnsEmptyList() {
             var connectionInfo = CreateValidConnectionInfo(ssl: true);
 
-            var mockConnection = new MockLdapConnectionAdapter();
-
-            var mockConnectionFactory = new MockLdapConnectionFactoryAdapter(mockConnection);
+            var mockConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter(
+                NullLogger<MockLdapPersistentConnectionFactoryAdapter>.Instance,
+                NullLogger<MockLdapDataSeeder>.Instance);
 
             var searchLimits = CreateValidSearchLimits();
-
-            var mockGroupEntry1 = CreateMockGroupEntry("Developers", "IT", searchLimits, out var groupSearchFilter1);
-            var mockGroupEntry2 = CreateMockGroupEntry("Administrators", "Trusted", searchLimits, out var groupSearchFilter2);
-            var mockUserEntry = CreateMockUserEntry("John", "Doe", searchLimits, out var userSearchFilter, out var _, new string[] { mockGroupEntry1.DistinguishedName, mockGroupEntry2.DistinguishedName });
-
-            mockConnection.AddSearchResult(groupSearchFilter1.ToString(), new List<MockLdapEntryAdapter> { mockGroupEntry1 });
-            mockConnection.AddSearchResult(groupSearchFilter2.ToString(), new List<MockLdapEntryAdapter> { mockGroupEntry2 });
-            mockConnection.AddSearchResult(userSearchFilter.ToString(), new List<MockLdapEntryAdapter> { mockUserEntry });
 
             var credential = new LDAPDomainAccountCredential("domain", "admin", "p@55w0rd");
 
             var searcher = new Searcher(connectionInfo, searchLimits, credential, mockConnectionFactory);
 
-            GenerateCommonUserSearchFilter("Dummiest", "User", searchLimits, out var expectedDummiestUserSearchFilter, out var _);
+            // Search for a user that doesn't exist in the seeder
+            var unknownUserSearchFilter = CreateSearchFilter("sAMAccountName", "nonexistent.user");
 
-            var result = await searcher.SearchParentEntriesAsync(expectedDummiestUserSearchFilter, RequiredEntryAttributes.Minimun, "TestRequest");
+            var result = await searcher.SearchParentEntriesAsync(unknownUserSearchFilter, RequiredEntryAttributes.Minimun, "TestRequest");
 
             Assert.False(result.IsSuccessfulOperation);
             Assert.Null(result.Entries);

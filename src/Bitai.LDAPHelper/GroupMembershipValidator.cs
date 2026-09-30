@@ -121,7 +121,7 @@ namespace Bitai.LDAPHelper
             if (string.IsNullOrEmpty(sAMAccountName))
                 throw new ArgumentNullException(nameof(sAMAccountName));
 
-            if (sAMAccountName.Contains("*"))
+            if (sAMAccountName.Contains('*'))
                 throw new ArgumentException($"{nameof(sAMAccountName)} cannot contain the character *.");
 
             var attributeFilter = new QueryFilters.AttributeFilter(DTO.EntryAttribute.sAMAccountName, new QueryFilters.FilterValue(sAMAccountName));

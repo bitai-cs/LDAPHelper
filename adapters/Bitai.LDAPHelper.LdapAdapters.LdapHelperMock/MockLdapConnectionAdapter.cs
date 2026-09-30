@@ -38,7 +38,10 @@ public class MockLdapConnectionAdapter : ILdapConnectionAdapter
         if (string.IsNullOrEmpty(userDN) || string.IsNullOrEmpty(password) || userDN.Contains("hacker") || password.Contains("123456"))
             throw new LdapOperationException($"{nameof(MockLdapConnectionAdapter)}.{nameof(MockLdapConnectionAdapter.BindAsync)}: Invalid credentials!");
 
-        _isBound = !string.IsNullOrEmpty(userDN) && !string.IsNullOrEmpty(password);
+        if (password.Equals("wrongpassword", StringComparison.OrdinalIgnoreCase))
+            _isBound = false;
+        else
+            _isBound = !string.IsNullOrEmpty(userDN) && !string.IsNullOrEmpty(password);
 
         return Task.CompletedTask;
     }        

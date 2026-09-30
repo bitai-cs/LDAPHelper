@@ -1,5 +1,7 @@
 using Bitai.LDAPHelper.DTO;
 using Bitai.LDAPHelper.LdapAdapters.LdapHelperMock;
+using Bitai.LDAPHelper.LdapAdapters.LdapHelperMock.LdapData;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Bitai.LDAPHelper.Tests
 {
@@ -10,9 +12,9 @@ namespace Bitai.LDAPHelper.Tests
     {
         [Fact]
         public async Task CreateUserAccountForMsAD_ReturnsSuccess() {
-            var mockConnection = new MockLdapConnectionAdapter();
-
-            var mockConnectionFactory = new MockLdapConnectionFactoryAdapter(mockConnection);
+            var mockConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter(
+                NullLogger<MockLdapPersistentConnectionFactoryAdapter>.Instance,
+                NullLogger<MockLdapDataSeeder>.Instance);
 
             var connectionInfo = CreateValidConnectionInfo(ssl: true);
 
@@ -44,9 +46,9 @@ namespace Bitai.LDAPHelper.Tests
 
         [Fact]
         public async Task CreateUserAccountForMsAD_MissingRequiredAttr_ReturnsError() {
-            var mockConnection = new MockLdapConnectionAdapter();
-
-            var mockConnectionFactory = new MockLdapConnectionFactoryAdapter(mockConnection);
+            var mockConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter(
+                NullLogger<MockLdapPersistentConnectionFactoryAdapter>.Instance,
+                NullLogger<MockLdapDataSeeder>.Instance);
 
             var connectionInfo = CreateValidConnectionInfo(ssl: true);
 
@@ -77,9 +79,9 @@ namespace Bitai.LDAPHelper.Tests
         [Fact]
         public async Task SetUserAccountPasswordForMsAD_ValidAccount_ReturnsSuccess() {
             // Arrange
-            var mockConnection = new MockLdapConnectionAdapter();
-            
-            var mockConnectionFactory = new MockLdapConnectionFactoryAdapter(mockConnection);
+            var mockConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter(
+                NullLogger<MockLdapPersistentConnectionFactoryAdapter>.Instance,
+                NullLogger<MockLdapDataSeeder>.Instance);
 
             var connectionInfo = CreateValidConnectionInfo(ssl: true);
 
@@ -89,18 +91,10 @@ namespace Bitai.LDAPHelper.Tests
 
             var accountManager = new AccountManager(connectionInfo, searchLimits, credential, mockConnectionFactory);
 
-            var groupName = "Accountants";
-            var groupContainerName = "Finance";
-            var mockGroupEntry1 = CreateMockGroupEntry(groupName, groupContainerName, searchLimits, out var groupSearchFilter1);
-            var mockGroupEntry2 = CreateMockGroupEntry("Auditors", "Trusted", searchLimits, out var groupSearchFilter2);
+            // Use data from the seeder - james.dockers user
+            var userDistinguishedName = "CN=James Dockers,OU=Seniors,OU=DevOps,OU=IT,DC=va,DC=bitai,DC=com";
 
-            var mockUserEntry = CreateMockUserEntry("John", "Doe", searchLimits, out var _, out var userSearchFilter, new string[] { mockGroupEntry2.DistinguishedName }, groupName, groupContainerName);
-
-            mockConnection.AddSearchResult(groupSearchFilter1.ToString(), new List<MockLdapEntryAdapter> { mockGroupEntry1 });
-            mockConnection.AddSearchResult(groupSearchFilter2.ToString(), new List<MockLdapEntryAdapter> { mockGroupEntry2 });
-            mockConnection.AddSearchResult(userSearchFilter.ToString(), new List<MockLdapEntryAdapter> { mockUserEntry });
-
-            var result = await accountManager.SetMsADUserAccountPassword(EntryAttribute.distinguishedName, mockUserEntry.DistinguishedName, "TestPassword", postUpdateTestAuthentication: true);
+            var result = await accountManager.SetMsADUserAccountPassword(EntryAttribute.distinguishedName, userDistinguishedName, "TestPassword", postUpdateTestAuthentication: true);
 
             // Assert
             Assert.True(result.IsSuccessfulOperation);
@@ -109,9 +103,9 @@ namespace Bitai.LDAPHelper.Tests
 
         [Fact]
         public async Task SetUserAccountPasswordForMsAD_AccountNotFound_ReturnsFailed() {
-            var mockConnection = new MockLdapConnectionAdapter();
-
-            var mockConnectionFactory = new MockLdapConnectionFactoryAdapter(mockConnection);
+            var mockConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter(
+                NullLogger<MockLdapPersistentConnectionFactoryAdapter>.Instance,
+                NullLogger<MockLdapDataSeeder>.Instance);
 
             var connectionInfo = CreateValidConnectionInfo(ssl: true);
 
@@ -121,21 +115,10 @@ namespace Bitai.LDAPHelper.Tests
 
             var accountManager = new AccountManager(connectionInfo, searchLimits, credential, mockConnectionFactory);
 
-            var groupName = "Accountants";
-            var groupContainerName = "Finance";
-            var mockGroupEntry1 = CreateMockGroupEntry(groupName, groupContainerName, searchLimits, out var groupSearchFilter1);
-            var mockGroupEntry2 = CreateMockGroupEntry("Auditors", "Trusted", searchLimits, out var groupSearchFilter2);
+            // Use a DN that doesn't exist in the seeder
+            var nonExistentUserDN = "CN=Non Existent User,OU=IT,DC=va,DC=bitai,DC=com";
 
-            var mockUserEntry = CreateMockUserEntry("John", "Doe", searchLimits, out var _, out var userSearchFilter, new string[] { mockGroupEntry2.DistinguishedName }, groupName, groupContainerName);
-
-            mockConnection.AddSearchResult(groupSearchFilter1.ToString(), new List<MockLdapEntryAdapter> { mockGroupEntry1 });
-            mockConnection.AddSearchResult(groupSearchFilter2.ToString(), new List<MockLdapEntryAdapter> { mockGroupEntry2 });
-            //Do not add to trigger account verification error!
-            //mockConnection.AddSearchResult(userSearchFilter.ToString(), new List<MockLdapEntryAdapter> { mockUserEntry });
-
-            var userCredential = new LDAPDistinguishedNameCredential(mockUserEntry.DistinguishedName, "NewP@ssw0rd");
-
-            var result = await accountManager.SetMsADUserAccountPassword(EntryAttribute.distinguishedName, mockUserEntry.DistinguishedName, "TestPassword", postUpdateTestAuthentication: true);
+            var result = await accountManager.SetMsADUserAccountPassword(EntryAttribute.distinguishedName, nonExistentUserDN, "TestPassword", postUpdateTestAuthentication: true);
 
             Assert.False(result.IsSuccessfulOperation);
             Assert.StartsWith("user account not found", result.OperationMessage, StringComparison.OrdinalIgnoreCase);
@@ -143,9 +126,9 @@ namespace Bitai.LDAPHelper.Tests
 
         [Fact]
         public async Task DisableUserAccountForMsAD_ValidAccount_ReturnsSuccess() {
-            var mockConnection = new MockLdapConnectionAdapter();
-
-            var mockConnectionFactory = new MockLdapConnectionFactoryAdapter(mockConnection);
+            var mockConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter(
+                NullLogger<MockLdapPersistentConnectionFactoryAdapter>.Instance,
+                NullLogger<MockLdapDataSeeder>.Instance);
 
             var connectionInfo = CreateValidConnectionInfo(ssl: true);
 
@@ -155,28 +138,21 @@ namespace Bitai.LDAPHelper.Tests
 
             var accountManager = new AccountManager(connectionInfo, searchLimits, credential, mockConnectionFactory);
 
-            var groupName = "Interviewers";
-            var groupContainerName = "Human Resources";
-            var mockGroupEntry1 = CreateMockGroupEntry(groupName, groupContainerName, searchLimits, out var groupSearchFilter1);
-            var mockGroupEntry2 = CreateMockGroupEntry("Auditors", "Trusted", searchLimits, out var groupSearchFilter2);
-            var mockUserEntry = CreateMockUserEntry("Francis", "Peralta", searchLimits, out var _, out var userSearchFilter, new string[] { mockGroupEntry2.DistinguishedName }, groupName, groupContainerName);
+            // Use data from the seeder - james.dockers user
+            var userDistinguishedName = "CN=James Dockers,OU=Seniors,OU=DevOps,OU=IT,DC=va,DC=bitai,DC=com";
 
-            mockConnection.AddSearchResult(groupSearchFilter1.ToString(), new List<MockLdapEntryAdapter> { mockGroupEntry1 });
-            mockConnection.AddSearchResult(groupSearchFilter2.ToString(), new List<MockLdapEntryAdapter> { mockGroupEntry2 });
-            mockConnection.AddSearchResult(userSearchFilter.ToString(), new List<MockLdapEntryAdapter> { mockUserEntry });
-
-            var result = await accountManager.DisableMsADUserAccount(EntryAttribute.distinguishedName, mockUserEntry.DistinguishedName, "TestDisable");
+            var result = await accountManager.DisableMsADUserAccount(EntryAttribute.distinguishedName, userDistinguishedName, "TestDisable");
 
             // Assert
-            Assert.True(result.IsSuccessfulOperation);          
+            Assert.True(result.IsSuccessfulOperation);
             Assert.Contains("has been disabled", result.OperationMessage.ToLower());
         }
 
         [Fact]
         public async Task DisableUserAccountForMsAD_AccountNotFound_ReturnsSuccess() {
-            var mockConnection = new MockLdapConnectionAdapter();
-
-            var mockConnectionFactory = new MockLdapConnectionFactoryAdapter(mockConnection);
+            var mockConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter(
+                NullLogger<MockLdapPersistentConnectionFactoryAdapter>.Instance,
+                NullLogger<MockLdapDataSeeder>.Instance);
 
             var connectionInfo = CreateValidConnectionInfo(ssl: true);
 
@@ -186,18 +162,10 @@ namespace Bitai.LDAPHelper.Tests
 
             var accountManager = new AccountManager(connectionInfo, searchLimits, credential, mockConnectionFactory);
 
-            var groupName = "Interviewers";
-            var groupContainerName = "Human Resources";
-            var mockGroupEntry1 = CreateMockGroupEntry(groupName, groupContainerName, searchLimits, out var groupSearchFilter1);
-            var mockGroupEntry2 = CreateMockGroupEntry("Auditors", "Trusted", searchLimits, out var groupSearchFilter2);
-            var mockUserEntry = CreateMockUserEntry("Francis", "Peralta", searchLimits, out var _, out var userSearchFilter, new string[] { mockGroupEntry2.DistinguishedName }, groupName, groupContainerName);
+            // Use a DN that doesn't exist in the seeder
+            var nonExistentUserDN = "CN=Non Existent User,OU=IT,DC=va,DC=bitai,DC=com";
 
-            mockConnection.AddSearchResult(groupSearchFilter1.ToString(), new List<MockLdapEntryAdapter> { mockGroupEntry1 });
-            mockConnection.AddSearchResult(groupSearchFilter2.ToString(), new List<MockLdapEntryAdapter> { mockGroupEntry2 });
-            //Do not add user account in order to trigger user not found validation.
-            //mockConnection.AddSearchResult(userSearchFilter.ToString(), new List<MockLdapEntryAdapter> { mockUserEntry });
-
-            var result = await accountManager.DisableMsADUserAccount(EntryAttribute.distinguishedName, mockUserEntry.DistinguishedName, "TestDisable");
+            var result = await accountManager.DisableMsADUserAccount(EntryAttribute.distinguishedName, nonExistentUserDN, "TestDisable");
 
             // Assert
             Assert.False(result.IsSuccessfulOperation);
@@ -206,9 +174,9 @@ namespace Bitai.LDAPHelper.Tests
 
         [Fact]
         public async Task RemoveUserAccountForMsAD_ValidAccount_ReturnsSuccess() {
-            var mockConnection = new MockLdapConnectionAdapter();
-
-            var mockConnectionFactory = new MockLdapConnectionFactoryAdapter(mockConnection);
+            var mockConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter(
+                NullLogger<MockLdapPersistentConnectionFactoryAdapter>.Instance,
+                NullLogger<MockLdapDataSeeder>.Instance);
 
             var connectionInfo = CreateValidConnectionInfo(ssl: true);
 
@@ -216,19 +184,12 @@ namespace Bitai.LDAPHelper.Tests
 
             var credential = new LDAPDomainAccountCredential("domain", "admin", "p@55w0rd");
 
-            var groupName = "Accountants";
-            var groupContainerName = "Finance";
-            var mockGroupEntry1 = CreateMockGroupEntry(groupName, groupContainerName, searchLimits, out var groupSearchFilter1);
-            var mockGroupEntry2 = CreateMockGroupEntry("Auditors", "Trusted", searchLimits, out var groupSearchFilter2);
-            var mockUserEntry = CreateMockUserEntry("John", "Doe", searchLimits, out var _, out var userSearchFilter, new string[] { mockGroupEntry2.DistinguishedName }, groupName, groupContainerName);
-
-            mockConnection.AddSearchResult(groupSearchFilter1.ToString(), new List<MockLdapEntryAdapter> { mockGroupEntry1 });
-            mockConnection.AddSearchResult(groupSearchFilter2.ToString(), new List<MockLdapEntryAdapter> { mockGroupEntry2 });
-            mockConnection.AddSearchResult(userSearchFilter.ToString(), new List<MockLdapEntryAdapter> { mockUserEntry });
+            // Use data from the seeder - james.dockers user
+            var userDistinguishedName = "CN=James Dockers,OU=Seniors,OU=DevOps,OU=IT,DC=va,DC=bitai,DC=com";
 
             var accountManager = new AccountManager(connectionInfo, searchLimits, credential, mockConnectionFactory);
-            
-            var result = await accountManager.RemoveMsADUserAccount(EntryAttribute.distinguishedName, mockUserEntry.DistinguishedName, "TestDelete");
+
+            var result = await accountManager.RemoveMsADUserAccount(EntryAttribute.distinguishedName, userDistinguishedName, "TestDelete");
 
             Assert.True(result.IsSuccessfulOperation);
             Assert.Contains("successfully removed", result.OperationMessage.ToLower());
@@ -236,9 +197,9 @@ namespace Bitai.LDAPHelper.Tests
 
         [Fact]
         public async Task RemoveUserAccountForMsAD_AccountNotFound_ReturnsSuccess() {
-            var mockConnection = new MockLdapConnectionAdapter();
-
-            var mockConnectionFactory = new MockLdapConnectionFactoryAdapter(mockConnection);
+            var mockConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter(
+                NullLogger<MockLdapPersistentConnectionFactoryAdapter>.Instance,
+                NullLogger<MockLdapDataSeeder>.Instance);
 
             var connectionInfo = CreateValidConnectionInfo(ssl: true);
 
@@ -246,20 +207,12 @@ namespace Bitai.LDAPHelper.Tests
 
             var credential = new LDAPDomainAccountCredential("domain", "admin", "p@55w0rd");
 
-            var groupName = "Accountants";
-            var groupContainerName = "Finance";
-            var mockGroupEntry1 = CreateMockGroupEntry(groupName, groupContainerName, searchLimits, out var groupSearchFilter1);
-            var mockGroupEntry2 = CreateMockGroupEntry("Auditors", "Trusted", searchLimits, out var groupSearchFilter2);
-            var mockUserEntry = CreateMockUserEntry("John", "Doe", searchLimits, out var _, out var userSearchFilter, new string[] { mockGroupEntry2.DistinguishedName }, groupName, groupContainerName);
-
-            mockConnection.AddSearchResult(groupSearchFilter1.ToString(), new List<MockLdapEntryAdapter> { mockGroupEntry1 });
-            mockConnection.AddSearchResult(groupSearchFilter2.ToString(), new List<MockLdapEntryAdapter> { mockGroupEntry2 });
-            //Do not add user entry to trigger account not found validation.
-            //mockConnection.AddSearchResult(userSearchFilter.ToString(), new List<MockLdapEntryAdapter> { mockUserEntry });
+            // Use a DN that doesn't exist in the seeder
+            var nonExistentUserDN = "CN=Non Existent User,OU=IT,DC=va,DC=bitai,DC=com";
 
             var accountManager = new AccountManager(connectionInfo, searchLimits, credential, mockConnectionFactory);
 
-            var result = await accountManager.RemoveMsADUserAccount(EntryAttribute.distinguishedName, mockUserEntry.DistinguishedName, "TestDelete");
+            var result = await accountManager.RemoveMsADUserAccount(EntryAttribute.distinguishedName, nonExistentUserDN, "TestDelete");
 
             Assert.False(result.IsSuccessfulOperation);
             Assert.Contains("user account not found", result.OperationMessage, StringComparison.OrdinalIgnoreCase);
