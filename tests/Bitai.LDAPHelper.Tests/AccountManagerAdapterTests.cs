@@ -24,6 +24,7 @@ namespace Bitai.LDAPHelper.Tests
 
             var newUser = new LDAPMsADUserAccount {
                 DistinguishedNameOfContainer = $"CN=Software Developers;OU=IT,{searchLimits.BaseDN}",
+                DistinguishedName = $"CN=John Doe,CN=Software Developers;OU=IT,{searchLimits.BaseDN}",
                 Cn = "John Doe",
                 DisplayName = "John Doe (Fullstack)",
                 SAMAccountName = "john.doe",
