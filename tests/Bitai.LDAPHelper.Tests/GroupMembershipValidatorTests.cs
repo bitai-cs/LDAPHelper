@@ -1,4 +1,4 @@
-using Bitai.LDAPHelper.DTO;
+﻿using Bitai.LDAPHelper.DTO;
 using Bitai.LDAPHelper.LdapAdapters.LdapHelperMock;
 using Bitai.LDAPHelper.LdapAdapters.LdapHelperMock.LdapData;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -25,9 +25,7 @@ namespace Bitai.LDAPHelper.Tests
         [Fact]
         public async Task CheckGroupMembershipAsync_UserIsDirectMember_ReturnsTrue() {
             // Arrange - james.dockers is direct member of DomainAdmins
-            var mockConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter(
-                NullLogger<MockLdapPersistentConnectionFactoryAdapter>.Instance,
-                NullLogger<MockLdapDataSeeder>.Instance);
+            var mockConnectionFactory = LdapMockFixture.Factory;
 
             var validator = new GroupMembershipValidator(_validConnectionInfo, _validSearchLimits, _validCredential, mockConnectionFactory);
 
@@ -39,9 +37,7 @@ namespace Bitai.LDAPHelper.Tests
         [Fact]
         public async Task CheckGroupMembershipAsync_UserIsIndirectMember_ReturnsTrue() {
             // Arrange - sara.pikes -> JuniorDevOps -> DevOpsEng -> ITAdmins -> DomainAdmins
-            var mockConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter(
-                NullLogger<MockLdapPersistentConnectionFactoryAdapter>.Instance,
-                NullLogger<MockLdapDataSeeder>.Instance);
+            var mockConnectionFactory = LdapMockFixture.Factory;
 
             var validator = new GroupMembershipValidator(_validConnectionInfo, _validSearchLimits, _validCredential, mockConnectionFactory);
 
@@ -55,9 +51,7 @@ namespace Bitai.LDAPHelper.Tests
         [Fact]
         public async Task CheckGroupMembershipAsync_UserIsMemberThroughMultipleLevels_ReturnsTrue() {
             // Arrange - james.dockers -> SeniorDevOps -> DevOpsEng -> ITAdmins -> DomainAdmins
-            var mockConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter(
-                NullLogger<MockLdapPersistentConnectionFactoryAdapter>.Instance,
-                NullLogger<MockLdapDataSeeder>.Instance);
+            var mockConnectionFactory = LdapMockFixture.Factory;
 
             var validator = new GroupMembershipValidator(_validConnectionInfo, _validSearchLimits, _validCredential, mockConnectionFactory);
 
@@ -71,9 +65,7 @@ namespace Bitai.LDAPHelper.Tests
         [Fact]
         public async Task CheckGroupMembershipAsync_UserIsNotMember_ReturnsFalse() {
             // Arrange - sara.pikes is not a member of DomainAdmins
-            var mockConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter(
-                NullLogger<MockLdapPersistentConnectionFactoryAdapter>.Instance,
-                NullLogger<MockLdapDataSeeder>.Instance);
+            var mockConnectionFactory = LdapMockFixture.Factory;
 
             var validator = new GroupMembershipValidator(_validConnectionInfo, _validSearchLimits, _validCredential, mockConnectionFactory);
 
@@ -87,9 +79,7 @@ namespace Bitai.LDAPHelper.Tests
         [Fact]
         public async Task CheckGroupMembershipAsync_UserNotFound_ThrowsException() {
             // Arrange
-            var mockConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter(
-                NullLogger<MockLdapPersistentConnectionFactoryAdapter>.Instance,
-                NullLogger<MockLdapDataSeeder>.Instance);
+            var mockConnectionFactory = LdapMockFixture.Factory;
 
             var validator = new GroupMembershipValidator(_validConnectionInfo, _validSearchLimits, _validCredential, mockConnectionFactory);
 
@@ -99,9 +89,7 @@ namespace Bitai.LDAPHelper.Tests
         [Fact]
         public async Task CheckGroupMembershipAsync_CaseInsensitiveComparison_ReturnsTrue() {
             // Arrange - james.dockers is member of DomainAdmins
-            var mockConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter(
-                NullLogger<MockLdapPersistentConnectionFactoryAdapter>.Instance,
-                NullLogger<MockLdapDataSeeder>.Instance);
+            var mockConnectionFactory = LdapMockFixture.Factory;
 
             var validator = new GroupMembershipValidator(_validConnectionInfo, _validSearchLimits, _validCredential, mockConnectionFactory);
 
@@ -113,9 +101,7 @@ namespace Bitai.LDAPHelper.Tests
         [Fact]
         public async Task CheckGroupMembershipAsync_NullSAMAccountName_ThrowsArgumentNullException() {
             // Arrange
-            var mockConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter(
-                NullLogger<MockLdapPersistentConnectionFactoryAdapter>.Instance,
-                NullLogger<MockLdapDataSeeder>.Instance);
+            var mockConnectionFactory = LdapMockFixture.Factory;
 
             var validator = new GroupMembershipValidator(_validConnectionInfo, _validSearchLimits, _validCredential, mockConnectionFactory);
 
@@ -127,9 +113,7 @@ namespace Bitai.LDAPHelper.Tests
         [Fact]
         public async Task CheckGroupMembershipAsync_EmptySAMAccountName_ThrowsArgumentNullException() {
             // Arrange
-            var mockConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter(
-                NullLogger<MockLdapPersistentConnectionFactoryAdapter>.Instance,
-                NullLogger<MockLdapDataSeeder>.Instance);
+            var mockConnectionFactory = LdapMockFixture.Factory;
 
             var validator = new GroupMembershipValidator(_validConnectionInfo, _validSearchLimits, _validCredential, mockConnectionFactory);
 
@@ -141,9 +125,7 @@ namespace Bitai.LDAPHelper.Tests
         [Fact]
         public async Task CheckGroupMembershipAsync_SAMAccountNameContainsWildcard_ThrowsArgumentException() {
             // Arrange
-            var mockConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter(
-                NullLogger<MockLdapPersistentConnectionFactoryAdapter>.Instance,
-                NullLogger<MockLdapDataSeeder>.Instance);
+            var mockConnectionFactory = LdapMockFixture.Factory;
 
             var validator = new GroupMembershipValidator(_validConnectionInfo, _validSearchLimits, _validCredential, mockConnectionFactory);
 
@@ -155,9 +137,7 @@ namespace Bitai.LDAPHelper.Tests
         [Fact]
         public async Task CheckGroupMembershipAsync_NullParentGroupCN_ThrowsArgumentNullException() {
             // Arrange
-            var mockConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter(
-                NullLogger<MockLdapPersistentConnectionFactoryAdapter>.Instance,
-                NullLogger<MockLdapDataSeeder>.Instance);
+            var mockConnectionFactory = LdapMockFixture.Factory;
 
             var validator = new GroupMembershipValidator(_validConnectionInfo, _validSearchLimits, _validCredential, mockConnectionFactory);
 
@@ -169,9 +149,7 @@ namespace Bitai.LDAPHelper.Tests
         [Fact]
         public async Task CheckGroupMembershipAsync_EmptyParentGroupCN_ThrowsArgumentNullException() {
             // Arrange
-            var mockConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter(
-                NullLogger<MockLdapPersistentConnectionFactoryAdapter>.Instance,
-                NullLogger<MockLdapDataSeeder>.Instance);
+            var mockConnectionFactory = LdapMockFixture.Factory;
 
             var validator = new GroupMembershipValidator(_validConnectionInfo, _validSearchLimits, _validCredential, mockConnectionFactory);
 
@@ -183,9 +161,7 @@ namespace Bitai.LDAPHelper.Tests
         [Fact]
         public async Task CheckGroupMembershipAsync_ParentGroupCNContainsWildcard_ThrowsArgumentException() {
             // Arrange
-            var mockConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter(
-                NullLogger<MockLdapPersistentConnectionFactoryAdapter>.Instance,
-                NullLogger<MockLdapDataSeeder>.Instance);
+            var mockConnectionFactory = LdapMockFixture.Factory;
 
             var validator = new GroupMembershipValidator(_validConnectionInfo, _validSearchLimits, _validCredential, mockConnectionFactory);
 
@@ -197,9 +173,7 @@ namespace Bitai.LDAPHelper.Tests
         [Fact]
         public async Task CheckGroupMembershipAsync_UserInMultipleGroups_FindsCorrectGroup() {
             // Arrange - james.dockers is member of multiple groups
-            var mockConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter(
-                NullLogger<MockLdapPersistentConnectionFactoryAdapter>.Instance,
-                NullLogger<MockLdapDataSeeder>.Instance);
+            var mockConnectionFactory = LdapMockFixture.Factory;
 
             var validator = new GroupMembershipValidator(_validConnectionInfo, _validSearchLimits, _validCredential, mockConnectionFactory);
 
@@ -215,9 +189,7 @@ namespace Bitai.LDAPHelper.Tests
         [Fact]
         public async Task GetAllGroupMembershipsAsync_UserWithNestedMemberships_ReturnsAllGroupsIncludingIndirect() {
             // Arrange - sara.pikes -> JuniorDevOps -> DevOpsEng -> ITAdmins -> DomainAdmins
-            var mockConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter(
-                NullLogger<MockLdapPersistentConnectionFactoryAdapter>.Instance,
-                NullLogger<MockLdapDataSeeder>.Instance);
+            var mockConnectionFactory = LdapMockFixture.Factory;
 
             var validator = new GroupMembershipValidator(_validConnectionInfo, _validSearchLimits, _validCredential, mockConnectionFactory);
 
@@ -236,9 +208,7 @@ namespace Bitai.LDAPHelper.Tests
         [Fact]
         public async Task GetAllGroupMembershipsAsync_UserWithDeepNesting_ReturnsAllGroupsInHierarchy() {
             // Arrange - james.dockers -> SeniorDevOps -> DevOpsEng -> ITAdmins -> DomainAdmins -> Administrators
-            var mockConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter(
-                NullLogger<MockLdapPersistentConnectionFactoryAdapter>.Instance,
-                NullLogger<MockLdapDataSeeder>.Instance);
+            var mockConnectionFactory = LdapMockFixture.Factory;
 
             var validator = new GroupMembershipValidator(_validConnectionInfo, _validSearchLimits, _validCredential, mockConnectionFactory);
 
@@ -258,9 +228,7 @@ namespace Bitai.LDAPHelper.Tests
         [Fact]
         public async Task GetAllGroupMembershipsAsync_UserNotFound_ThrowsException() {
             // Arrange
-            var mockConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter(
-                NullLogger<MockLdapPersistentConnectionFactoryAdapter>.Instance,
-                NullLogger<MockLdapDataSeeder>.Instance);
+            var mockConnectionFactory = LdapMockFixture.Factory;
 
             var validator = new GroupMembershipValidator(_validConnectionInfo, _validSearchLimits, _validCredential, mockConnectionFactory);
 
@@ -271,9 +239,7 @@ namespace Bitai.LDAPHelper.Tests
         [Fact]
         public async Task GetAllGroupMembershipsAsync_RemovesDuplicateGroups() {
             // Arrange - james.dockers has multiple paths to same groups
-            var mockConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter(
-                NullLogger<MockLdapPersistentConnectionFactoryAdapter>.Instance,
-                NullLogger<MockLdapDataSeeder>.Instance);
+            var mockConnectionFactory = LdapMockFixture.Factory;
 
             var validator = new GroupMembershipValidator(_validConnectionInfo, _validSearchLimits, _validCredential, mockConnectionFactory);
 
@@ -288,9 +254,7 @@ namespace Bitai.LDAPHelper.Tests
         [Fact]
         public async Task GetAllGroupMembershipsAsync_CaseInsensitiveDistinct_ReturnsUniqueGroups() {
             // Arrange - james.dockers has multiple paths to same groups
-            var mockConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter(
-                NullLogger<MockLdapPersistentConnectionFactoryAdapter>.Instance,
-                NullLogger<MockLdapDataSeeder>.Instance);
+            var mockConnectionFactory = LdapMockFixture.Factory;
 
             var validator = new GroupMembershipValidator(_validConnectionInfo, _validSearchLimits, _validCredential, mockConnectionFactory);
 
@@ -305,9 +269,7 @@ namespace Bitai.LDAPHelper.Tests
         [Fact]
         public async Task GetAllGroupMembershipsAsync_NullSAMAccountName_ThrowsArgumentNullException() {
             // Arrange
-            var mockConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter(
-                NullLogger<MockLdapPersistentConnectionFactoryAdapter>.Instance,
-                NullLogger<MockLdapDataSeeder>.Instance);
+            var mockConnectionFactory = LdapMockFixture.Factory;
 
             var validator = new GroupMembershipValidator(_validConnectionInfo, _validSearchLimits, _validCredential, mockConnectionFactory);
 
@@ -319,9 +281,7 @@ namespace Bitai.LDAPHelper.Tests
         [Fact]
         public async Task GetAllGroupMembershipsAsync_EmptySAMAccountName_ThrowsArgumentNullException() {
             // Arrange
-            var mockConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter(
-                NullLogger<MockLdapPersistentConnectionFactoryAdapter>.Instance,
-                NullLogger<MockLdapDataSeeder>.Instance);
+            var mockConnectionFactory = LdapMockFixture.Factory;
 
             var validator = new GroupMembershipValidator(_validConnectionInfo, _validSearchLimits, _validCredential, mockConnectionFactory);
 
@@ -333,9 +293,7 @@ namespace Bitai.LDAPHelper.Tests
         [Fact]
         public async Task GetAllGroupMembershipsAsync_SAMAccountNameContainsWildcard_ThrowsArgumentException() {
             // Arrange
-            var mockConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter(
-                NullLogger<MockLdapPersistentConnectionFactoryAdapter>.Instance,
-                NullLogger<MockLdapDataSeeder>.Instance);
+            var mockConnectionFactory = LdapMockFixture.Factory;
 
             var validator = new GroupMembershipValidator(_validConnectionInfo, _validSearchLimits, _validCredential, mockConnectionFactory);
 
@@ -351,9 +309,7 @@ namespace Bitai.LDAPHelper.Tests
         [Fact]
         public async Task CheckGroupMembershipAsync_WithMultipleNestedPaths_ReturnsTrueIfAnyPathLeadsToTarget() {
             // Arrange - james.dockers has multiple paths to DomainAdmins
-            var mockConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter(
-                NullLogger<MockLdapPersistentConnectionFactoryAdapter>.Instance,
-                NullLogger<MockLdapDataSeeder>.Instance);
+            var mockConnectionFactory = LdapMockFixture.Factory;
 
             var validator = new GroupMembershipValidator(_validConnectionInfo, _validSearchLimits, _validCredential, mockConnectionFactory);
 
@@ -367,9 +323,7 @@ namespace Bitai.LDAPHelper.Tests
         [Fact]
         public async Task GetAllGroupMembershipsAsync_WhenSearchFails_ThrowsException() {
             // Arrange
-            var mockConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter(
-                NullLogger<MockLdapPersistentConnectionFactoryAdapter>.Instance,
-                NullLogger<MockLdapDataSeeder>.Instance);
+            var mockConnectionFactory = LdapMockFixture.Factory;
 
             var validator = new GroupMembershipValidator(_validConnectionInfo, _validSearchLimits, _validCredential, mockConnectionFactory);
 
@@ -383,9 +337,7 @@ namespace Bitai.LDAPHelper.Tests
         [Fact]
         public async Task CheckGroupMembershipAsync_WithWhitespaceInCN_HandlesCorrectly() {
             // Arrange - No groups with whitespace in seeder, use existing group
-            var mockConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter(
-                NullLogger<MockLdapPersistentConnectionFactoryAdapter>.Instance,
-                NullLogger<MockLdapDataSeeder>.Instance);
+            var mockConnectionFactory = LdapMockFixture.Factory;
 
             var validator = new GroupMembershipValidator(_validConnectionInfo, _validSearchLimits, _validCredential, mockConnectionFactory);
 

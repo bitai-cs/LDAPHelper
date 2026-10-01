@@ -20,6 +20,32 @@ namespace Bitai.LDAPHelper.Tests
         }
 
         /// <summary>
+        /// Adds a disposable user with a unique DN to the shared mock data store, so tests that modify or
+        /// delete accounts never touch the users created by the seeder. Returns the DN of the new user.
+        /// </summary>
+        protected string CreateDisposableUser(string prefix)
+        {
+            var id = Guid.NewGuid().ToString("N");
+            var samAccountName = $"{prefix}.{id}";
+            var distinguishedName = $"CN={prefix} {id},OU=Seniors,OU=DevOps,OU=IT,DC=va,DC=bitai,DC=com";
+
+            var entry = new MockLdapEntryAdapter(distinguishedName);
+            entry.AddAttribute("objectGuid", Guid.NewGuid().ToByteArray());
+            entry.AddAttribute("sAMAccountName", samAccountName);
+            entry.AddAttribute("sAMAccountType", "805306368");
+            entry.AddAttribute("cn", $"{prefix} {id}");
+            entry.AddAttribute("name", $"{prefix} {id}");
+            entry.AddAttribute("displayName", $"{prefix} {id}");
+            entry.AddAttribute("userPrincipalName", $"{samAccountName}@va.bitai.com");
+            entry.AddAttribute("userAccountControl", "512");
+            entry.AddAttribute("objectClass", new[] { "top", "person", "organizationalPerson", "user" });
+
+            MockLdapDataStore.Instance.AddOrUpdateEntry(entry);
+
+            return distinguishedName;
+        }
+
+        /// <summary>
         /// Creates a search filter for a given attribute and value.
         /// </summary>
         protected QueryFilters.AttributeFilter CreateSearchFilter(string attributeName, string value)

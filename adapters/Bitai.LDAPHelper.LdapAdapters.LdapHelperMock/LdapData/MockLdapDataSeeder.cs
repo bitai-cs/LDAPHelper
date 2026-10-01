@@ -26,8 +26,6 @@ public class MockLdapDataSeeder
     }
 
     public void SeedAllData() {
-        _dataStore.Clear();
-
         _logger.LogInformation("=".PadRight(60, '='));
         _logger.LogInformation("MOCK DATA SEEDING STARTED");
         _logger.LogInformation("=".PadRight(60, '='));

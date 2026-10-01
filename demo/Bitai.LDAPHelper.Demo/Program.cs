@@ -117,7 +117,6 @@ public partial class Program
             if (implementation == ImplementationType.Mock)
             {
                 Log.Information("Initializing Mock Implementation...");
-                _context.ConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter();
 
                 // Create logger for MockLdapDataSeeder
                 using var loggerFactory = LoggerFactory.Create(builder => {
@@ -125,7 +124,10 @@ public partial class Program
                     builder.AddSerilog(Log.Logger);
                 });
                 var logger = loggerFactory.CreateLogger<MockLdapDataSeeder>();
+                var logger2 = loggerFactory.CreateLogger<MockLdapPersistentConnectionFactoryAdapter>();
 
+                _context.ConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter(logger2, logger);
+               
                 // Seed mock data
                 var seeder = new MockLdapDataSeeder(logger);
                 seeder.SeedAllData();

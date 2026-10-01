@@ -1,4 +1,4 @@
-using Bitai.LDAPHelper.DTO;
+﻿using Bitai.LDAPHelper.DTO;
 using Bitai.LDAPHelper.LdapAdapters.LdapHelperMock;
 using Bitai.LDAPHelper.LdapAdapters.LdapHelperMock.LdapData;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -14,9 +14,7 @@ namespace Bitai.LDAPHelper.Tests
         public async Task SearchEntries_ReturnsExpectedEntries() {
             var connectionInfo = CreateValidConnectionInfo(ssl: true);
 
-            var mockConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter(
-                NullLogger<MockLdapPersistentConnectionFactoryAdapter>.Instance,
-                NullLogger<MockLdapDataSeeder>.Instance);
+            var mockConnectionFactory = LdapMockFixture.Factory;
 
             var searchLimits = CreateValidSearchLimits();
            
@@ -37,9 +35,7 @@ namespace Bitai.LDAPHelper.Tests
         public async Task SearchEntries_ReturnsEmptyList() {
             var connectionInfo = CreateValidConnectionInfo(ssl: true);
 
-            var mockConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter(
-                NullLogger<MockLdapPersistentConnectionFactoryAdapter>.Instance,
-                NullLogger<MockLdapDataSeeder>.Instance);
+            var mockConnectionFactory = LdapMockFixture.Factory;
 
             var searchLimits = CreateValidSearchLimits();
 
@@ -60,9 +56,7 @@ namespace Bitai.LDAPHelper.Tests
         public async Task SearchParentEntries_ReturnsExpectedEntries() {
             var connectionInfo = CreateValidConnectionInfo(ssl: true);
 
-            var mockConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter(
-                NullLogger<MockLdapPersistentConnectionFactoryAdapter>.Instance,
-                NullLogger<MockLdapDataSeeder>.Instance);
+            var mockConnectionFactory = LdapMockFixture.Factory;
 
             var searchLimits = CreateValidSearchLimits();
 
@@ -85,9 +79,7 @@ namespace Bitai.LDAPHelper.Tests
         public async Task SearchParentEntries_ReturnsEmptyList() {
             var connectionInfo = CreateValidConnectionInfo(ssl: true);
 
-            var mockConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter(
-                NullLogger<MockLdapPersistentConnectionFactoryAdapter>.Instance,
-                NullLogger<MockLdapDataSeeder>.Instance);
+            var mockConnectionFactory = LdapMockFixture.Factory;
 
             var searchLimits = CreateValidSearchLimits();
 

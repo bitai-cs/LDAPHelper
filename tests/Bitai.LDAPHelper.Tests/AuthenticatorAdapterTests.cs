@@ -1,4 +1,4 @@
-using Bitai.LDAPHelper.DTO;
+﻿using Bitai.LDAPHelper.DTO;
 using Bitai.LDAPHelper.LdapAdapters.LdapHelperMock;
 using Bitai.LDAPHelper.LdapAdapters.LdapHelperMock.LdapData;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -13,9 +13,7 @@ namespace Bitai.LDAPHelper.Tests
         [Fact]
         public async Task AuthenticateUser_ReturnsSuccess() {
             //Mock connection factory
-            var mockConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter(
-                NullLogger<MockLdapPersistentConnectionFactoryAdapter>.Instance,
-                NullLogger<MockLdapDataSeeder>.Instance);
+            var mockConnectionFactory = LdapMockFixture.Factory;
 
             //Connection information
             var connectionInfo = CreateValidConnectionInfo(true);
@@ -38,9 +36,7 @@ namespace Bitai.LDAPHelper.Tests
             var searchLimits = CreateValidSearchLimits();
 
             //Mock connection factory
-            var mockConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter(
-                NullLogger<MockLdapPersistentConnectionFactoryAdapter>.Instance,
-                NullLogger<MockLdapDataSeeder>.Instance);
+            var mockConnectionFactory = LdapMockFixture.Factory;
 
             //Connection information
             var connectionInfo = CreateValidConnectionInfo(true);
@@ -64,9 +60,7 @@ namespace Bitai.LDAPHelper.Tests
         [Fact]
         public async Task AuthenticateDN_ReturnsSuccess() {
             //Mock connection factory
-            var mockConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter(
-                NullLogger<MockLdapPersistentConnectionFactoryAdapter>.Instance,
-                NullLogger<MockLdapDataSeeder>.Instance);
+            var mockConnectionFactory = LdapMockFixture.Factory;
 
             //Connection information
             var connectionInfo = CreateValidConnectionInfo(true);
@@ -92,9 +86,7 @@ namespace Bitai.LDAPHelper.Tests
             var searchLimits = CreateValidSearchLimits();
 
             //Mock connection factory
-            var mockConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter(
-                NullLogger<MockLdapPersistentConnectionFactoryAdapter>.Instance,
-                NullLogger<MockLdapDataSeeder>.Instance);
+            var mockConnectionFactory = LdapMockFixture.Factory;
 
             //Connection information
             var connectionInfo = CreateValidConnectionInfo(true);
@@ -118,9 +110,7 @@ namespace Bitai.LDAPHelper.Tests
         [Fact]
         public async Task AuthenticateUser_ReturnsFailed() {
             //Mock connection factory
-            var mockConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter(
-                NullLogger<MockLdapPersistentConnectionFactoryAdapter>.Instance,
-                NullLogger<MockLdapDataSeeder>.Instance);
+            var mockConnectionFactory = LdapMockFixture.Factory;
 
             //Connection information
             var connectionInfo = CreateValidConnectionInfo(true);
@@ -144,9 +134,7 @@ namespace Bitai.LDAPHelper.Tests
             var searchLimits = CreateValidSearchLimits();
 
             //Mock connection factory
-            var mockConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter(
-                NullLogger<MockLdapPersistentConnectionFactoryAdapter>.Instance,
-                NullLogger<MockLdapDataSeeder>.Instance);
+            var mockConnectionFactory = LdapMockFixture.Factory;
 
             //Connection information
             var connectionInfo = CreateValidConnectionInfo(true);
@@ -168,9 +156,7 @@ namespace Bitai.LDAPHelper.Tests
         [Fact]
         public async Task AuthenticateDN_ReturnsFailed() {
             //Mock connection factory
-            var mockConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter(
-                NullLogger<MockLdapPersistentConnectionFactoryAdapter>.Instance,
-                NullLogger<MockLdapDataSeeder>.Instance);
+            var mockConnectionFactory = LdapMockFixture.Factory;
 
             //Connection information
             var connectionInfo = CreateValidConnectionInfo(true);
@@ -197,9 +183,7 @@ namespace Bitai.LDAPHelper.Tests
             var searchLimits = CreateValidSearchLimits();
 
             //Mock connection factory
-            var mockConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter(
-                NullLogger<MockLdapPersistentConnectionFactoryAdapter>.Instance,
-                NullLogger<MockLdapDataSeeder>.Instance);
+            var mockConnectionFactory = LdapMockFixture.Factory;
 
             //Connection information
             var connectionInfo = CreateValidConnectionInfo(true);

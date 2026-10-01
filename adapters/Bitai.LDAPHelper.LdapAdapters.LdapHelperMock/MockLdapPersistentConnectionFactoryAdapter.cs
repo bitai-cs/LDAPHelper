@@ -9,14 +9,13 @@ namespace Bitai.LDAPHelper.LdapAdapters.LdapHelperMock;
 /// </summary>
 public class MockLdapPersistentConnectionFactoryAdapter : ILdapConnectionFactoryAdapter
 {
-    private readonly MockLdapPersistentConnectionAdapter _connection;
+    //private readonly MockLdapPersistentConnectionAdapter _connection;
     private readonly ILogger<MockLdapPersistentConnectionFactoryAdapter> _logger;
 
     public MockLdapPersistentConnectionFactoryAdapter(ILogger<MockLdapPersistentConnectionFactoryAdapter> logger, ILogger<MockLdapDataSeeder> seederLogger)
     {
         _logger = logger;
-        _connection = new MockLdapPersistentConnectionAdapter();
-
+        
         var _seeder = new MockLdapDataSeeder(seederLogger);
         _seeder.SeedAllData();
         _seeder.PrintAllData();
@@ -29,7 +28,9 @@ public class MockLdapPersistentConnectionFactoryAdapter : ILdapConnectionFactory
         bool bindRequired = true)
     {
         // Always succeed in mock mode
+        var _connection = new MockLdapPersistentConnectionAdapter();
         _connection.BindAsync(userAccount, password);
+
         return Task.FromResult<ILdapConnectionAdapter>(_connection);
     }
 }

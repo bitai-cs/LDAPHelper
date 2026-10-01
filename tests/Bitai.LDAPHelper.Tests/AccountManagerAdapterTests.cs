@@ -1,4 +1,4 @@
-using Bitai.LDAPHelper.DTO;
+﻿using Bitai.LDAPHelper.DTO;
 using Bitai.LDAPHelper.LdapAdapters.LdapHelperMock;
 using Bitai.LDAPHelper.LdapAdapters.LdapHelperMock.LdapData;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -12,9 +12,7 @@ namespace Bitai.LDAPHelper.Tests
     {
         [Fact]
         public async Task CreateUserAccountForMsAD_ReturnsSuccess() {
-            var mockConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter(
-                NullLogger<MockLdapPersistentConnectionFactoryAdapter>.Instance,
-                NullLogger<MockLdapDataSeeder>.Instance);
+            var mockConnectionFactory = LdapMockFixture.Factory;
 
             var connectionInfo = CreateValidConnectionInfo(ssl: true);
 
@@ -46,9 +44,7 @@ namespace Bitai.LDAPHelper.Tests
 
         [Fact]
         public async Task CreateUserAccountForMsAD_MissingRequiredAttr_ReturnsError() {
-            var mockConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter(
-                NullLogger<MockLdapPersistentConnectionFactoryAdapter>.Instance,
-                NullLogger<MockLdapDataSeeder>.Instance);
+            var mockConnectionFactory = LdapMockFixture.Factory;
 
             var connectionInfo = CreateValidConnectionInfo(ssl: true);
 
@@ -79,9 +75,7 @@ namespace Bitai.LDAPHelper.Tests
         [Fact]
         public async Task SetUserAccountPasswordForMsAD_ValidAccount_ReturnsSuccess() {
             // Arrange
-            var mockConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter(
-                NullLogger<MockLdapPersistentConnectionFactoryAdapter>.Instance,
-                NullLogger<MockLdapDataSeeder>.Instance);
+            var mockConnectionFactory = LdapMockFixture.Factory;
 
             var connectionInfo = CreateValidConnectionInfo(ssl: true);
 
@@ -91,8 +85,8 @@ namespace Bitai.LDAPHelper.Tests
 
             var accountManager = new AccountManager(connectionInfo, searchLimits, credential, mockConnectionFactory);
 
-            // Use data from the seeder - james.dockers user
-            var userDistinguishedName = "CN=James Dockers,OU=Seniors,OU=DevOps,OU=IT,DC=va,DC=bitai,DC=com";
+            // Disposable user, so the seeded data shared by all tests is never modified
+            var userDistinguishedName = CreateDisposableUser("setpassword");
 
             var result = await accountManager.SetMsADUserAccountPassword(EntryAttribute.distinguishedName, userDistinguishedName, "TestPassword", postUpdateTestAuthentication: true);
 
@@ -103,9 +97,7 @@ namespace Bitai.LDAPHelper.Tests
 
         [Fact]
         public async Task SetUserAccountPasswordForMsAD_AccountNotFound_ReturnsFailed() {
-            var mockConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter(
-                NullLogger<MockLdapPersistentConnectionFactoryAdapter>.Instance,
-                NullLogger<MockLdapDataSeeder>.Instance);
+            var mockConnectionFactory = LdapMockFixture.Factory;
 
             var connectionInfo = CreateValidConnectionInfo(ssl: true);
 
@@ -126,9 +118,7 @@ namespace Bitai.LDAPHelper.Tests
 
         [Fact]
         public async Task DisableUserAccountForMsAD_ValidAccount_ReturnsSuccess() {
-            var mockConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter(
-                NullLogger<MockLdapPersistentConnectionFactoryAdapter>.Instance,
-                NullLogger<MockLdapDataSeeder>.Instance);
+            var mockConnectionFactory = LdapMockFixture.Factory;
 
             var connectionInfo = CreateValidConnectionInfo(ssl: true);
 
@@ -138,8 +128,8 @@ namespace Bitai.LDAPHelper.Tests
 
             var accountManager = new AccountManager(connectionInfo, searchLimits, credential, mockConnectionFactory);
 
-            // Use data from the seeder - james.dockers user
-            var userDistinguishedName = "CN=James Dockers,OU=Seniors,OU=DevOps,OU=IT,DC=va,DC=bitai,DC=com";
+            // Disposable user, so the seeded data shared by all tests is never modified
+            var userDistinguishedName = CreateDisposableUser("disable");
 
             var result = await accountManager.DisableMsADUserAccount(EntryAttribute.distinguishedName, userDistinguishedName, "TestDisable");
 
@@ -150,9 +140,7 @@ namespace Bitai.LDAPHelper.Tests
 
         [Fact]
         public async Task DisableUserAccountForMsAD_AccountNotFound_ReturnsSuccess() {
-            var mockConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter(
-                NullLogger<MockLdapPersistentConnectionFactoryAdapter>.Instance,
-                NullLogger<MockLdapDataSeeder>.Instance);
+            var mockConnectionFactory = LdapMockFixture.Factory;
 
             var connectionInfo = CreateValidConnectionInfo(ssl: true);
 
@@ -174,9 +162,7 @@ namespace Bitai.LDAPHelper.Tests
 
         [Fact]
         public async Task RemoveUserAccountForMsAD_ValidAccount_ReturnsSuccess() {
-            var mockConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter(
-                NullLogger<MockLdapPersistentConnectionFactoryAdapter>.Instance,
-                NullLogger<MockLdapDataSeeder>.Instance);
+            var mockConnectionFactory = LdapMockFixture.Factory;
 
             var connectionInfo = CreateValidConnectionInfo(ssl: true);
 
@@ -184,8 +170,8 @@ namespace Bitai.LDAPHelper.Tests
 
             var credential = new LDAPDomainAccountCredential("domain", "admin", "p@55w0rd");
 
-            // Use data from the seeder - james.dockers user
-            var userDistinguishedName = "CN=James Dockers,OU=Seniors,OU=DevOps,OU=IT,DC=va,DC=bitai,DC=com";
+            // Disposable user, so the seeded data shared by all tests is never modified
+            var userDistinguishedName = CreateDisposableUser("remove");
 
             var accountManager = new AccountManager(connectionInfo, searchLimits, credential, mockConnectionFactory);
 
@@ -197,9 +183,7 @@ namespace Bitai.LDAPHelper.Tests
 
         [Fact]
         public async Task RemoveUserAccountForMsAD_AccountNotFound_ReturnsSuccess() {
-            var mockConnectionFactory = new MockLdapPersistentConnectionFactoryAdapter(
-                NullLogger<MockLdapPersistentConnectionFactoryAdapter>.Instance,
-                NullLogger<MockLdapDataSeeder>.Instance);
+            var mockConnectionFactory = LdapMockFixture.Factory;
 
             var connectionInfo = CreateValidConnectionInfo(ssl: true);
 
