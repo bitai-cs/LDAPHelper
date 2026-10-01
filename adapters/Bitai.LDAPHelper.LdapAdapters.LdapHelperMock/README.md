@@ -91,10 +91,9 @@ In the `Bitai.LDAPHelper` ecosystem, core services interact exclusively with LDA
 
 ## Key Features
 
-1. **In-Memory Connection Simulation (`MockLdapConnectionAdapter`)**
+1. **Persistent Shared State (`MockLdapPersistentConnectionAdapter`)**
    - Simulates `ConnectAsync`, `BindAsync`, `SearchAsync`, `AddEntryAsync`, `ModifyEntryAsync`, and `DeleteEntryAsync`.
    - Supports registerable search results via `AddSearchResult(filterPattern, entries)`.
-2. **Persistent Shared State (`MockLdapPersistentConnectionAdapter`)**
    - Backed by `MockLdapDataStore` to persist entry creations, modifications, and deletions across multiple connections.
    - Evaluates search filters dynamically against stored records.
 3. **Deterministic Directory Seeder (`MockLdapDataSeeder`)**
@@ -116,8 +115,6 @@ adapters/Bitai.LDAPHelper.LdapAdapters.LdapHelperMock/
 ├── Bitai.LDAPHelper.LdapAdapters.LdapHelperMock.csproj
 ├── README.md
 ├── LICENSE.md
-├── MockLdapConnectionAdapter.cs
-├── MockLdapConnectionFactoryAdapter.cs
 ├── MockLdapPersistentConnectionAdapter.cs
 ├── MockLdapPersistentConnectionFactoryAdapter.cs
 ├── MockLdapEntryAdapter.cs
@@ -135,9 +132,7 @@ adapters/Bitai.LDAPHelper.LdapAdapters.LdapHelperMock/
 
 | Class | Implemented Interface | Primary Responsibility |
 |---|---|---|
-| `MockLdapConnectionAdapter` | `ILdapConnectionAdapter` | Standard in-memory mock connection with configurable search results & side-effect trackers. |
-| `MockLdapConnectionFactoryAdapter` | `ILdapConnectionFactoryAdapter` | Factory returning an instance of `MockLdapConnectionAdapter`. |
-| `MockLdapPersistentConnectionAdapter` | `ILdapConnectionAdapter` | Persistent mock connection connected to the central `MockLdapDataStore`. |
+| `MockLdapPersistentConnectionAdapter` | `ILdapConnectionAdapter` | Persistent mock connection connected to the central `MockLdapDataStore`. Supports configurable search results & side-effect trackers. |
 | `MockLdapPersistentConnectionFactoryAdapter` | `ILdapConnectionFactoryAdapter` | Factory producing `MockLdapPersistentConnectionAdapter` instances. |
 | `MockLdapEntryAdapter` | `ILdapEntryAdapter` | Represents an LDAP entry with a DN and attribute set. |
 | `MockLdapAttributeSetAdapter` | `ILdapAttributeSetAdapter` | Dictionary-backed container for entry attributes. Includes verification helpers. |
@@ -175,8 +170,8 @@ using Bitai.LDAPHelper;
 using Bitai.LDAPHelper.DTO;
 using Bitai.LDAPHelper.LdapAdapters.LdapHelperMock;
 
-// 1. Create a mock connection and configure stubbed search results
-var mockConnection = new MockLdapConnectionAdapter();
+// 1. Create a persistent mock connection
+var mockConnection = new MockLdapPersistentConnectionAdapter();
 
 var userEntry = new MockLdapEntryAdapter("CN=John Doe,OU=Users,DC=example,DC=com");
 userEntry.AddAttribute("cn", "John Doe");
@@ -186,7 +181,7 @@ userEntry.AddAttribute("userPrincipalName", "jdoe@example.com");
 mockConnection.AddSearchResult("(sAMAccountName=jdoe)", new List<MockLdapEntryAdapter> { userEntry });
 
 // 2. Wrap in a factory
-var factory = new MockLdapConnectionFactoryAdapter(mockConnection);
+var factory = new MockLdapPersistentConnectionFactoryAdapter();
 
 // 3. Initialize LDAPHelper services using the mock factory
 var connectionInfo = new ConnectionInfo("localhost", 389, useSSL: false, connectionTimeout: 15);
@@ -220,7 +215,7 @@ public class UserServiceTests
     public async Task GetUser_ShouldReturnMatchingLdapEntry()
     {
         // Arrange
-        var mockConnection = new MockLdapConnectionAdapter();
+        var mockConnection = new MockLdapPersistentConnectionAdapter();
         
         var expectedDn = "CN=Alice Smith,OU=Engineering,DC=corp,DC=local";
         var entry = new MockLdapEntryAdapter(expectedDn);
@@ -231,7 +226,7 @@ public class UserServiceTests
 
         mockConnection.AddSearchResult("asmith", new List<MockLdapEntryAdapter> { entry });
         
-        var factory = new MockLdapConnectionFactoryAdapter(mockConnection);
+        var factory = new MockLdapPersistentConnectionFactoryAdapter();
         var searcher = new Searcher(
             new ConnectionInfo("ldap.corp.local", 389, false, 10),
             new SearchLimits("DC=corp,DC=local"),
@@ -300,7 +295,7 @@ public class AuthenticationIntegrationTests
 
 ### Scenario 3: Verifying Account Management Side Effects
 
-When testing routines that create, modify, or delete directory objects (e.g. `AccountManager`), use `MockLdapConnectionAdapter` to verify generated modifications:
+When testing routines that create, modify, or delete directory objects (e.g. `AccountManager`), use `MockLdapPersistentConnectionAdapter` to verify generated modifications:
 
 ```csharp
 using Xunit;
@@ -315,8 +310,8 @@ public class AccountManagerTests
     public async Task ModifyUserAttribute_ShouldRecordModification()
     {
         // Arrange
-        var mockConnection = new MockLdapConnectionAdapter();
-        var factory = new MockLdapConnectionFactoryAdapter(mockConnection);
+        var mockConnection = new MockLdapPersistentConnectionAdapter();
+        var factory = new MockLdapPersistentConnectionFactoryAdapter();
         
         var connectionInfo = new ConnectionInfo("localhost", 389, false, 10);
         var searchLimits = new SearchLimits("DC=example,DC=com");
@@ -413,7 +408,7 @@ dotnet pack adapters/Bitai.LDAPHelper.LdapAdapters.LdapHelperMock/Bitai.LDAPHelp
 
 ## Observability & Diagnostic Assertions
 
-When debugging unit or integration tests, `MockLdapConnectionAdapter` provides diagnostic tracking properties:
+When debugging unit or integration tests, `MockLdapPersistentConnectionAdapter` provides diagnostic tracking properties:
 
 ```csharp
 // Inspect entries created during the test run

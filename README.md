@@ -365,8 +365,8 @@ public class SearcherTests
     [Fact]
     public async Task GetUser_UsingMockAdapter_ShouldReturnStubbedUser()
     {
-        // 1. Instantiate in-memory mock connection
-        var mockConnection = new MockLdapConnectionAdapter();
+        // 1. Instantiate persistent mock connection
+        var mockConnection = new MockLdapPersistentConnectionAdapter();
 
         // 2. Add stubbed search response
         var stubEntry = new MockLdapEntryAdapter("CN=Test User,OU=Users,DC=example,DC=com");
@@ -376,7 +376,7 @@ public class SearcherTests
         mockConnection.AddSearchResult("(sAMAccountName=testuser)", new List<MockLdapEntryAdapter> { stubEntry });
 
         // 3. Pass mock factory to Searcher
-        var factory = new MockLdapConnectionFactoryAdapter(mockConnection);
+        var factory = new MockLdapPersistentConnectionFactoryAdapter();
         var searcher = new Searcher(
             new ConnectionInfo("localhost", 389, false, 5),
             new SearchLimits("DC=example,DC=com"),
