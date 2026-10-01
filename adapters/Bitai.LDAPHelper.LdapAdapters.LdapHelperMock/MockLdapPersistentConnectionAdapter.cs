@@ -1,22 +1,88 @@
 using System.Text;
 using Bitai.LDAPHelper.LdapAdapters;
 using Bitai.LDAPHelper.LdapAdapters.LdapHelperMock.LdapData;
+using Bitai.LDAPHelper.DTO;
 
 namespace Bitai.LDAPHelper.LdapAdapters.LdapHelperMock;
 
 /// <summary>
 /// Persistent mock connection backed by a shared in-memory LDAP data store.
 /// </summary>
-public class MockLdapPersistentConnectionAdapter : MockLdapConnectionAdapter
+public class MockLdapPersistentConnectionAdapter : ILdapConnectionAdapter
 {
     private readonly MockLdapDataStore _dataStore;
+    private bool _disposed = false;
+    private Dictionary<string, List<MockLdapEntryAdapter>> _searchResults = new();
+    private bool _isBound = false;
 
-    public MockLdapPersistentConnectionAdapter() : base()
+    public int ConnectionTimeout { get; set; }
+    public bool SecureSocketLayer { get; set; }
+    public bool IsBound => _isBound;
+    public List<MockLdapEntryAdapter> CreatedEntries { get; } = new List<MockLdapEntryAdapter>();
+    public List<MockModification> Modifications { get; } = new List<MockModification>();
+    public List<string> DeletedEntries { get; } = new List<string>();
+
+    public MockLdapPersistentConnectionAdapter()
     {
         _dataStore = MockLdapDataStore.Instance;
     }
 
-    public override Task AddEntryAsync(string distinguishedName, ILdapAttributeSetAdapter attributes)
+    public void AddSearchResult(string filterPattern, List<MockLdapEntryAdapter> entries) {
+        _searchResults[filterPattern] = entries;
+    }
+
+    public void ServerCertificateValidationByPass() {
+        throw new InvalidOperationException($"{nameof(ServerCertificateValidationByPass)}: Not allowed in mocked classes!");
+    }
+
+    public Task ConnectAsync(string host, int port) {
+        if (string.IsNullOrEmpty(host) || host == "unknown" || host == "0.0.0.0" || port <= 0)
+            throw new Exception($"{nameof(MockLdapPersistentConnectionAdapter)}.{nameof(ConnectAsync)}: Invalid server connection!");
+
+        return Task.CompletedTask;
+    }
+
+    public Task BindAsync(string userDN, string password) {
+        if (string.IsNullOrEmpty(userDN) || string.IsNullOrEmpty(password) || userDN.Contains("hacker") || password.Contains("123456"))
+            throw new LdapOperationException($"{nameof(MockLdapPersistentConnectionAdapter)}.{nameof(BindAsync)}: Invalid credentials!");
+
+        if (password.Equals("wrongpassword", StringComparison.OrdinalIgnoreCase))
+            _isBound = false;
+        else
+            _isBound = !string.IsNullOrEmpty(userDN) && !string.IsNullOrEmpty(password);
+
+        return Task.CompletedTask;
+    }
+
+    public ILdapAttributeSetAdapter CreateAttributeSet() {
+        return new MockLdapAttributeSetAdapter();
+    }
+
+    public ILdapModificationAdapter CreateModification(LdapModificationType type, string attributeName, object value) {
+        return new MockLdapModificationAdapter(type, attributeName, value);
+    }
+
+    public void Disconnect() {
+        _isBound = false;
+    }
+
+    public void Dispose() {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing) {
+        if (!_disposed) {
+            if (disposing) {
+                // Cleanup
+            }
+            _disposed = true;
+        }
+    }
+
+
+
+    public Task AddEntryAsync(string distinguishedName, ILdapAttributeSetAdapter attributes)
     {
         var mockAttributes = (MockLdapAttributeSetAdapter)attributes;
         var entry = new MockLdapEntryAdapter(distinguishedName);
@@ -45,7 +111,7 @@ public class MockLdapPersistentConnectionAdapter : MockLdapConnectionAdapter
         return Task.CompletedTask;
     }
 
-    public override Task ModifyEntryAsync(string distinguishedName, IEnumerable<ILdapModificationAdapter> modifications)
+    public Task ModifyEntryAsync(string distinguishedName, IEnumerable<ILdapModificationAdapter> modifications)
     {
         var entry = _dataStore.GetEntry(distinguishedName);
         if (entry == null)
@@ -133,7 +199,7 @@ public class MockLdapPersistentConnectionAdapter : MockLdapConnectionAdapter
         return Task.CompletedTask;
     }
 
-    public override Task DeleteEntryAsync(string distinguishedName)
+    public Task DeleteEntryAsync(string distinguishedName)
     {
         if (_dataStore.RemoveEntry(distinguishedName))
         {
@@ -143,7 +209,7 @@ public class MockLdapPersistentConnectionAdapter : MockLdapConnectionAdapter
         return Task.CompletedTask;
     }
 
-    public override Task<ILdapSearchQueueAdapter> SearchAsync(
+    public Task<ILdapSearchQueueAdapter> SearchAsync(
         ISearchLimits searchLimits,
         string searchFilter,
         string[] attributeNames,
@@ -170,6 +236,8 @@ public class MockLdapPersistentConnectionAdapter : MockLdapConnectionAdapter
         return Task.FromResult<ILdapSearchQueueAdapter>(mockQueue);
     }
 
+
+
     private bool MatchesFilter(MockLdapEntryAdapter entry, string filter)
     {
         // Simple wildcard matching for demo purposes
@@ -184,10 +252,10 @@ public class MockLdapPersistentConnectionAdapter : MockLdapConnectionAdapter
             var value = ExtractFilterValue(filter, "distinguishedName");
             return MatchWildcard(entry.DistinguishedName, value);
         }
-        else if (filter.Contains("(cn="))
+        else if (filter.Contains("(Name="))
         {
-            var value = ExtractFilterValue(filter, "cn");
-            var cn = entry.GetAttributeSet().GetAttribute("cn")?.StringValue;
+            var value = ExtractFilterValue(filter, "Name");
+            var cn = entry.GetAttributeSet().GetAttribute("Name")?.StringValue;
             return MatchWildcard(cn, value);
         }
         else if (filter.Contains("(objectSid="))
@@ -246,6 +314,8 @@ public class MockLdapPersistentConnectionAdapter : MockLdapConnectionAdapter
         
         return value.Equals(pattern, StringComparison.OrdinalIgnoreCase);
     }
+
+
 
     private static string ConvertByteToStringSid(byte[] sidBytes)
     {

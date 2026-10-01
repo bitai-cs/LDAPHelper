@@ -22,7 +22,7 @@ namespace Bitai.LDAPHelper.Extensions
                 partialList.AddRange(entry.GetMemberOfEntriesRecursively());
             }
 
-            return partialList.Distinct();
+            return partialList.DistinctBy(e => e.distinguishedName);
         }
     }
 }

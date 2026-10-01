@@ -228,7 +228,7 @@ public class MockLdapAttributeAdapter : ILdapAttributeAdapter
     }
 
     /// <summary>
-    /// Returns the base name of the attribute (e.g., "cn" from "cn;lang-ja;phonetic")
+    /// Returns the base name of the attribute (e.g., "Name" from "Name;lang-ja;phonetic")
     /// </summary>
     public string GetBaseName() {
         return _baseName;

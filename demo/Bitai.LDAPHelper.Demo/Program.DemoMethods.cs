@@ -107,7 +107,6 @@ public partial class Program
             Cn = fullName,
             Name = fullName,
             DisplayName = fullName,
-            MemberOf = memberOf,
             ObjectClass = objectClasses,
             Password = password,
             SAMAccountName = userAccountName,

@@ -12,16 +12,16 @@ namespace Bitai.LDAPHelper
     /// Performs LDAP search operations and maps results into DTO models.
     /// </summary>
 	public class Searcher : BaseHelper
-	{
-		#region Constructor 
+    {
+        #region Constructor 
         /// <summary>
         /// Initializes a new instance of the <see cref="Searcher"/> class.
         /// </summary>
         /// <param name="clientConfiguration">Client configuration containing connection, credential, and search settings.</param>
         /// <param name="connectionFactory">LDAP connection factory abstraction.</param>
-		public Searcher(ClientConfiguration clientConfiguration, ILdapConnectionFactoryAdapter connectionFactory) : base(clientConfiguration, connectionFactory)
-		{
-		}
+        public Searcher(ClientConfiguration clientConfiguration, ILdapConnectionFactoryAdapter connectionFactory) : base(clientConfiguration, connectionFactory)
+        {
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Searcher"/> class.
@@ -31,36 +31,36 @@ namespace Bitai.LDAPHelper
         /// <param name="domainAccountCredential">Credential used to execute LDAP searches.</param>
         /// <param name="connectionFactory">LDAP connection factory abstraction.</param>
 		public Searcher(ConnectionInfo connectionInfo, SearchLimits searchLimits, DTO.LDAPDomainAccountCredential domainAccountCredential, ILdapConnectionFactoryAdapter connectionFactory) : base(connectionInfo, searchLimits, domainAccountCredential, connectionFactory)
-		{
-		}
-		#endregion
+        {
+        }
+        #endregion
 
 
 
 
-		#region Public methods
-		/// <summary>
-		/// Searches for entries matching the provided LDAP filter and loads the requested attributes.
-		/// </summary>
+        #region Public methods
+        /// <summary>
+        /// Searches for entries matching the provided LDAP filter and loads the requested attributes.
+        /// </summary>
         /// <param name="searchFilterObject">
-		/// A combinable LDAP filter that identifies the entries to search for. This filter will be converted 
-		/// to its string representation and used directly in the LDAP search operation.
-		/// </param>
-		/// <param name="requiredEntryAttributes">
-		/// The set of attributes to load for each entry returned in the search result. Use this to limit 
-		/// attributes loaded for performance (for example, OnlyMemberOf, Few, All, etc.).
-		/// </param>
-		/// <param name="requestLabel">
-		/// Optional label/tag that will be set on the returned LDAPSearchResult and on created LDAPEntry 
-		/// instances to help callers correlate operations and results.
-		/// </param>
-		/// <returns>
-		/// A task that resolves to an <see cref="DTO.LDAPSearchResult"/> containing the entries found and 
-		/// any operation message. If an error occurs, the returned LDAPSearchResult will have 
-		/// IsSuccessfulOperation == false and contain error details.
-		/// </returns>
-		public async Task<DTO.LDAPSearchResult> SearchEntriesAsync(QueryFilters.ICombinableFilter searchFilterObject, DTO.RequiredEntryAttributes requiredEntryAttributes, string requestLabel)
-		{
+        /// A combinable LDAP filter that identifies the entries to search for. This filter will be converted 
+        /// to its string representation and used directly in the LDAP search operation.
+        /// </param>
+        /// <param name="requiredEntryAttributes">
+        /// The set of attributes to load for each entry returned in the search result. Use this to limit 
+        /// attributes loaded for performance (for example, OnlyMemberOf, Few, All, etc.).
+        /// </param>
+        /// <param name="requestLabel">
+        /// Optional label/tag that will be set on the returned LDAPSearchResult and on created LDAPEntry 
+        /// instances to help callers correlate operations and results.
+        /// </param>
+        /// <returns>
+        /// A task that resolves to an <see cref="DTO.LDAPSearchResult"/> containing the entries found and 
+        /// any operation message. If an error occurs, the returned LDAPSearchResult will have 
+        /// IsSuccessfulOperation == false and contain error details.
+        /// </returns>
+        public async Task<DTO.LDAPSearchResult> SearchEntriesAsync(QueryFilters.ICombinableFilter searchFilterObject, DTO.RequiredEntryAttributes requiredEntryAttributes, string requestLabel)
+        {
             try
             {
                 string searchFilter = searchFilterObject.ToString();
@@ -90,9 +90,7 @@ namespace Bitai.LDAPHelper
             }
             catch (LdapException ex)
             {
-                string msg = string.IsNullOrEmpty(ex.LdapErrorMessage) ? ex.Message : (string.IsNullOrEmpty(ex.Message) ? ex.LdapErrorMessage : $"{ex.Message} ({ex.LdapErrorMessage})");
-
-                var searchResult = new DTO.LDAPSearchResult(msg, ex, requestLabel);
+                var searchResult = new DTO.LDAPSearchResult($"LDAP error encountered while performing search.", ex, requestLabel);
 
                 return searchResult;
             }
@@ -141,26 +139,32 @@ namespace Bitai.LDAPHelper
 		/// each discovered parent. Any LDAP or general exception is captured and returned as an unsuccessful 
 		/// LDAPSearchResult rather than being thrown.
         /// </remarks>
-        public async Task<DTO.LDAPSearchResult> SearchParentEntriesAsync(QueryFilters.ICombinableFilter searchFilter, DTO.RequiredEntryAttributes requiredEntryAttributes, string requestLabel) {
-            try {
-                // First, perform a partial search to get the memberOf attributes of the entries matching the provided filter. This is necessary to discover the parent entries (groups/containers) that we need to load with the requested attributes.
+        public async Task<DTO.LDAPSearchResult> SearchParentEntriesAsync(QueryFilters.ICombinableFilter searchFilter, DTO.RequiredEntryAttributes requiredEntryAttributes, string requestLabel)
+        {
+            try
+            {
+                // First, perform a partial search to get the memberOf attributes of the entry or entries matching the provided filter. This is necessary to discover the parent entries (groups/containers) that we need to load with the requested attributes.
                 var partialSearchResult = await this.SearchEntriesAsync(searchFilter, DTO.RequiredEntryAttributes.OnlyMemberOf, requestLabel);
 
-                if (!partialSearchResult.IsSuccessfulOperation) {
+                if (!partialSearchResult.IsSuccessfulOperation)
+                {
                     return partialSearchResult;
                 }
-                else if (!partialSearchResult.Entries.Any()) {
+                else if (!partialSearchResult.Entries.Any())
+                {
                     throw new EntryNotFoundException("Unable to evaluate without an entry.");
                 }
 
                 var collectedEntries = partialSearchResult.Entries.SelectAllMemberOfEntriesRecursively();
 
                 var resultEntries = new List<DTO.LDAPEntry>();
-                foreach (var entry in collectedEntries) {
+                foreach (var entry in collectedEntries)
+                {
                     var distinguishedNameFilter = new QueryFilters.AttributeFilter(DTO.EntryAttribute.distinguishedName, new QueryFilters.FilterValue(entry.distinguishedName.ReplaceSpecialCharsToScapedChars()));
 
                     partialSearchResult = await SearchEntriesAsync(distinguishedNameFilter, requiredEntryAttributes, requestLabel);
-                    if (!partialSearchResult.IsSuccessfulOperation) {
+                    if (!partialSearchResult.IsSuccessfulOperation)
+                    {
                         return partialSearchResult;
                     }
 
@@ -190,11 +194,63 @@ namespace Bitai.LDAPHelper
             //	var searchResult = new DTO.LDAPSearchResult(msg, ex, requestLabel);
             //	return searchResult;
             //}
-            catch (Exception ex) {
-				var searchResult = new DTO.LDAPSearchResult($"Unexpected error performing search. {ex.Message}", ex, requestLabel);
+            catch (Exception ex)
+            {
+                var searchResult = new DTO.LDAPSearchResult($"Unexpected error performing search. {ex.Message}", ex, requestLabel);
 
-				return searchResult;
-			}
+                return searchResult;
+            }
+        }
+
+        public async Task<DTO.LDAPSearchResult> SearchParentEntriesAsync(IEnumerable<DTO.LDAPEntry> entries, DTO.RequiredEntryAttributes requiredEntryAttributes, string requestLabel)
+        {
+            try
+            {               
+                var collectedEntries = entries.SelectAllMemberOfEntriesRecursively();
+
+                var resultEntries = new List<DTO.LDAPEntry>();
+                foreach (var entry in collectedEntries)
+                {
+                    var distinguishedNameFilter = new QueryFilters.AttributeFilter(DTO.EntryAttribute.distinguishedName, new QueryFilters.FilterValue(entry.distinguishedName.ReplaceSpecialCharsToScapedChars()));
+
+                    var partialSearchResult = await SearchEntriesAsync(distinguishedNameFilter, requiredEntryAttributes, requestLabel);
+                    if (!partialSearchResult.IsSuccessfulOperation)
+                    {
+                        return partialSearchResult;
+                    }
+
+                    resultEntries.AddRange(partialSearchResult.Entries);
+                }
+
+                return new DTO.LDAPSearchResult(requestLabel, resultEntries);
+            }
+            catch (EntryNotFoundException ex)
+            {
+                var searchResult = new DTO.LDAPSearchResult("Nonexistent entry.", ex, requestLabel);
+
+                return searchResult;
+            }
+            catch (LdapException ex)
+            {
+                string msg = string.IsNullOrEmpty(ex.LdapErrorMessage) ? ex.Message : (string.IsNullOrEmpty(ex.Message) ? ex.LdapErrorMessage : $"{ex.Message} ({ex.LdapErrorMessage})");
+                var searchResult = new DTO.LDAPSearchResult(msg, ex, requestLabel);
+
+                return searchResult;
+            }
+            //// BITAI: Remain for future reference if we want to avoid direct dependency on Novell.Directory.Ldap in this class. The LdapException type is specific to the Novell library, so if we want to keep this class decoupled from that library, we can catch general Exception and check the type name as done in other parts of the code. However, if we are okay with referencing Novell.Directory.Ldap directly, catching LdapException is more straightforward and type-safe.
+            //catch (Exception ex) when (ex.GetType().Name == "LdapException") {
+            //	var ldapErrorMessageProp = ex.GetType().GetProperty("LdapErrorMessage");
+            //	string ldapErrorMessage = ldapErrorMessageProp?.GetValue(ex) as string ?? "";
+            //	string msg = string.IsNullOrEmpty(ldapErrorMessage) ? ex.Message : $"{ex.Message} ({ldapErrorMessage})";
+            //	var searchResult = new DTO.LDAPSearchResult(msg, ex, requestLabel);
+            //	return searchResult;
+            //}
+            catch (Exception ex)
+            {
+                var searchResult = new DTO.LDAPSearchResult($"Unexpected error performing search. {ex.Message}", ex, requestLabel);
+
+                return searchResult;
+            }
         }
         #endregion
 

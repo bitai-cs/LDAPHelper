@@ -1,3 +1,4 @@
+using System.Xml.Linq;
 using Bitai.LDAPHelper.LdapAdapters.LdapHelperMock;
 using Microsoft.Extensions.Logging;
 
@@ -25,8 +26,6 @@ public class MockLdapDataSeeder
     }
 
     public void SeedAllData() {
-        _dataStore.Clear();
-
         _logger.LogInformation("=".PadRight(60, '='));
         _logger.LogInformation("MOCK DATA SEEDING STARTED");
         _logger.LogInformation("=".PadRight(60, '='));
@@ -87,19 +86,19 @@ public class MockLdapDataSeeder
         // Create domain roots (no RID needed for domains)
         var domains = new[]
         {
-            "DC=holding,DC=latam,DC=com",
-            "DC=us,DC=latam,DC=com",
-            "DC=pe,DC=latam,DC=com",
-            "DC=br,DC=latam,DC=com",
-            "DC=mx,DC=latam,DC=com",
-            "DC=cl,DC=latam,DC=com"
+            "DC=va,DC=bitai,DC=com",
+            "DC=us,DC=bitai,DC=com",
+            "DC=pe,DC=bitai,DC=com",
+            "DC=br,DC=bitai,DC=com",
+            "DC=mx,DC=bitai,DC=com",
+            "DC=cl,DC=bitai,DC=com"
         };
 
         foreach (var domainDN in domains) {
             var domain = new MockLdapEntryAdapter(domainDN);
             domain.AddAttribute("objectClass", new[] { "top", "domain", "domainDNS" });
             domain.AddAttribute("dc", domainDN.Split(',')[0].Replace("DC=", ""));
-            domain.AddAttribute("distinguishedName", domainDN);
+            domain.AddAttribute("containerDN", domainDN);
             _dataStore.AddOrUpdateEntry(domain);
         }
     }
@@ -107,44 +106,44 @@ public class MockLdapDataSeeder
     private void SeedOrganizationalUnits() {
         var ous = new[]
         {
-            // IT Department structure
-            "OU=IT,DC=holding,DC=latam,DC=com",
-            "OU=DevOps,OU=IT,DC=holding,DC=latam,DC=com",
-            "OU=Seniors,OU=DevOps,OU=IT,DC=holding,DC=latam,DC=com",
-            "OU=Juniors,OU=DevOps,OU=IT,DC=holding,DC=latam,DC=com",
-            "OU=Interships,OU=DevOps,OU=IT,DC=holding,DC=latam,DC=com",
-            "OU=Support,OU=IT,DC=holding,DC=latam,DC=com",
-            "OU=Interships,OU=Support,OU=IT,DC=us,DC=latam,DC=com",
-            "OU=Interships,OU=Support,OU=IT,DC=pe,DC=latam,DC=com",
+            // VA Region
+            "OU=IT,DC=va,DC=bitai,DC=com",
+            "OU=DevOps,OU=IT,DC=va,DC=bitai,DC=com",
+            "OU=Seniors,OU=DevOps,OU=IT,DC=va,DC=bitai,DC=com",
+            "OU=Juniors,OU=DevOps,OU=IT,DC=va,DC=bitai,DC=com",
+            "OU=Interships,OU=DevOps,OU=IT,DC=va,DC=bitai,DC=com",
+            "OU=Support,OU=IT,DC=va,DC=bitai,DC=com",                      
             
-            // US Region
-            "OU=IT,DC=us,DC=latam,DC=com",
-            "OU=Sales,DC=us,DC=latam,DC=com",
-            "OU=Marketing,DC=us,DC=latam,DC=com",
-            "OU=HR,DC=us,DC=latam,DC=com",
+            // US Region            
+            "OU=IT,DC=us,DC=bitai,DC=com",
+            "OU=Interships,OU=Support,OU=IT,DC=us,DC=bitai,DC=com",
+            "OU=Sales,DC=us,DC=bitai,DC=com",
+            "OU=Marketing,DC=us,DC=bitai,DC=com",
+            "OU=HR,DC=us,DC=bitai,DC=com",
             
             // PE Region
-            "OU=IT,DC=pe,DC=latam,DC=com",
-            "OU=Sales,DC=pe,DC=latam,DC=com",
-            "OU=Marketing,DC=pe,DC=latam,DC=com",
-            "OU=HR,DC=pe,DC=latam,DC=com",
+            "OU=IT,DC=pe,DC=bitai,DC=com",
+            "OU=Sales,DC=pe,DC=bitai,DC=com",
+            "OU=Marketing,DC=pe,DC=bitai,DC=com",
+            "OU=HR,DC=pe,DC=bitai,DC=com",
+            "OU=Interships,OU=Support,OU=IT,DC=pe,DC=bitai,DC=com",
             
             // BR Region
-            "OU=IT,DC=br,DC=latam,DC=com",
-            "OU=Sales,DC=br,DC=latam,DC=com",
+            "OU=IT,DC=br,DC=bitai,DC=com",
+            "OU=Sales,DC=br,DC=bitai,DC=com",
             
             // MX Region
-            "OU=IT,DC=mx,DC=latam,DC=com",
-            "OU=Sales,DC=mx,DC=latam,DC=com",
+            "OU=IT,DC=mx,DC=bitai,DC=com",
+            "OU=Sales,DC=mx,DC=bitai,DC=com",
             
             // CL Region
-            "OU=IT,DC=cl,DC=latam,DC=com",
-            "OU=Sales,DC=cl,DC=latam,DC=com",
+            "OU=IT,DC=cl,DC=bitai,DC=com",
+            "OU=Sales,DC=cl,DC=bitai,DC=com",
             
             // Built-in containers
-            "CN=Users,DC=holding,DC=latam,DC=com",
-            "CN=Computers,DC=holding,DC=latam,DC=com",
-            "CN=Builtin,DC=holding,DC=latam,DC=com"
+            "CN=Users,DC=va,DC=bitai,DC=com",
+            "CN=Computers,DC=va,DC=bitai,DC=com",
+            "CN=Builtin,DC=va,DC=bitai,DC=com"
         };
 
         foreach (var ouDN in ous) {
@@ -153,7 +152,7 @@ public class MockLdapDataSeeder
             var ouName = ouDN.Split(',')[0].Replace("OU=", "").Replace("CN=", "");
             ou.AddAttribute("ou", ouName);
             ou.AddAttribute("name", ouName);
-            ou.AddAttribute("distinguishedName", ouDN);
+            ou.AddAttribute("containerDN", ouDN);
 
             _dataStore.AddOrUpdateEntry(ou);
         }
@@ -166,37 +165,37 @@ public class MockLdapDataSeeder
     private void SeedStandardUsers() {
         var users = new List<UserData>
         {
-            // IT DevOps - Holding
-            new UserData("James", "Dockers", "james.dockers", "HOLDING", "OU=Seniors,OU=DevOps,OU=IT,DC=holding,DC=latam,DC=com", "Senior DevOps Engineer"),
-            new UserData("Sara", "Pikes", "sara.pikes", "HOLDING", "OU=Juniors,OU=DevOps,OU=IT,DC=holding,DC=latam,DC=com", "Junior DevOps Engineer"),
-            new UserData("Robert", "Miller", "robert.miller", "HOLDING", "OU=Interships,OU=DevOps,OU=IT,DC=holding,DC=latam,DC=com", "Intern"),
+            // IT DevOps - VA
+            new UserData("James", "Dockers", "james.dockers", "BITAIVA", "OU=Seniors,OU=DevOps,OU=IT,DC=va,DC=bitai,DC=com", "Senior DevOps Engineer"),
+            new UserData("Sara", "Pikes", "sara.pikes", "BITAIVA", "OU=Juniors,OU=DevOps,OU=IT,DC=va,DC=bitai,DC=com", "Junior DevOps Engineer"),
+            new UserData("Robert", "Miller", "robert.miller", "BITAIVA", "OU=Interships,OU=DevOps,OU=IT,DC=va,DC=bitai,DC=com", "Intern"),
             
             // IT Support - US
-            new UserData("Maria", "Gonzalez", "maria.gonzalez", "US", "OU=Support,OU=IT,DC=us,DC=latam,DC=com", "Support Lead"),
-            new UserData("John", "Smith", "john.smith", "US", "OU=Interships,OU=Support,OU=IT,DC=us,DC=latam,DC=com", "Support Intern"),
+            new UserData("Maria", "Gonzalez", "maria.gonzalez", "US", "OU=Support,OU=IT,DC=us,DC=bitai,DC=com", "Support Lead"),
+            new UserData("John", "Smith", "john.smith", "US", "OU=Interships,OU=Support,OU=IT,DC=us,DC=bitai,DC=com", "Support Intern"),
             
             // IT Support - PE
-            new UserData("Carlos", "Rodriguez", "carlos.rodriguez", "PE", "OU=Support,OU=IT,DC=pe,DC=latam,DC=com", "Support Analyst"),
-            new UserData("Ana", "Martinez", "ana.martinez", "PE", "OU=Interships,OU=Support,OU=IT,DC=pe,DC=latam,DC=com", "Support Intern"),
+            new UserData("Carlos", "Rodriguez", "carlos.rodriguez", "PE", "OU=Support,OU=IT,DC=pe,DC=bitai,DC=com", "Support Analyst"),
+            new UserData("Ana", "Martinez", "ana.martinez", "PE", "OU=Interships,OU=Support,OU=IT,DC=pe,DC=bitai,DC=com", "Support Intern"),
             
             // Regional IT
-            new UserData("Paulo", "Silva", "paulo.silva", "BR", "OU=IT,DC=br,DC=latam,DC=com", "IT Administrator"),
-            new UserData("Miguel", "Sanchez", "miguel.sanchez", "MX", "OU=IT,DC=mx,DC=latam,DC=com", "IT Administrator"),
-            new UserData("Fernando", "Lopez", "fernando.lopez", "CL", "OU=IT,DC=cl,DC=latam,DC=com", "IT Administrator"),
+            new UserData("Paulo", "Silva", "paulo.silva", "BR", "OU=IT,DC=br,DC=bitai,DC=com", "IT Administrator"),
+            new UserData("Miguel", "Sanchez", "miguel.sanchez", "MX", "OU=IT,DC=mx,DC=bitai,DC=com", "IT Administrator"),
+            new UserData("Fernando", "Lopez", "fernando.lopez", "CL", "OU=IT,DC=cl,DC=bitai,DC=com", "IT Administrator"),
             
             // Additional users for search demos
-            new UserData("Isaac", "Newton", "isaac.newton", "HOLDING", "OU=Seniors,OU=DevOps,OU=IT,DC=holding,DC=latam,DC=com", "Principal Engineer"),
-            new UserData("Manuel", "Cordoba", "manuel.cordoba", "HOLDING", "OU=Seniors,OU=DevOps,OU=IT,DC=holding,DC=latam,DC=com", "Tech Lead"),
-            new UserData("Saint", "Seiya", "saint.seiya", "HOLDING", "OU=Juniors,OU=DevOps,OU=IT,DC=holding,DC=latam,DC=com", "Junior Developer", memberOf: new string[] { "CN=Users,DC=holding,DC=latam,DC=com" }),
-            new UserData("Ken", "Master", "ken.master", "HOLDING", "OU=Seniors,OU=DevOps,OU=IT,DC=holding,DC=latam,DC=com", "Security Specialist", memberOf: new string[] { "CN=Administrators,CN=Builtin,DC=holding,DC=latam,DC=com" }),
+            new UserData("Isaac", "Newton", "isaac.newton", "BITAIVA", "OU=Seniors,OU=DevOps,OU=IT,DC=va,DC=bitai,DC=com", "Principal Engineer"),
+            new UserData("Manuel", "Cordoba", "manuel.cordoba", "BITAIVA", "OU=Seniors,OU=DevOps,OU=IT,DC=va,DC=bitai,DC=com", "Tech Lead"),
+            new UserData("Saint", "Seiya", "saint.seiya", "BITAIVA", "OU=Juniors,OU=DevOps,OU=IT,DC=va,DC=bitai,DC=com", "Junior Developer", memberOf: new string[] { "CN=Users,DC=va,DC=bitai,DC=com" }),
+            new UserData("Ken", "Master", "ken.master", "BITAIVA", "OU=Seniors,OU=DevOps,OU=IT,DC=va,DC=bitai,DC=com", "Security Specialist", memberOf: new string[] { "CN=Administrators,CN=Builtin,DC=va,DC=bitai,DC=com" }),
             
             // Additional users for realistic environment
-            new UserData("Alice", "Wonderland", "alice.wonder", "HOLDING", "OU=Support,OU=IT,DC=holding,DC=latam,DC=com", "Support Analyst"),
-            new UserData("Bruce", "Wayne", "bruce.wayne", "US", "OU=IT,DC=us,DC=latam,DC=com", "Security Architect"),
-            new UserData("Clark", "Kent", "clark.kent", "US", "OU=IT,DC=us,DC=latam,DC=com", "Journalist"),
-            new UserData("Diana", "Prince", "diana.prince", "PE", "OU=IT,DC=pe,DC=latam,DC=com", "Security Consultant"),
-            new UserData("Barry", "Allen", "barry.allen", "BR", "OU=IT,DC=br,DC=latam,DC=com", "Network Engineer"),
-            new UserData("Arthur", "Curry", "arthur.curry", "MX", "OU=IT,DC=mx,DC=latam,DC=com", "Infrastructure Engineer"),
+            new UserData("Alice", "Wonderland", "alice.wonder", "BITAIVA", "OU=Support,OU=IT,DC=va,DC=bitai,DC=com", "Support Analyst"),
+            new UserData("Bruce", "Wayne", "bruce.wayne", "US", "OU=IT,DC=us,DC=bitai,DC=com", "Security Architect"),
+            new UserData("Clark", "Kent", "clark.kent", "US", "OU=IT,DC=us,DC=bitai,DC=com", "Journalist"),
+            new UserData("Diana", "Prince", "diana.prince", "PE", "OU=IT,DC=pe,DC=bitai,DC=com", "Security Consultant"),
+            new UserData("Barry", "Allen", "barry.allen", "BR", "OU=IT,DC=br,DC=bitai,DC=com", "Network Engineer"),
+            new UserData("Arthur", "Curry", "arthur.curry", "MX", "OU=IT,DC=mx,DC=bitai,DC=com", "Infrastructure Engineer"),
         };
 
         foreach (var user in users) {
@@ -210,8 +209,8 @@ public class MockLdapDataSeeder
             "Victor",
             "Bastidas",
             "victor.bastidas",
-            "HOLDING",
-            "OU=Seniors,OU=DevOps,OU=IT,DC=holding,DC=latam,DC=com",
+            "BITAIVA",
+            "OU=Seniors,OU=DevOps,OU=IT,DC=va,DC=bitai,DC=com",
             "Senior DevOps Engineer"
         );
         CreateMockUser(newUser);
@@ -221,8 +220,8 @@ public class MockLdapDataSeeder
             "Red",
             "Robbin",
             "red.robbin",
-            "HOLDING",
-            "OU=Interships,OU=DevOps,OU=IT,DC=holding,DC=latam,DC=com",
+            "BITAIVA",
+            "OU=Interships,OU=DevOps,OU=IT,DC=va,DC=bitai,DC=com",
             "Intern"
         );
         CreateMockUser(passwordResetUser);
@@ -233,7 +232,7 @@ public class MockLdapDataSeeder
             "Pikes",
             "sara.pikes",
             "US",
-            "OU=Interships,OU=Support,OU=IT,DC=us,DC=latam,DC=com",
+            "OU=Interships,OU=Support,OU=IT,DC=us,DC=bitai,DC=com",
             "Support Intern",
             userAccountControl: "514" // Already disabled
         );
@@ -245,7 +244,7 @@ public class MockLdapDataSeeder
             "Cuy",
             "magic.cuy",
             "PE",
-            "OU=Interships,OU=Support,OU=IT,DC=pe,DC=latam,DC=com",
+            "OU=Interships,OU=Support,OU=IT,DC=pe,DC=bitai,DC=com",
             "Support Intern"
         );
         CreateMockUser(removeUser);
@@ -255,8 +254,8 @@ public class MockLdapDataSeeder
             "Ken",
             "Master",
             "ken.master",
-            "HOLDING",
-            "OU=Seniors,OU=DevOps,OU=IT,DC=holding,DC=latam,DC=com",
+            "BITAIVA",
+            "OU=Seniors,OU=DevOps,OU=IT,DC=va,DC=bitai,DC=com",
             "Security Specialist"
         );
         CreateMockUser(groupMemberUser);
@@ -283,8 +282,8 @@ public class MockLdapDataSeeder
         userEntry.AddAttribute("givenName", user.FirstName);
         userEntry.AddAttribute("displayName", $"{user.FirstName} {user.LastName}");
         userEntry.AddAttribute("name", $"{user.FirstName} {user.LastName}");
-        userEntry.AddAttribute("mail", $"{user.SAMAccountName}@{user.Domain.ToLower()}.latam.com");
-        userEntry.AddAttribute("userPrincipalName", $"{user.SAMAccountName}@{user.Domain.ToLower()}.latam.com");
+        userEntry.AddAttribute("mail", $"{user.SAMAccountName}@{user.Domain.ToLower()}.bitai.com");
+        userEntry.AddAttribute("userPrincipalName", $"{user.SAMAccountName}@{user.Domain.ToLower()}.bitai.com");
         userEntry.AddAttribute("userAccountControl", user.UserAccountControl);
         userEntry.AddAttribute("objectClass", new[] { "top", "person", "organizationalPerson", "user" });
         userEntry.AddAttribute("whenCreated", DateTime.UtcNow.AddDays(-_random.Next(1, 365)).ToString("yyyyMMddHHmmss.0Z"));
@@ -292,7 +291,7 @@ public class MockLdapDataSeeder
         userEntry.AddAttribute("distinguishedName", distinguishedName);
         userEntry.AddAttribute("title", user.Title);
         userEntry.AddAttribute("department", user.Department ?? "IT");
-        userEntry.AddAttribute("company", $"{user.Domain} LATAM");
+        userEntry.AddAttribute("company", $"{user.Domain} BITAI");
         userEntry.AddAttribute("telephoneNumber", $"+1-555-{_random.Next(100, 999)}-{_random.Next(1000, 9999)}");
 
         if (!string.IsNullOrEmpty(user.Manager)) {
@@ -315,32 +314,32 @@ public class MockLdapDataSeeder
         var groups = new List<GroupData>
         {
             // Global groups
-            new GroupData("Domain Admins", "CN=Users,DC=holding,DC=latam,DC=com", "DomainAdmins", "Domain Administrators Group"),
-            new GroupData("Domain Users", "CN=Users,DC=holding,DC=latam,DC=com", "DomainUsers", "All domain users"),
-            new GroupData("Domain Computers", "CN=Users,DC=holding,DC=latam,DC=com", "DomainComputers", "All domain computers"),
+            new GroupData("Domain Admins", "CN=Users,DC=va,DC=bitai,DC=com", "DomainAdmins", "Domain Administrators Group"),
+            new GroupData("Domain Users", "CN=Users,DC=va,DC=bitai,DC=com", "DomainUsers", "All domain users"),
+            new GroupData("Domain Computers", "CN=Users,DC=va,DC=bitai,DC=com", "DomainComputers", "All domain computers"),
             
             // IT Department groups
-            new GroupData("IT Admins", "OU=IT,DC=holding,DC=latam,DC=com", "ITAdmins", "IT Administrators"),
-            new GroupData("DevOps Engineers", "OU=DevOps,OU=IT,DC=holding,DC=latam,DC=com", "DevOpsEng", "DevOps Engineering Team"),
-            new GroupData("Senior DevOps", "OU=Seniors,OU=DevOps,OU=IT,DC=holding,DC=latam,DC=com", "SeniorDevOps", "Senior DevOps Engineers"),
-            new GroupData("Junior DevOps", "OU=Juniors,OU=DevOps,OU=IT,DC=holding,DC=latam,DC=com", "JuniorDevOps", "Junior DevOps Engineers"),
-            new GroupData("Interns", "OU=Interships,OU=DevOps,OU=IT,DC=holding,DC=latam,DC=com", "Interns", "Intern Program Participants"),
+            new GroupData("IT Admins", "OU=IT,DC=va,DC=bitai,DC=com", "ITAdmins", "IT Administrators"),
+            new GroupData("DevOps Engineers", "OU=DevOps,OU=IT,DC=va,DC=bitai,DC=com", "DevOpsEng", "DevOps Engineering Team"),
+            new GroupData("Senior DevOps", "OU=Seniors,OU=DevOps,OU=IT,DC=va,DC=bitai,DC=com", "SeniorDevOps", "Senior DevOps Engineers"),
+            new GroupData("Junior DevOps", "OU=Juniors,OU=DevOps,OU=IT,DC=va,DC=bitai,DC=com", "JuniorDevOps", "Junior DevOps Engineers"),
+            new GroupData("Interns", "OU=Interships,OU=DevOps,OU=IT,DC=va,DC=bitai,DC=com", "Interns", "Intern Program Participants"),
             
             // Support groups
-            new GroupData("Support Team", "OU=Support,OU=IT,DC=holding,DC=latam,DC=com", "SupportTeam", "Support Department"),
-            new GroupData("US Support", "OU=Support,OU=IT,DC=us,DC=latam,DC=com", "USSupport", "US Support Team"),
-            new GroupData("PE Support", "OU=Support,OU=IT,DC=pe,DC=latam,DC=com", "PESupport", "Peru Support Team"),
+            new GroupData("Support Team", "OU=Support,OU=IT,DC=va,DC=bitai,DC=com", "SupportTeam", "Support Department"),
+            new GroupData("US Support", "OU=Support,OU=IT,DC=us,DC=bitai,DC=com", "USSupport", "US Support Team"),
+            new GroupData("PE Support", "OU=Support,OU=IT,DC=pe,DC=bitai,DC=com", "PESupport", "Peru Support Team"),
             
             // Regional groups
-            new GroupData("US IT Team", "OU=IT,DC=us,DC=latam,DC=com", "USITTeam", "US IT Department"),
-            new GroupData("PE IT Team", "OU=IT,DC=pe,DC=latam,DC=com", "PEITTeam", "Peru IT Department"),
-            new GroupData("BR IT Team", "OU=IT,DC=br,DC=latam,DC=com", "BRITTeam", "Brazil IT Department"),
-            new GroupData("MX IT Team", "OU=IT,DC=mx,DC=latam,DC=com", "MXITTeam", "Mexico IT Department"),
-            new GroupData("CL IT Team", "OU=IT,DC=cl,DC=latam,DC=com", "CLITTeam", "Chile IT Department"),
+            new GroupData("US IT Team", "OU=IT,DC=us,DC=bitai,DC=com", "USITTeam", "US IT Department"),
+            new GroupData("PE IT Team", "OU=IT,DC=pe,DC=bitai,DC=com", "PEITTeam", "Peru IT Department"),
+            new GroupData("BR IT Team", "OU=IT,DC=br,DC=bitai,DC=com", "BRITTeam", "Brazil IT Department"),
+            new GroupData("MX IT Team", "OU=IT,DC=mx,DC=bitai,DC=com", "MXITTeam", "Mexico IT Department"),
+            new GroupData("CL IT Team", "OU=IT,DC=cl,DC=bitai,DC=com", "CLITTeam", "Chile IT Department"),
             
             // Security groups
-            new GroupData("Administrators", "CN=Builtin,DC=holding,DC=latam,DC=com", "Administrators", "Built-in Administrators Group"),
-            new GroupData("Security Analysts", "OU=IT,DC=holding,DC=latam,DC=com", "SecurityAnalysts", "Security Team"),
+            new GroupData("Administrators", "CN=Builtin,DC=va,DC=bitai,DC=com", "Administrators", "Built-in Administrators Group"),
+            new GroupData("Security Analysts", "OU=IT,DC=va,DC=bitai,DC=com", "SecurityAnalysts", "Security Team"),
         };
 
         foreach (var group in groups) {
@@ -352,8 +351,8 @@ public class MockLdapDataSeeder
         // Groups referenced in JSON config
         var demoSpecificGroups = new[]
         {
-            new GroupData("Administrators", "CN=Builtin,DC=holding,DC=latam,DC=com", "Administrators", "Built-in Administrators"),
-            new GroupData("DevOps Leaders", "OU=Seniors,OU=DevOps,OU=IT,DC=holding,DC=latam,DC=com", "DevOpsLeaders", "DevOps Leadership Team")
+            new GroupData("Administrators", "CN=Builtin,DC=va,DC=bitai,DC=com", "Administrators", "Built-in Administrators"),
+            new GroupData("DevOps Leaders", "OU=Seniors,OU=DevOps,OU=IT,DC=va,DC=bitai,DC=com", "DevOpsLeaders", "DevOps Leadership Team")
         };
 
         foreach (var group in demoSpecificGroups) {
@@ -384,7 +383,7 @@ public class MockLdapDataSeeder
         groupEntry.AddAttribute("objectClass", new[] { "top", "group" });
         groupEntry.AddAttribute("groupType", "-2147483640"); // Universal security group
         groupEntry.AddAttribute("whenCreated", DateTime.UtcNow.AddDays(-_random.Next(1, 365)).ToString("yyyyMMddHHmmss.0Z"));
-        groupEntry.AddAttribute("distinguishedName", groupDistinguishedName);
+        groupEntry.AddAttribute("containerDN", groupDistinguishedName);
 
         _dataStore.AddOrUpdateEntry(groupEntry);
         _logger.LogDebug($"Created group: {group.SAMAccountName} ({groupDistinguishedName}) with RID: {rid}");
@@ -398,19 +397,19 @@ public class MockLdapDataSeeder
         var computers = new[]
         {
             // Servers
-            new ComputerData("DEVSERVER01", "OU=DevOps,OU=IT,DC=holding,DC=latam,DC=com", "Development Server", "server"),
-            new ComputerData("DBSERVER01", "OU=IT,DC=holding,DC=latam,DC=com", "Database Server", "server"),
-            new ComputerData("WEBSERVER01", "OU=IT,DC=us,DC=latam,DC=com", "Web Server US", "server"),
-            new ComputerData("APPSERVER01", "OU=IT,DC=pe,DC=latam,DC=com", "Application Server PE", "server"),
-            new ComputerData("FILESERVER01", "OU=IT,DC=br,DC=latam,DC=com", "File Server BR", "server"),
-            new ComputerData("MAILSERVER01", "OU=IT,DC=mx,DC=latam,DC=com", "Mail Server MX", "server"),
-            new ComputerData("MONITOR01", "OU=IT,DC=cl,DC=latam,DC=com", "Monitoring Server", "server"),
+            new ComputerData("DEVSERVER01", "OU=DevOps,OU=IT,DC=va,DC=bitai,DC=com", "Development Server", "server"),
+            new ComputerData("DBSERVER01", "OU=IT,DC=va,DC=bitai,DC=com", "Database Server", "server"),
+            new ComputerData("WEBSERVER01", "OU=IT,DC=us,DC=bitai,DC=com", "Web Server US", "server"),
+            new ComputerData("APPSERVER01", "OU=IT,DC=pe,DC=bitai,DC=com", "Application Server PE", "server"),
+            new ComputerData("FILESERVER01", "OU=IT,DC=br,DC=bitai,DC=com", "File Server BR", "server"),
+            new ComputerData("MAILSERVER01", "OU=IT,DC=mx,DC=bitai,DC=com", "Mail Server MX", "server"),
+            new ComputerData("MONITOR01", "OU=IT,DC=cl,DC=bitai,DC=com", "Monitoring Server", "server"),
             
             // Workstations
-            new ComputerData("WS-USA-001", "CN=Computers,DC=us,DC=latam,DC=com", "USA Workstation 001", "workstation"),
-            new ComputerData("WS-PE-001", "CN=Computers,DC=pe,DC=latam,DC=com", "Peru Workstation 001", "workstation"),
-            new ComputerData("WS-BR-001", "CN=Computers,DC=br,DC=latam,DC=com", "Brazil Workstation 001", "workstation"),
-            new ComputerData("DEV-LAPTOP-001", "OU=DevOps,OU=IT,DC=holding,DC=latam,DC=com", "Developer Laptop", "workstation"),
+            new ComputerData("WS-USA-001", "CN=Computers,DC=us,DC=bitai,DC=com", "USA Workstation 001", "workstation"),
+            new ComputerData("WS-PE-001", "CN=Computers,DC=pe,DC=bitai,DC=com", "Peru Workstation 001", "workstation"),
+            new ComputerData("WS-BR-001", "CN=Computers,DC=br,DC=bitai,DC=com", "Brazil Workstation 001", "workstation"),
+            new ComputerData("DEV-LAPTOP-001", "OU=DevOps,OU=IT,DC=va,DC=bitai,DC=com", "Developer Laptop", "workstation"),
         };
 
         foreach (var computer in computers) {
@@ -434,7 +433,7 @@ public class MockLdapDataSeeder
         computerEntry.AddAttribute("objectGuid", Guid.NewGuid().ToByteArray());
         computerEntry.AddAttribute("sAMAccountName", $"{computer.Name}$");
         computerEntry.AddAttribute("sAMAccountType", "805306369"); // Computer account
-        computerEntry.AddAttribute("cn", computer.Name);
+        computerEntry.AddAttribute("Name", computer.Name);
         computerEntry.AddAttribute("name", computer.Name);
         computerEntry.AddAttribute("displayName", computer.Description);
         computerEntry.AddAttribute("description", computer.Description);
@@ -442,9 +441,9 @@ public class MockLdapDataSeeder
         computerEntry.AddAttribute("userAccountControl", "4096"); // Workstation/server account
         computerEntry.AddAttribute("operatingSystem", computer.Type == "server" ? "Windows Server 2022" : "Windows 11 Pro");
         computerEntry.AddAttribute("operatingSystemVersion", "10.0 (20348)");
-        computerEntry.AddAttribute("dNSHostName", $"{computer.Name}.latam.com");
+        computerEntry.AddAttribute("dNSHostName", $"{computer.Name}.bitai.com");
         computerEntry.AddAttribute("whenCreated", DateTime.UtcNow.AddDays(-_random.Next(1, 365)).ToString("yyyyMMddHHmmss.0Z"));
-        computerEntry.AddAttribute("distinguishedName", distinguishedName);
+        computerEntry.AddAttribute("containerDN", distinguishedName);
 
         _dataStore.AddOrUpdateEntry(computerEntry);
         _logger.LogDebug($"Created computer: {computer.Name} ({distinguishedName}) with RID: {rid}");
@@ -543,13 +542,13 @@ public class MockLdapDataSeeder
         // Add manager relationships
         var managers = new Dictionary<string, string>
         {
-            { "james.dockers", "CN=Isaac Newton,OU=Seniors,OU=DevOps,OU=IT,DC=holding,DC=latam,DC=com" },
-            { "sara.pikes", "CN=James Dockers,OU=Seniors,OU=DevOps,OU=IT,DC=holding,DC=latam,DC=com" },
-            { "robert.miller", "CN=James Dockers,OU=Seniors,OU=DevOps,OU=IT,DC=holding,DC=latam,DC=com" },
-            { "maria.gonzalez", "CN=Bruce Wayne,OU=IT,DC=us,DC=latam,DC=com" },
-            { "carlos.rodriguez", "CN=Diana Prince,OU=IT,DC=pe,DC=latam,DC=com" },
-            { "saint.seiya", "CN=Manuel Cordoba,OU=Seniors,OU=DevOps,OU=IT,DC=holding,DC=latam,DC=com" },
-            { "ken.master", "CN=Isaac Newton,OU=Seniors,OU=DevOps,OU=IT,DC=holding,DC=latam,DC=com" },
+            { "james.dockers", "CN=Isaac Newton,OU=Seniors,OU=DevOps,OU=IT,DC=va,DC=bitai,DC=com" },
+            { "sara.pikes", "CN=James Dockers,OU=Seniors,OU=DevOps,OU=IT,DC=va,DC=bitai,DC=com" },
+            { "robert.miller", "CN=James Dockers,OU=Seniors,OU=DevOps,OU=IT,DC=va,DC=bitai,DC=com" },
+            { "maria.gonzalez", "CN=Bruce Wayne,OU=IT,DC=us,DC=bitai,DC=com" },
+            { "carlos.rodriguez", "CN=Diana Prince,OU=IT,DC=pe,DC=bitai,DC=com" },
+            { "saint.seiya", "CN=Manuel Cordoba,OU=Seniors,OU=DevOps,OU=IT,DC=va,DC=bitai,DC=com" },
+            { "ken.master", "CN=Isaac Newton,OU=Seniors,OU=DevOps,OU=IT,DC=va,DC=bitai,DC=com" },
         };
 
         foreach (var relation in managers) {
@@ -660,6 +659,8 @@ public class MockLdapDataSeeder
         public string Manager { get; set; }
         public string[] MemberOf { get; set; }
 
+
+
         public UserData(string firstName, string lastName, string samAccountName,
             string domain, string containerDN, string title, string department = "IT",
             string userAccountControl = "512", string manager = null, string[] memberOf = null) {
@@ -679,18 +680,20 @@ public class MockLdapDataSeeder
     private class GroupData
     {
         public string Name { get; set; }
-        public string ContainerDistinguishedName { get; set; }
+        public string ContainerDN { get; set; }
         public string SAMAccountName { get; set; }
         public string Description { get; set; }
         public string GeneratedDistinguishedName { get;  private set; }
 
-        public GroupData(string name, string distinguishedName, string samAccountName, string description) {
+
+
+        public GroupData(string name, string containerDN, string samAccountName, string description) {
             Name = name;
-            ContainerDistinguishedName = distinguishedName;
+            ContainerDN = containerDN;
             SAMAccountName = samAccountName;
             Description = description;
 
-            GeneratedDistinguishedName = $"CN={name},{distinguishedName}";
+            GeneratedDistinguishedName = $"CN={name},{containerDN}";
         }
     }
 

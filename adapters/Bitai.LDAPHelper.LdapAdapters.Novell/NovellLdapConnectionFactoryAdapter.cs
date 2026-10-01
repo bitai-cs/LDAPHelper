@@ -14,28 +14,34 @@ public class NovellLdapConnectionFactoryAdapter : ILdapConnectionFactoryAdapter
         IConnectionInfo connectionInfo,
         string userAccount,
         string password,
-        bool bindRequired = true) {
-        var ldapConnection = new LdapConnection {
+        bool bindRequired = true)
+    {
+        var ldapConnection = new LdapConnection
+        {
             ConnectionTimeout = connectionInfo.ConnectionTimeout * 1000
         };
 
         var adapter = new NovellLdapConnectionAdapter(ldapConnection);
 
-        if (connectionInfo.UseSSL) {
+        if (connectionInfo.UseSSL)
+        {
             adapter.SecureSocketLayer = true;
             adapter.ServerCertificateValidationByPass();
         }
 
         await adapter.ConnectAsync(connectionInfo.Server, connectionInfo.ServerPort);
 
-        try {
+        try
+        {
             await adapter.BindAsync(userAccount, password);
         }
-        catch (LdapException) {
+        catch (LdapException)
+        {
             if (bindRequired)
                 throw;
         }
-        catch (Exception) {
+        catch (Exception)
+        {
             throw;
         }
 
